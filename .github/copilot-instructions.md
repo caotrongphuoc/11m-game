@@ -48,8 +48,19 @@ Hard rules (also returned by `get_ak_guardrails`):
 - Common message payload ≤ 64 bytes; max 7 references per message; pools are fixed size.
 
 ## Coding rules
-This is a penalty shootout game project, using prefix `pk_game_*`. ALWAYS follow:
+This is a penalty shootout game project (11-meter penalty kick), using prefix `em_game_*` (Eleven Meter). ALWAYS follow:
 - `docs/02-guide-coding-rules.md` (detailed rules adopted from zomwar-game)
 - Reference sample repo: https://github.com/caotrongphuoc/zomwar-game (especially `application/sources/app/game/game_zomwar/` and `application/sources/app/screens/`)
 
-File structure, naming, coding style, and commit messages — ALL must follow the coding rules document above.
+Naming conventions for this project:
+- Game folder: `application/sources/app/game/game_eleven_meter/`
+- Object files: `em_game_<object>.h/cpp` (e.g. `em_game_ball.h`, `em_game_keeper.cpp`)
+- Screen files: `scr_em_<name>.h/cpp` in `application/sources/app/screens/`
+- Header guards: `__EM_GAME_<OBJECT>_H__`
+- Signals: `EM_GAME_<OBJECT>_<ACTION>` anchored to `EM_GAME_DEFINE_SIG`
+- Task IDs: `EM_GAME_<NAME>_ID` with handler `em_game_<name>_handle`
+- Typedefs: `em_game_<object>_t`
+- Functions: `em_game_<object>_<action>()`
+- Project-level macros: `EM_GAME_*`
+
+File structure, coding style (Allman braces, tab 4, `int* p`, `if (x)`), and commit messages — ALL must follow the coding rules document above.
