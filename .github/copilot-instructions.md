@@ -1,4 +1,4 @@
-<!--
+`<!--
 Copy this file to .github/copilot-instructions.md in your AK firmware project.
 It "steers" the AI agent to always consult the AK MCP docs server before writing
 firmware, so generated code follows kernel conventions and stays out of the core.
@@ -46,3 +46,10 @@ Hard rules (also returned by `get_ak_guardrails`):
 - User signals start at `AK_USER_DEFINE_SIG` (10); task priorities are `LEVEL_1..7`
   (0 is reserved).
 - Common message payload ≤ 64 bytes; max 7 references per message; pools are fixed size.
+
+## Coding rules
+This is a penalty shootout game project, using prefix `pk_game_*`. ALWAYS follow:
+- `docs/02-guide-coding-rules.md` (detailed rules adopted from zomwar-game)
+- Reference sample repo: https://github.com/caotrongphuoc/zomwar-game (especially `application/sources/app/game/game_zomwar/` and `application/sources/app/screens/`)
+
+File structure, naming, coding style, and commit messages — ALL must follow the coding rules document above.
