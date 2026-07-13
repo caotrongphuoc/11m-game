@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "ak-docs": {
+      "type": "http",
+      "url": "https://ak-mcp.ntbinh-regis.workers.dev/mcp"
+    }
+  }
+}
