@@ -47,15 +47,29 @@ Hard rules (also returned by `get_ak_guardrails`):
   (0 is reserved).
 - Common message payload ≤ 64 bytes; max 7 references per message; pools are fixed size.
 
-## Coding rules
-This is a penalty shootout game project (11-meter penalty kick), using prefix `em_game_*` (Eleven Meter). ALWAYS follow:
-- `docs/02-guide-coding-rules.md` (detailed rules adopted from zomwar-game)
-- Reference sample repo: https://github.com/caotrongphuoc/zomwar-game (especially `application/sources/app/game/game_zomwar/` and `application/sources/app/screens/`)
+## Project context
 
-Naming conventions for this project:
-- Game folder: `application/sources/app/game/game_eleven_meter/`
-- Object files: `em_game_<object>.h/cpp` (e.g. `em_game_ball.h`, `em_game_keeper.cpp`)
-- Screen files: `scr_em_<name>.h/cpp` in `application/sources/app/screens/`
+This is a penalty shootout game (11-meter penalty kick) built on top of a blank **AK Embedded Base Kit** for STM32L151. Prefix for this game: `em_game_*` (Eleven Meter).
+
+### Base source (starting point — DEV FROM HERE)
+- Upstream: https://github.com/the-ak-foundation/ak-base-kit-stm32l151
+- The base kit ships as an empty template: only `application/`, `boot/`, `hardware/`.
+- Folders like `application/sources/app/game/` and `application/sources/app/screens/` do NOT exist yet — they must be created following the pattern below.
+
+### Reference (READ-ONLY — for rules and patterns, do NOT copy code)
+- Sample project: https://github.com/caotrongphuoc/zomwar-game
+  - Study `application/sources/app/game/game_zomwar/` for object file layout
+  - Study `application/sources/app/screens/` for screen file layout
+  - Study `application/sources/app/app.h` and `task_list.h/cpp` for signal & task registration
+- Coding rules: `docs/02-guide-coding-rules.md` (copied from zomwar-game)
+
+**Important**: study the patterns and re-implement with `em_game_*` prefix. Do not blindly copy zomwar sources into this repo.
+
+## Naming for this project (em_game_*)
+- Game folder: `application/sources/app/game/game_eleven_meter/` (to be created)
+- Screens folder: `application/sources/app/screens/` (to be created if missing)
+- Object files: `em_game_<object>.h/cpp` (e.g. `em_game_ball.h`)
+- Screen files: `scr_em_<name>.h/cpp`
 - Header guards: `__EM_GAME_<OBJECT>_H__`
 - Signals: `EM_GAME_<OBJECT>_<ACTION>` anchored to `EM_GAME_DEFINE_SIG`
 - Task IDs: `EM_GAME_<NAME>_ID` with handler `em_game_<name>_handle`
@@ -63,4 +77,8 @@ Naming conventions for this project:
 - Functions: `em_game_<object>_<action>()`
 - Project-level macros: `EM_GAME_*`
 
-File structure, coding style (Allman braces, tab 4, `int* p`, `if (x)`), and commit messages — ALL must follow the coding rules document above.
+## Coding style
+Follow `docs/02-guide-coding-rules.md` — Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
+
+## Commit message
+Follow the tag convention: `[ADD]`, `[UPDATE]`, `[FIX]`, `[REMOVE]`, `[DOC]`, `[MERGE]` + lowercase imperative description.
