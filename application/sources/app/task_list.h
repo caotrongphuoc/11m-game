@@ -25,6 +25,7 @@ enum {
 	AC_TASK_RF24_IF_ID,
 	AC_TASK_UART_IF_ID,
 	AC_TASK_DBG_ID,
+	AC_TASK_BUZZER_ID,
 	AC_TASK_DISPLAY_ID,
 
 #if defined(TASK_ZIGBEE_EN)
@@ -76,6 +77,7 @@ extern void task_if(ak_msg_t*);
 extern void task_rf24_if(ak_msg_t*);
 extern void task_uart_if(ak_msg_t*);
 extern void task_dbg(ak_msg_t*);
+extern void task_buzzer(ak_msg_t*);
 extern void task_display(ak_msg_t*);
 extern void task_zigbee(ak_msg_t*);
 
