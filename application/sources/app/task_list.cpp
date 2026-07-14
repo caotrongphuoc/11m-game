@@ -20,6 +20,11 @@ const task_t app_task_table[] = {
 	{AC_TASK_DBG_ID				,	TASK_PRI_LEVEL_4	,	task_dbg			},
 	{AC_TASK_BUZZER_ID			,	TASK_PRI_LEVEL_4	,	task_buzzer			},
 	{AC_TASK_DISPLAY_ID			,	TASK_PRI_LEVEL_4	,	task_display		},
+	{EM_GAME_MATCH_ID			,	TASK_PRI_LEVEL_4	,	em_game_match_handle	},
+	{EM_GAME_SHOOTER_ID			,	TASK_PRI_LEVEL_4	,	em_game_shooter_handle	},
+	{EM_GAME_KEEPER_ID			,	TASK_PRI_LEVEL_4	,	em_game_keeper_handle	},
+	{EM_GAME_BALL_ID				,	TASK_PRI_LEVEL_4	,	em_game_ball_handle	},
+	{EM_GAME_GOAL_ID				,	TASK_PRI_LEVEL_4	,	em_game_goal_handle	},
 
 	#if defined(TASK_ZIGBEE_EN)
 	{AC_TASK_ZIGBEE_ID			,	TASK_PRI_LEVEL_4	,	task_zigbee			},

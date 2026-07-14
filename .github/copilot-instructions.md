@@ -80,37 +80,57 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 ## Coding style
 Follow `docs/02-guide-coding-rules.md` — Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
 
-## Commit message workflow
+## Commit workflow (incremental)
 
-After completing ANY logical unit of work, always provide a ready-to-copy
-commit command in this exact format:
+Work must be delivered in the SMALLEST logical steps. Never bundle multiple
+topics into a single response.
 
-    git commit -m "[ACTION] short description"
+For each step:
+1. Make ONE topical change (e.g. only signals in app.h, OR only task list
+   registration, OR only makefile chain — never mixed).
+2. Verify it (build if applicable).
+3. STOP and present ONE commit command in a fenced bash block:
 
-Rules:
-- ACTION tag in UPPERCASE, chosen from: ADD / UPDATE / FIX / REMOVE / DOC / MERGE
-- Description in lowercase, imperative mood (add, fix, rename, wire...)
+```bash
+       git commit -m "[ACTION] short description"
+```
+
+4. Wait for me to reply "next" (or similar) before moving to the next step.
+
+Do NOT present multiple `git commit` commands in one response.
+Do NOT continue to the next step until I confirm the previous commit is done.
+
+Rules for the commit message:
+- ACTION tag in UPPERCASE: ADD / UPDATE / FIX / REMOVE / DOC / MERGE
+- Description in lowercase, imperative mood
 - No trailing period
-- Keep the whole line under ~80 characters
+- Under ~80 characters total
 - Name the specific module/file/signal when relevant
+- One [ACTION] = one topic
 
-Present each command in a fenced bash code block so it can be copied directly.
+Example of a multi-step feature — presented across multiple responses,
+not in one message:
 
-If a chunk of work naturally splits into multiple commits (e.g. signals in
-app.h vs task registration vs stubs), provide the commits in ORDER, each as
-its own code block. Never merge unrelated changes into one commit —
-one [ACTION] = one topic.
-
-Example output after finishing a phase:
-
+Response 1:
+    (edits to app.h only)
 ```bash
     git commit -m "[ADD] em_game signal blocks and timer intervals"
 ```
+    Waiting for confirmation before proceeding.
 
+Response 2 (after I say "next"):
+    (edits to task_list.h/cpp only)
 ```bash
-    git commit -m "[ADD] register 5 em_game_* tasks in task list"
+    git commit -m "[ADD] register em_game_* tasks in task list"
 ```
+    Waiting for confirmation.
 
+Response 3 (after "next"):
+    (creates game/ folder + stubs + makefiles)
 ```bash
     git commit -m "[ADD] em_game task stubs and makefile chain"
 ```
+
+If the whole feature was already done in one shot (like Phase 1 already is),
+still present commits ONE AT A TIME in successive responses, waiting for
+"next" between each.

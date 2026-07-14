@@ -22,6 +22,8 @@ extern "C"
 #include "app_eeprom.h"
 #include "app_data.h"
 
+#define EM_GAME_DEFINE_SIG	(100)
+
 /*****************************************************************************/
 /* SYSTEM task define
  */
@@ -159,7 +161,93 @@ enum {
 	AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SNOW_MOVING_UPDATE,
 	AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SLEEP,
 	AC_DISPLAY_SHOW_MODBUS_PULL_UPDATE,
-	AC_DISPLAY_SHOW_MODBUS_PULL_SLEEP
+	AC_DISPLAY_SHOW_MODBUS_PULL_SLEEP,
+	EM_GAME_DISPLAY_SHOW_MENU = EM_GAME_DEFINE_SIG,
+	EM_GAME_DISPLAY_SHOW_PENALTY,
+	EM_GAME_DISPLAY_SHOW_GAME_OVER,
+	EM_GAME_DISPLAY_REFRESH
+};
+
+/*****************************************************************************/
+/*  Eleven Meter game MATCH task define
+ */
+/*****************************************************************************/
+/* define timer */
+#define EM_GAME_MATCH_SELECTION_TIMEOUT		(3000)
+#define EM_GAME_MATCH_ROUND_END_INTERVAL		(1200)
+
+/* define signal */
+enum {
+	EM_GAME_MATCH_SETUP = EM_GAME_DEFINE_SIG,
+	EM_GAME_MATCH_START,
+	EM_GAME_MATCH_START_ROUND,
+	EM_GAME_MATCH_SHOOTER_TIMEOUT,
+	EM_GAME_MATCH_INPUT_LEFT,
+	EM_GAME_MATCH_INPUT_CENTER,
+	EM_GAME_MATCH_INPUT_RIGHT,
+	EM_GAME_MATCH_HIT_RESULT,
+	EM_GAME_MATCH_ROUND_END,
+	EM_GAME_MATCH_GAME_OVER,
+	EM_GAME_MATCH_RESET
+};
+
+/*****************************************************************************/
+/*  Eleven Meter game SHOOTER task define
+ */
+/*****************************************************************************/
+/* define timer */
+#define EM_GAME_SHOOTER_ANIM_TICK_INTERVAL	(80)
+
+/* define signal */
+enum {
+	EM_GAME_SHOOTER_SETUP = EM_GAME_DEFINE_SIG,
+	EM_GAME_SHOOTER_KICK,
+	EM_GAME_SHOOTER_ANIM_TICK,
+	EM_GAME_SHOOTER_RESET
+};
+
+/*****************************************************************************/
+/*  Eleven Meter game KEEPER task define
+ */
+/*****************************************************************************/
+/* define timer */
+#define EM_GAME_KEEPER_ANIM_TICK_INTERVAL	(80)
+
+/* define signal */
+enum {
+	EM_GAME_KEEPER_SETUP = EM_GAME_DEFINE_SIG,
+	EM_GAME_KEEPER_AI_PICK,
+	EM_GAME_KEEPER_DIVE,
+	EM_GAME_KEEPER_ANIM_TICK,
+	EM_GAME_KEEPER_RESET
+};
+
+/*****************************************************************************/
+/*  Eleven Meter game BALL task define
+ */
+/*****************************************************************************/
+/* define timer */
+#define EM_GAME_BALL_ANIM_TICK_INTERVAL		(50)
+
+/* define signal */
+enum {
+	EM_GAME_BALL_SETUP = EM_GAME_DEFINE_SIG,
+	EM_GAME_BALL_KICK,
+	EM_GAME_BALL_ANIM_TICK,
+	EM_GAME_BALL_RESET
+};
+
+/*****************************************************************************/
+/*  Eleven Meter game GOAL task define
+ */
+/*****************************************************************************/
+/* define timer */
+
+/* define signal */
+enum {
+	EM_GAME_GOAL_SETUP = EM_GAME_DEFINE_SIG,
+	EM_GAME_GOAL_CHECK_HIT,
+	EM_GAME_GOAL_RESET
 };
 
 /*****************************************************************************/
@@ -193,6 +281,12 @@ enum {
 /* define signal */
 enum {
 	AC_BUZZER_ALARM = AK_USER_DEFINE_SIG,
+	EM_GAME_BUZZER_KICK = EM_GAME_DEFINE_SIG,
+	EM_GAME_BUZZER_GOAL,
+	EM_GAME_BUZZER_SAVE,
+	EM_GAME_BUZZER_MISS,
+	EM_GAME_BUZZER_WIN,
+	EM_GAME_BUZZER_LOSE
 };
 
 /*****************************************************************************/
