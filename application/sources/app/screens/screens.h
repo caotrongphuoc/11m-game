@@ -28,6 +28,11 @@ extern view_dynamic_t dyn_view_game_menu;
 extern view_screen_t scr_game_menu;
 extern void scr_game_menu_handle(ak_msg_t* msg);
 
+// scr_game_penalty
+extern view_dynamic_t dyn_view_game_penalty;
+extern view_screen_t scr_game_penalty;
+extern void scr_game_penalty_handle(ak_msg_t* msg);
+
 // scr_idle
 extern view_dynamic_t dyn_view_idle;
 extern view_screen_t scr_idle;
