@@ -5,6 +5,7 @@ VPATH += sources/app/screens
 
 # CPP source files
 SOURCES_CPP += sources/app/screens/screens_bitmap.cpp
+SOURCES_CPP += sources/app/screens/scr_game_over.cpp
 SOURCES_CPP += sources/app/screens/scr_game_menu.cpp
 SOURCES_CPP += sources/app/screens/scr_game_penalty.cpp
 SOURCES_CPP += sources/app/screens/scr_idle.cpp
