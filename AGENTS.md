@@ -67,10 +67,10 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 
 ## Naming for this project (em_game_*)
 - Game folder: `application/sources/app/game/game_eleven_meter/` (to be created)
-- Screens folder: `application/sources/app/screens/` (to be created if missing)
+- Screens folder: `application/sources/app/screens/` (already exists)
 - Object files: `em_game_<object>.h/cpp` (e.g. `em_game_ball.h`)
-- Screen files: `scr_em_<name>.h/cpp`
-- Header guards: `__EM_GAME_<OBJECT>_H__`
+- Screen files: `scr_game_<name>.h/cpp` (follow zomwar pattern, e.g. `scr_game_penalty.cpp`)
+- Header guards: `__EM_GAME_<OBJECT>_H__` for game objects, `__SCR_GAME_<NAME>_H__` for screens
 - Signals: `EM_GAME_<OBJECT>_<ACTION>` anchored to `EM_GAME_DEFINE_SIG`
 - Task IDs: `EM_GAME_<NAME>_ID` with handler `em_game_<name>_handle`
 - Typedefs: `em_game_<object>_t`
@@ -80,5 +80,41 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 ## Coding style
 Follow `docs/02-guide-coding-rules.md` — Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
 
-## Commit message
-Follow the tag convention: `[ADD]`, `[UPDATE]`, `[FIX]`, `[REMOVE]`, `[DOC]`, `[MERGE]` + lowercase imperative description.
+## Commit message workflow
+
+After completing ANY logical unit of work, always provide a ready-to-copy
+commit message in this exact format:
+
+    git commit -m "[ACTION] short description"
+
+Rules:
+- ACTION tag in UPPERCASE, chosen from: ADD / UPDATE / FIX / REMOVE / DOC / MERGE
+- Description in lowercase, imperative mood (add, fix, rename, wire...)
+- No trailing period
+- Keep the whole line under ~80 characters
+- Name the specific module/file/signal when relevant
+
+Present each command in a fenced bash code block so it can be copied directly.
+Precede each commit with the matching `git add <path>` line so staging is precise.
+
+If a chunk of work naturally splits into multiple commits (e.g. signals in
+app.h vs task registration vs stubs), provide the commits in ORDER, each as
+its own add + commit pair. Never merge unrelated changes into one commit —
+one [ACTION] = one topic.
+
+Example output after finishing a phase:
+
+```bash
+    git add application/sources/app/app.h
+    git commit -m "[ADD] em_game signal blocks and timer intervals"
+```
+
+```bash
+    git add application/sources/app/task_list.h application/sources/app/task_list.cpp
+    git commit -m "[ADD] register 5 em_game_* tasks in task list"
+```
+
+```bash
+    git add application/sources/app/game/ application/sources/app/Makefile.mk
+    git commit -m "[ADD] em_game task stubs and makefile chain"
+```
