@@ -210,7 +210,22 @@ static void em_game_match_state_round_end(ak_msg_t* msg)
 
 static void em_game_match_state_game_over(ak_msg_t* msg)
 {
-	(void)msg;
+	switch (msg->sig)
+	{
+	case EM_GAME_MATCH_INPUT_CENTER:
+		em_game_match_state_reset(&s_match);
+		FSM_TRAN(&s_match, em_game_match_state_menu);
+		task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
+		break;
+
+	case EM_GAME_MATCH_INPUT_LEFT:
+		FSM_TRAN(&s_match, em_game_match_state_menu);
+		task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void em_game_match_handle(ak_msg_t* msg)
