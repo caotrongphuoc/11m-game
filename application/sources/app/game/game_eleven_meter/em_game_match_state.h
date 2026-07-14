@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "ak.h"
 #include "port.h"
 #include "message.h"
 
