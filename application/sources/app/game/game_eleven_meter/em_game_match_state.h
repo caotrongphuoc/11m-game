@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "fsm.h"
 #include "port.h"
 #include "message.h"
 
@@ -44,7 +43,6 @@ typedef struct
 
 typedef struct
 {
-	fsm_t fsm;
 	em_game_ball_t ball;
 	em_game_keeper_t keeper;
 	em_game_shooter_t shooter;

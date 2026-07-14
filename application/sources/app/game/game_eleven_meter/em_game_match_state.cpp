@@ -4,7 +4,7 @@
 
 void em_game_match_state_init(em_game_match_state_t* ms)
 {
-	memset(ms, 0, sizeof(em_game_match_state_t));
+	memset(ms, 0, sizeof(*ms));
 	em_game_scoreboard_reset(&ms->scoreboard);
 }
 
