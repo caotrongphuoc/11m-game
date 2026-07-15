@@ -5,6 +5,7 @@
 void em_game_match_state_init(em_game_match_state_t* ms)
 {
 	memset(ms, 0, sizeof(*ms));
+	ms->difficulty = EM_GAME_DIFFICULTY_NORMAL;
 	em_game_scoreboard_reset(&ms->scoreboard);
 }
 

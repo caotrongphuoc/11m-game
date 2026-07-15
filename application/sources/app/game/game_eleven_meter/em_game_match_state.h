@@ -55,6 +55,7 @@ typedef struct
 	em_game_keeper_t keeper;
 	em_game_shooter_t shooter;
 	em_game_scoreboard_t scoreboard;
+	em_game_difficulty_t difficulty;
 	em_game_result_t last_result;
 	uint32_t random_seed;
 	uint32_t countdown_start_tick;

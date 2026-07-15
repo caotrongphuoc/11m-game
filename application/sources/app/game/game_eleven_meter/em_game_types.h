@@ -14,6 +14,13 @@ typedef enum
 
 typedef enum
 {
+	EM_GAME_DIFFICULTY_EASY,
+	EM_GAME_DIFFICULTY_NORMAL,
+	EM_GAME_DIFFICULTY_HARD
+} em_game_difficulty_t;
+
+typedef enum
+{
 	EM_GAME_RESULT_NONE,
 	EM_GAME_RESULT_GOAL,
 	EM_GAME_RESULT_SAVE,
