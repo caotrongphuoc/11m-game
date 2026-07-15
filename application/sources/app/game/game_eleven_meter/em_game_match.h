@@ -1,6 +1,9 @@
 #ifndef __EM_GAME_MATCH_H__
 #define __EM_GAME_MATCH_H__
 
+#include "ak.h"
+#include "message.h"
+
 #define EM_GAME_MATCH_MISS_BASE_CHANCE (10)
 #define EM_GAME_MATCH_MISS_FAST_BONUS (20)
 #define EM_GAME_MATCH_MISS_MAX_CHANCE (30)

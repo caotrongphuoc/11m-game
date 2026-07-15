@@ -1,6 +1,9 @@
 #ifndef __EM_GAME_SHOOTER_H__
 #define __EM_GAME_SHOOTER_H__
 
+#include "ak.h"
+#include "message.h"
+
 #include "em_game_match_state.h"
 
 #define EM_GAME_SHOOTER_START_X (64)

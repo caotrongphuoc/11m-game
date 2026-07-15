@@ -2,8 +2,7 @@
 #define __EM_GAME_TYPES_H__
 
 /*
- * Direction and zone intentionally use separate types. A direction represents
- * input or movement intent, while a zone represents a collision region.
+ * A direction represents input or movement intent.
  */
 typedef enum {
   EM_GAME_DIRECTION_NONE,

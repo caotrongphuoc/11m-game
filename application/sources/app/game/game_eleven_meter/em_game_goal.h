@@ -1,6 +1,11 @@
 #ifndef __EM_GAME_GOAL_H__
 #define __EM_GAME_GOAL_H__
 
+#include <stdint.h>
+
+#include "ak.h"
+#include "message.h"
+
 typedef struct
 {
 	uint8_t ball_direction;
