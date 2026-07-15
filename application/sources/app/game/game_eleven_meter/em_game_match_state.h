@@ -28,8 +28,11 @@ typedef struct
 {
 	int16_t x;
 	int16_t y;
+	int16_t target_x;
+	int16_t target_y;
 	uint8_t frame;
 	bool visible;
+	bool moving;
 	em_game_direction_t direction;
 } em_game_keeper_t;
 
