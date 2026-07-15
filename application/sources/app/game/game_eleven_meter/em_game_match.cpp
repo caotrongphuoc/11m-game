@@ -142,6 +142,7 @@ static void em_game_match_finish_match()
 static void em_game_match_start_kick(em_game_direction_t direction)
 {
 	em_game_ball_kick_t ball_kick;
+	em_game_keeper_ai_pick_t keeper_pick;
 	uint32_t reaction_time;
 	uint8_t miss_chance;
 	uint8_t miss_roll;
@@ -165,10 +166,13 @@ static void em_game_match_start_kick(em_game_direction_t direction)
 	s_match.countdown_seconds = 0;
 	ball_kick.direction = (uint8_t)direction;
 	ball_kick.is_wide = (miss_roll < miss_chance) ? 1 : 0;
+	keeper_pick.shooter_direction = (uint8_t)direction;
+	keeper_pick.difficulty = (uint8_t)s_match.difficulty;
 
 	task_post_common_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_KICK,
 	                     &direction_payload, sizeof(direction_payload));
-	task_post_pure_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_AI_PICK);
+	task_post_common_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_AI_PICK,
+	                     (uint8_t*)&keeper_pick, sizeof(keeper_pick));
 	task_post_common_msg(EM_GAME_BALL_ID, EM_GAME_BALL_KICK,
 	                     (uint8_t*)&ball_kick, sizeof(ball_kick));
 	task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_KICK);

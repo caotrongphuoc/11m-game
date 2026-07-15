@@ -60,9 +60,12 @@ static void em_game_keeper_reset()
 	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
-static void em_game_keeper_pick_direction()
+static void em_game_keeper_pick_direction(em_game_direction_t shooter_direction,
+                                          em_game_difficulty_t difficulty)
 {
 	uint32_t tick = sys_ctrl_millis();
+	em_game_direction_t direction;
+	uint8_t roll;
 
 	s_keeper_random_seed ^= tick;
 	if (s_keeper_random_seed == 0)
@@ -70,8 +73,51 @@ static void em_game_keeper_pick_direction()
 		s_keeper_random_seed = EM_GAME_KEEPER_RANDOM_FALLBACK;
 	}
 
-	em_game_keeper.direction =
-	    (em_game_direction_t)((em_game_keeper_xorshift32() % 3) + EM_GAME_DIRECTION_LEFT);
+	direction =
+	    (em_game_direction_t)((em_game_keeper_xorshift32() %
+	                           EM_GAME_KEEPER_DIRECTION_COUNT) +
+	                          EM_GAME_DIRECTION_LEFT);
+
+	switch (difficulty)
+	{
+	case EM_GAME_DIFFICULTY_EASY:
+		if (direction == shooter_direction)
+		{
+			roll = em_game_keeper_xorshift32() % 100;
+			if (roll < EM_GAME_KEEPER_EASY_MATCH_FLIP_CHANCE)
+			{
+				uint8_t offset =
+				    (em_game_keeper_xorshift32() %
+				     (EM_GAME_KEEPER_DIRECTION_COUNT - 1)) +
+				    1;
+
+				direction =
+				    (em_game_direction_t)(((direction -
+				                            EM_GAME_DIRECTION_LEFT +
+				                            offset) %
+				                           EM_GAME_KEEPER_DIRECTION_COUNT) +
+				                          EM_GAME_DIRECTION_LEFT);
+			}
+		}
+		break;
+
+	case EM_GAME_DIFFICULTY_HARD:
+		if (direction != shooter_direction)
+		{
+			roll = em_game_keeper_xorshift32() % 100;
+			if (roll < EM_GAME_KEEPER_HARD_MISS_OVERRIDE_CHANCE)
+			{
+				direction = shooter_direction;
+			}
+		}
+		break;
+
+	case EM_GAME_DIFFICULTY_NORMAL:
+	default:
+		break;
+	}
+
+	em_game_keeper.direction = direction;
 	em_game_keeper.target_x = em_game_keeper_get_target_x(em_game_keeper.direction);
 	em_game_keeper.target_y = EM_GAME_KEEPER_TARGET_Y;
 	em_game_keeper.frame = 0;
@@ -122,7 +168,24 @@ void em_game_keeper_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_KEEPER_AI_PICK:
-		em_game_keeper_pick_direction();
+		if (get_data_len_common_msg(msg) == sizeof(em_game_keeper_ai_pick_t))
+		{
+			em_game_keeper_ai_pick_t* keeper_pick =
+			    (em_game_keeper_ai_pick_t*)get_data_common_msg(msg);
+			em_game_direction_t shooter_direction =
+			    (em_game_direction_t)keeper_pick->shooter_direction;
+			em_game_difficulty_t difficulty =
+			    (em_game_difficulty_t)keeper_pick->difficulty;
+
+			if ((shooter_direction >= EM_GAME_DIRECTION_LEFT) &&
+			    (shooter_direction <= EM_GAME_DIRECTION_RIGHT) &&
+			    (difficulty >= EM_GAME_DIFFICULTY_EASY) &&
+			    (difficulty <= EM_GAME_DIFFICULTY_HARD))
+			{
+				em_game_keeper_pick_direction(shooter_direction,
+				                              difficulty);
+			}
+		}
 		break;
 
 	case EM_GAME_KEEPER_ANIM_TICK:

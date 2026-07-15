@@ -13,7 +13,16 @@
 #define EM_GAME_KEEPER_TARGET_RIGHT_X (87)
 #define EM_GAME_KEEPER_TARGET_Y (34)
 #define EM_GAME_KEEPER_STEP_COUNT (4)
+#define EM_GAME_KEEPER_DIRECTION_COUNT (3)
+#define EM_GAME_KEEPER_EASY_MATCH_FLIP_CHANCE (60)
+#define EM_GAME_KEEPER_HARD_MISS_OVERRIDE_CHANCE (30)
 #define EM_GAME_KEEPER_RANDOM_FALLBACK (0x6D2B79F5UL)
+
+typedef struct
+{
+	uint8_t shooter_direction;
+	uint8_t difficulty;
+} em_game_keeper_ai_pick_t;
 
 extern em_game_keeper_t em_game_keeper;
 
