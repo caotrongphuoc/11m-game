@@ -19,6 +19,9 @@ view_screen_t scr_game_over = {
 
 void view_scr_game_over()
 {
+	const em_game_view_t* view = task_display_get_game_view();
+	uint8_t ai_score = view->saves + view->misses;
+
 	view_render.clear();
 	view_render.setTextColor(WHITE);
 
@@ -27,8 +30,27 @@ void view_scr_game_over()
 	view_render.print("GAME OVER");
 
 	view_render.setTextSize(1);
-	view_render.setCursor(34, 30);
-	view_render.print("WINNER: --");
+	view_render.setCursor(22, 27);
+	view_render.print("WINNER: ");
+
+	if (view->winner == EM_GAME_WINNER_PLAYER)
+	{
+		view_render.print("PLAYER");
+	}
+	else if (view->winner == EM_GAME_WINNER_AI)
+	{
+		view_render.print("AI");
+	}
+	else
+	{
+		view_render.print("--");
+	}
+
+	view_render.setCursor(40, 40);
+	view_render.print("SCORE ");
+	view_render.print((unsigned int)view->goals);
+	view_render.print("-");
+	view_render.print((unsigned int)ai_score);
 
 	view_render.setCursor(7, 55);
 	view_render.print("MODE:RETRY  UP:HOME");
