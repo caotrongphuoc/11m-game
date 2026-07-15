@@ -40,6 +40,13 @@ void task_display(ak_msg_t* msg)
 	}
 	break;
 
+	case EM_GAME_DISPLAY_SHOW_RIP:
+	{
+		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_RIP\n");
+		SCREEN_TRAN(scr_game_rip_handle, &scr_game_rip);
+	}
+	break;
+
 	case EM_GAME_DISPLAY_SHOW_GAME_OVER:
 	{
 		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_GAME_OVER\n");
