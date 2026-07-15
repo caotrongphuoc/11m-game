@@ -18,6 +18,29 @@ view_screen_t scr_game_menu = {
 
 void view_scr_game_menu()
 {
+	const em_game_view_t* view = task_display_get_game_view();
+	const char* difficulty_text;
+	uint8_t difficulty_x;
+
+	switch ((em_game_difficulty_t)view->difficulty)
+	{
+	case EM_GAME_DIFFICULTY_EASY:
+		difficulty_text = "< EASY >";
+		difficulty_x = 40;
+		break;
+
+	case EM_GAME_DIFFICULTY_HARD:
+		difficulty_text = "< HARD >";
+		difficulty_x = 40;
+		break;
+
+	case EM_GAME_DIFFICULTY_NORMAL:
+	default:
+		difficulty_text = "< NORMAL >";
+		difficulty_x = 34;
+		break;
+	}
+
 	view_render.clear();
 	view_render.setTextSize(1);
 	view_render.setTextColor(WHITE);
@@ -25,11 +48,17 @@ void view_scr_game_menu()
 	view_render.setCursor(16, 2);
 	view_render.print("PENALTY SHOOTOUT");
 
-	view_render.setCursor(7, 27);
-	view_render.print("PRESS MODE TO START");
+	view_render.setCursor(34, 17);
+	view_render.print("Difficulty:");
 
-	view_render.setCursor(28, 55);
-	view_render.print("MODE = START");
+	view_render.setCursor(difficulty_x, 29);
+	view_render.print(difficulty_text);
+
+	view_render.setCursor(22, 45);
+	view_render.print("UP/DOWN: CYCLE");
+
+	view_render.setCursor(31, 55);
+	view_render.print("MODE: START");
 }
 
 void scr_game_menu_handle(ak_msg_t* msg)
