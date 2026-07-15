@@ -7,6 +7,8 @@
 #include "task_list.h"
 
 #include "em_game_ball.h"
+#include "em_game_goal.h"
+#include "em_game_keeper.h"
 #include "em_game_types.h"
 
 em_game_ball_t em_game_ball;
@@ -71,8 +73,6 @@ static void em_game_ball_start(const em_game_ball_kick_t* kick)
 
 static void em_game_ball_advance()
 {
-	uint8_t payload;
-
 	if (!em_game_ball.moving)
 	{
 		return;
@@ -100,15 +100,20 @@ static void em_game_ball_advance()
 
 	if (em_game_ball.wide)
 	{
-		payload = (uint8_t)EM_GAME_RESULT_MISS;
-		task_post_common_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_HIT_RESULT, &payload,
-		                     sizeof(payload));
+		uint8_t result_payload = (uint8_t)EM_GAME_RESULT_MISS;
+
+		task_post_common_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_HIT_RESULT,
+		                     &result_payload, sizeof(result_payload));
 	}
 	else
 	{
-		payload = (uint8_t)em_game_ball.direction;
-		task_post_common_msg(EM_GAME_GOAL_ID, EM_GAME_GOAL_CHECK_HIT, &payload,
-		                     sizeof(payload));
+		em_game_goal_hit_t hit;
+
+		hit.ball_direction = (uint8_t)em_game_ball.direction;
+		hit.keeper_direction = (uint8_t)em_game_keeper_get_direction();
+
+		task_post_common_msg(EM_GAME_GOAL_ID, EM_GAME_GOAL_CHECK_HIT,
+		                     (uint8_t*)&hit, sizeof(hit));
 	}
 }
 
