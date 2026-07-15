@@ -9,8 +9,10 @@
 #include "task_list.h"
 
 #include "em_game_ball.h"
+#include "em_game_keeper.h"
 #include "em_game_match.h"
 #include "em_game_match_state.h"
+#include "em_game_shooter.h"
 
 static em_game_match_state_t s_match;
 static bool s_match_initialized = false;
@@ -37,6 +39,19 @@ static uint32_t em_game_match_xorshift32(uint32_t* state)
 	*state = value;
 
 	return value;
+}
+
+static void em_game_match_refresh_display()
+{
+	em_game_view_t view;
+
+	s_match.ball = em_game_ball;
+	s_match.keeper = em_game_keeper;
+	s_match.shooter = em_game_shooter;
+
+	em_game_match_state_build_view(&s_match, &view);
+	task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_REFRESH,
+	                     (uint8_t*)&view, sizeof(view));
 }
 
 static void em_game_match_handle_hit_result(ak_msg_t* msg)
@@ -75,6 +90,7 @@ static void em_game_match_handle_hit_result(ak_msg_t* msg)
 	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_ROUND_END,
 	          EM_GAME_MATCH_ROUND_END_INTERVAL, TIMER_ONE_SHOT);
 	s_state = EM_GAME_STATE_ROUND_END;
+	em_game_match_refresh_display();
 }
 
 static void em_game_match_finish_match()
@@ -82,6 +98,7 @@ static void em_game_match_finish_match()
 	em_game_winner_t winner =
 	    em_game_scoreboard_evaluate_winner(&s_match.scoreboard);
 
+	em_game_match_refresh_display();
 	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_GAME_OVER);
 
 	if (winner == EM_GAME_WINNER_PLAYER)
@@ -120,6 +137,7 @@ static void em_game_match_start_kick(em_game_direction_t direction)
 	miss_roll = em_game_match_xorshift32(&s_match.random_seed) % 100;
 
 	s_match.pending_direction = direction;
+	s_match.countdown_seconds = 0;
 	ball_kick.direction = (uint8_t)direction;
 	ball_kick.is_wide = (miss_roll < miss_chance) ? 1 : 0;
 
@@ -131,6 +149,7 @@ static void em_game_match_start_kick(em_game_direction_t direction)
 	task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_KICK);
 
 	s_state = EM_GAME_STATE_REVEAL;
+	em_game_match_refresh_display();
 }
 
 void em_game_match_handle(ak_msg_t* msg)
@@ -154,6 +173,9 @@ void em_game_match_handle(ak_msg_t* msg)
 			s_match.shooter.direction = EM_GAME_DIRECTION_NONE;
 			s_match.pending_direction = EM_GAME_DIRECTION_NONE;
 			s_match.last_result = EM_GAME_RESULT_NONE;
+			task_post_pure_msg(EM_GAME_BALL_ID, EM_GAME_BALL_RESET);
+			task_post_pure_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_RESET);
+			task_post_pure_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_RESET);
 			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_START_ROUND);
 		}
 		break;
@@ -166,7 +188,10 @@ void em_game_match_handle(ak_msg_t* msg)
 			task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_PENALTY);
 			timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT,
 			          EM_GAME_MATCH_SELECTION_TIMEOUT, TIMER_ONE_SHOT);
+			timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK,
+			          EM_GAME_MATCH_COUNTDOWN_TICK_INTERVAL, TIMER_PERIODIC);
 			s_state = EM_GAME_STATE_SHOOTER_WAIT;
+			em_game_match_refresh_display();
 		}
 		break;
 
@@ -192,6 +217,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
 			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
+			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
 			em_game_match_start_kick(EM_GAME_DIRECTION_LEFT);
 		}
 		break;
@@ -200,6 +226,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
 			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
+			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
 			em_game_match_start_kick(EM_GAME_DIRECTION_CENTER);
 		}
 		break;
@@ -208,6 +235,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
 			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
+			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
 			em_game_match_start_kick(EM_GAME_DIRECTION_RIGHT);
 		}
 		break;
@@ -233,8 +261,26 @@ void em_game_match_handle(ak_msg_t* msg)
 	case EM_GAME_MATCH_SHOOTER_TIMEOUT:
 		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
+			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
 			em_game_match_start_kick(EM_GAME_DIRECTION_CENTER);
 		}
+		break;
+
+	case EM_GAME_MATCH_COUNTDOWN_TICK:
+		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
+		{
+			uint32_t elapsed =
+			    sys_ctrl_millis() - s_match.countdown_start_tick;
+			uint8_t elapsed_seconds = elapsed / 1000;
+
+			s_match.countdown_seconds =
+			    (elapsed_seconds < 3) ? (3 - elapsed_seconds) : 0;
+			em_game_match_refresh_display();
+		}
+		break;
+
+	case EM_GAME_MATCH_DISPLAY_REFRESH:
+		em_game_match_refresh_display();
 		break;
 
 	case EM_GAME_MATCH_HIT_RESULT:
@@ -263,6 +309,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
 			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
+			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
 			s_state = EM_GAME_STATE_MENU;
 		}
 		else if (s_state == EM_GAME_STATE_REVEAL)

@@ -175,6 +175,7 @@ enum {
 /* define timer */
 #define EM_GAME_MATCH_SELECTION_TIMEOUT		(3000)
 #define EM_GAME_MATCH_ROUND_END_INTERVAL		(1200)
+#define EM_GAME_MATCH_COUNTDOWN_TICK_INTERVAL	(1000)
 
 /* define signal */
 enum {
@@ -189,7 +190,9 @@ enum {
 	EM_GAME_MATCH_SHOOTER_TIMEOUT,
 	EM_GAME_MATCH_HIT_RESULT,
 	EM_GAME_MATCH_ROUND_END,
-	EM_GAME_MATCH_RESET
+	EM_GAME_MATCH_RESET,
+	EM_GAME_MATCH_COUNTDOWN_TICK,
+	EM_GAME_MATCH_DISPLAY_REFRESH
 };
 
 /*****************************************************************************/
