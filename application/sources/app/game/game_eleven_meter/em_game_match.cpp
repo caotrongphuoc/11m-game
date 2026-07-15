@@ -304,13 +304,16 @@ void em_game_match_handle(ak_msg_t* msg)
 	case EM_GAME_MATCH_COUNTDOWN_TICK:
 		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
-			uint32_t elapsed =
-			    sys_ctrl_millis() - s_match.countdown_start_tick;
-			uint8_t elapsed_seconds = elapsed / 1000;
+			if (s_match.countdown_seconds > 1)
+			{
+				s_match.countdown_seconds--;
+				em_game_match_refresh_display();
+			}
 
-			s_match.countdown_seconds =
-			    (elapsed_seconds < 3) ? (3 - elapsed_seconds) : 0;
-			em_game_match_refresh_display();
+			if (s_match.countdown_seconds <= 1)
+			{
+				timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
+			}
 		}
 		break;
 
