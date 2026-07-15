@@ -56,18 +56,14 @@ typedef struct
 	em_game_keeper_t keeper;
 	em_game_shooter_t shooter;
 	em_game_scoreboard_t scoreboard;
-	em_game_direction_t pending_direction;
 	em_game_result_t last_result;
 	uint32_t random_seed;
 	uint32_t countdown_start_tick;
 	uint8_t countdown_seconds;
-	bool input_locked;
 } em_game_match_state_t;
 
 typedef struct
 {
-	uint8_t screen;
-	uint8_t state;
 	uint8_t round;
 	uint8_t goals;
 	uint8_t saves;
@@ -83,9 +79,6 @@ typedef struct
 	int16_t keeper_y;
 	int16_t shooter_x;
 	int16_t shooter_y;
-	uint8_t ball_frame;
-	uint8_t keeper_frame;
-	uint8_t shooter_frame;
 	uint8_t flags;
 } em_game_view_t;
 

@@ -136,7 +136,6 @@ static void em_game_match_start_kick(em_game_direction_t direction)
 
 	miss_roll = em_game_match_xorshift32(&s_match.random_seed) % 100;
 
-	s_match.pending_direction = direction;
 	s_match.countdown_seconds = 0;
 	ball_kick.direction = (uint8_t)direction;
 	ball_kick.is_wide = (miss_roll < miss_chance) ? 1 : 0;
@@ -171,7 +170,6 @@ void em_game_match_handle(ak_msg_t* msg)
 			s_match.ball.direction = EM_GAME_DIRECTION_NONE;
 			s_match.keeper.direction = EM_GAME_DIRECTION_NONE;
 			s_match.shooter.direction = EM_GAME_DIRECTION_NONE;
-			s_match.pending_direction = EM_GAME_DIRECTION_NONE;
 			s_match.last_result = EM_GAME_RESULT_NONE;
 			task_post_pure_msg(EM_GAME_BALL_ID, EM_GAME_BALL_RESET);
 			task_post_pure_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_RESET);

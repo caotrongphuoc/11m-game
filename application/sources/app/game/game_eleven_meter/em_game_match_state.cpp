@@ -35,9 +35,6 @@ void em_game_match_state_build_view(const em_game_match_state_t* ms, em_game_vie
 	view->keeper_y = ms->keeper.y;
 	view->shooter_x = ms->shooter.x;
 	view->shooter_y = ms->shooter.y;
-	view->ball_frame = ms->ball.frame;
-	view->keeper_frame = ms->keeper.frame;
-	view->shooter_frame = ms->shooter.frame;
 
 	if (ms->ball.visible)
 	{
