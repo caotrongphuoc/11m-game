@@ -58,7 +58,6 @@ void em_game_shooter_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
-	case EM_GAME_SHOOTER_SETUP:
 	case EM_GAME_SHOOTER_RESET:
 		em_game_shooter_reset();
 		break;

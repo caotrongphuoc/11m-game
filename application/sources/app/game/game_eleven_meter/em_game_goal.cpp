@@ -46,10 +46,6 @@ void em_game_goal_handle(ak_msg_t* msg)
 		em_game_goal_check_hit(msg);
 		break;
 
-	case EM_GAME_GOAL_SETUP:
-	case EM_GAME_GOAL_RESET:
-		break;
-
 	default:
 		break;
 	}

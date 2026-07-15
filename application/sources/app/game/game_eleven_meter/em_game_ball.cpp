@@ -125,7 +125,6 @@ void em_game_ball_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
-	case EM_GAME_BALL_SETUP:
 	case EM_GAME_BALL_RESET:
 		em_game_ball_reset();
 		break;

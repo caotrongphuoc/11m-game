@@ -303,24 +303,6 @@ void em_game_match_handle(ak_msg_t* msg)
 		}
 		break;
 
-	case EM_GAME_MATCH_RESET:
-		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
-		{
-			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
-			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
-			s_state = EM_GAME_STATE_MENU;
-		}
-		else if (s_state == EM_GAME_STATE_REVEAL)
-		{
-			s_state = EM_GAME_STATE_MENU;
-		}
-		else if (s_state == EM_GAME_STATE_ROUND_END)
-		{
-			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_ROUND_END);
-			s_state = EM_GAME_STATE_MENU;
-		}
-		break;
-
 	default:
 		break;
 	}

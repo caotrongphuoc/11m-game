@@ -25,11 +25,4 @@ typedef enum {
   EM_GAME_WINNER_AI
 } em_game_winner_t;
 
-typedef enum {
-  EM_GAME_ZONE_NONE,
-  EM_GAME_ZONE_LEFT,
-  EM_GAME_ZONE_CENTER,
-  EM_GAME_ZONE_RIGHT
-} em_game_zone_t;
-
 #endif //__EM_GAME_TYPES_H__

@@ -117,7 +117,6 @@ void em_game_keeper_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
-	case EM_GAME_KEEPER_SETUP:
 	case EM_GAME_KEEPER_RESET:
 		em_game_keeper_reset();
 		break;
