@@ -111,13 +111,22 @@ static void em_game_match_handle_hit_result(ak_msg_t* msg)
 
 static void em_game_match_finish_match()
 {
-	em_game_winner_t winner =
-	    em_game_scoreboard_evaluate_winner(&s_match.scoreboard);
+	em_game_scoreboard_evaluate_winner(&s_match.scoreboard);
+	s_state = EM_GAME_STATE_RIP;
+	em_game_match_refresh_display();
+	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_RIP);
+	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT,
+	          EM_GAME_MATCH_RIP_DURATION, TIMER_ONE_SHOT);
+}
 
+static void em_game_match_show_game_over()
+{
+	timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT);
+	s_state = EM_GAME_STATE_GAME_OVER;
 	em_game_match_refresh_display();
 	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_GAME_OVER);
 
-	if (winner == EM_GAME_WINNER_PLAYER)
+	if (s_match.scoreboard.winner == EM_GAME_WINNER_PLAYER)
 	{
 		task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_WIN);
 	}
@@ -125,8 +134,6 @@ static void em_game_match_finish_match()
 	{
 		task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_LOSE);
 	}
-
-	s_state = EM_GAME_STATE_GAME_OVER;
 }
 
 static void em_game_match_start_kick(em_game_direction_t direction)
@@ -340,6 +347,14 @@ void em_game_match_handle(ak_msg_t* msg)
 				s_state = EM_GAME_STATE_ROUND_START;
 				task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
 			}
+		}
+		break;
+
+	case EM_GAME_MATCH_RIP_TIMEOUT:
+	case EM_GAME_MATCH_SKIP_RIP:
+		if (s_state == EM_GAME_STATE_RIP)
+		{
+			em_game_match_show_game_over();
 		}
 		break;
 
