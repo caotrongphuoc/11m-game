@@ -27,6 +27,18 @@ enum
 
 static uint8_t s_state;
 
+static uint32_t em_game_match_xorshift32(uint32_t* state)
+{
+	uint32_t value = *state;
+
+	value ^= value << 13;
+	value ^= value >> 17;
+	value ^= value << 5;
+	*state = value;
+
+	return value;
+}
+
 static void em_game_match_handle_hit_result(ak_msg_t* msg)
 {
 	em_game_result_t result;
@@ -87,11 +99,29 @@ static void em_game_match_finish_match()
 static void em_game_match_start_kick(em_game_direction_t direction)
 {
 	em_game_ball_kick_t ball_kick;
+	uint32_t reaction_time;
+	uint8_t miss_chance;
+	uint8_t miss_roll;
 	uint8_t direction_payload = (uint8_t)direction;
+
+	reaction_time = sys_ctrl_millis() - s_match.countdown_start_tick;
+	miss_chance = EM_GAME_MATCH_MISS_BASE_CHANCE;
+
+	if (reaction_time < EM_GAME_MATCH_FAST_REACTION_INTERVAL)
+	{
+		miss_chance += EM_GAME_MATCH_MISS_FAST_BONUS;
+	}
+
+	if (miss_chance > EM_GAME_MATCH_MISS_MAX_CHANCE)
+	{
+		miss_chance = EM_GAME_MATCH_MISS_MAX_CHANCE;
+	}
+
+	miss_roll = em_game_match_xorshift32(&s_match.random_seed) % 100;
 
 	s_match.pending_direction = direction;
 	ball_kick.direction = (uint8_t)direction;
-	ball_kick.is_wide = 0;
+	ball_kick.is_wide = (miss_roll < miss_chance) ? 1 : 0;
 
 	task_post_common_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_KICK,
 	                     &direction_payload, sizeof(direction_payload));
@@ -143,6 +173,15 @@ void em_game_match_handle(ak_msg_t* msg)
 	case EM_GAME_MATCH_START:
 		if (s_state == EM_GAME_STATE_MENU)
 		{
+			if (s_match.random_seed == 0)
+			{
+				s_match.random_seed = sys_ctrl_millis();
+				if (s_match.random_seed == 0)
+				{
+					s_match.random_seed = EM_GAME_MATCH_RANDOM_FALLBACK;
+				}
+			}
+
 			em_game_scoreboard_reset(&s_match.scoreboard);
 			s_state = EM_GAME_STATE_ROUND_START;
 			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
