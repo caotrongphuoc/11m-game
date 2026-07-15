@@ -1,6 +1,6 @@
 #include "ak.h"
-#include "port.h"
 #include "message.h"
+#include "port.h"
 #include "timer.h"
 
 #include "sys_ctrl.h"
@@ -8,6 +8,7 @@
 #include "app.h"
 #include "task_list.h"
 
+#include "em_game_ball.h"
 #include "em_game_match.h"
 #include "em_game_match_state.h"
 
@@ -59,13 +60,15 @@ static void em_game_match_handle_hit_result(ak_msg_t* msg)
 	s_match.last_result = result;
 	task_post_pure_msg(AC_TASK_BUZZER_ID, buzzer_signal);
 	em_game_scoreboard_record_result(&s_match.scoreboard, result);
-	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_ROUND_END, EM_GAME_MATCH_ROUND_END_INTERVAL, TIMER_ONE_SHOT);
+	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_ROUND_END,
+	          EM_GAME_MATCH_ROUND_END_INTERVAL, TIMER_ONE_SHOT);
 	s_state = EM_GAME_STATE_ROUND_END;
 }
 
 static void em_game_match_finish_match()
 {
-	em_game_winner_t winner = em_game_scoreboard_evaluate_winner(&s_match.scoreboard);
+	em_game_winner_t winner =
+	    em_game_scoreboard_evaluate_winner(&s_match.scoreboard);
 
 	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_GAME_OVER);
 
@@ -83,13 +86,18 @@ static void em_game_match_finish_match()
 
 static void em_game_match_start_kick(em_game_direction_t direction)
 {
+	em_game_ball_kick_t ball_kick;
 	uint8_t direction_payload = (uint8_t)direction;
 
 	s_match.pending_direction = direction;
+	ball_kick.direction = (uint8_t)direction;
+	ball_kick.is_wide = 0;
 
-	task_post_common_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_KICK, &direction_payload, sizeof(direction_payload));
+	task_post_common_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_KICK,
+	                     &direction_payload, sizeof(direction_payload));
 	task_post_pure_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_AI_PICK);
-	task_post_common_msg(EM_GAME_BALL_ID, EM_GAME_BALL_KICK, &direction_payload, sizeof(direction_payload));
+	task_post_common_msg(EM_GAME_BALL_ID, EM_GAME_BALL_KICK,
+	                     (uint8_t*)&ball_kick, sizeof(ball_kick));
 	task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_KICK);
 
 	s_state = EM_GAME_STATE_REVEAL;
@@ -126,7 +134,8 @@ void em_game_match_handle(ak_msg_t* msg)
 			s_match.countdown_start_tick = sys_ctrl_millis();
 			s_match.countdown_seconds = 3;
 			task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_PENALTY);
-			timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT, EM_GAME_MATCH_SELECTION_TIMEOUT, TIMER_ONE_SHOT);
+			timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT,
+			          EM_GAME_MATCH_SELECTION_TIMEOUT, TIMER_ONE_SHOT);
 			s_state = EM_GAME_STATE_SHOOTER_WAIT;
 		}
 		break;
