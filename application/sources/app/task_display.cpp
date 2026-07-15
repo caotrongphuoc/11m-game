@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "fsm.h"
 #include "port.h"
 #include "message.h"
@@ -12,6 +14,13 @@
 #include "screens.h"
 
 scr_mng_t scr_mng_app;
+
+static em_game_view_t s_em_game_view;
+
+const em_game_view_t* task_display_get_game_view()
+{
+	return &s_em_game_view;
+}
 
 void task_display(ak_msg_t* msg) {
 	switch (msg->sig) {
@@ -32,7 +41,12 @@ void task_display(ak_msg_t* msg) {
 
 	case EM_GAME_DISPLAY_REFRESH: {
 		APP_DBG_SIG("EM_GAME_DISPLAY_REFRESH\n");
-		return;
+
+		if (get_data_len_common_msg(msg) != sizeof(em_game_view_t)) {
+			return;
+		}
+
+		memcpy(&s_em_game_view, get_data_common_msg(msg), sizeof(s_em_game_view));
 	}
 
 	default:

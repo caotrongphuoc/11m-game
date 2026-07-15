@@ -4,6 +4,8 @@
 #include "screen_manager.h"
 #include "screens.h"
 
+#include "game/game_eleven_meter/em_game_match_state.h"
+
 #define LCD_WIDTH			(124)
 #define LCD_HEIGHT			(60)
 
@@ -15,5 +17,7 @@
 #define LOGO16_GLCD_WIDTH	(16)
 
 extern scr_mng_t scr_mng_app;
+
+extern const em_game_view_t* task_display_get_game_view();
 
 #endif // __TASK_DISPLAY_H__
