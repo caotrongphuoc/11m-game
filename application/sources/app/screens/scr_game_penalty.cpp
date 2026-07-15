@@ -47,6 +47,28 @@ void scr_game_penalty_handle(ak_msg_t* msg)
 	case SCREEN_ENTRY:
 	{
 		APP_DBG_SIG("SCREEN_ENTRY\n");
+		timer_remove_attr(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_IDLE);
+	}
+	break;
+
+	case AC_DISPLAY_BUTON_UP_PRESSED:
+	{
+		APP_DBG_SIG("AC_DISPLAY_BUTON_UP_PRESSED\n");
+		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_LEFT);
+	}
+	break;
+
+	case AC_DISPLAY_BUTON_MODE_PRESSED:
+	{
+		APP_DBG_SIG("AC_DISPLAY_BUTON_MODE_PRESSED\n");
+		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_CENTER);
+	}
+	break;
+
+	case AC_DISPLAY_BUTON_DOWN_PRESSED:
+	{
+		APP_DBG_SIG("AC_DISPLAY_BUTON_DOWN_PRESSED\n");
+		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_RIGHT);
 	}
 	break;
 
