@@ -20,6 +20,8 @@ static void em_game_shooter_reset()
 	em_game_shooter.visible = true;
 	em_game_shooter.moving = false;
 	em_game_shooter.direction = EM_GAME_DIRECTION_NONE;
+
+	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 static void em_game_shooter_start(em_game_direction_t direction)
@@ -30,6 +32,7 @@ static void em_game_shooter_start(em_game_direction_t direction)
 	em_game_shooter.direction = direction;
 
 	timer_set(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_ANIM_TICK, EM_GAME_SHOOTER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
+	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 static void em_game_shooter_advance()
@@ -47,6 +50,8 @@ static void em_game_shooter_advance()
 		em_game_shooter.moving = false;
 		timer_remove_attr(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_ANIM_TICK);
 	}
+
+	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 void em_game_shooter_handle(ak_msg_t* msg)

@@ -26,6 +26,8 @@ static void em_game_ball_reset()
 	em_game_ball.moving = false;
 	em_game_ball.wide = false;
 	em_game_ball.direction = EM_GAME_DIRECTION_NONE;
+
+	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 static int16_t em_game_ball_get_target_x(em_game_direction_t direction,
@@ -69,6 +71,7 @@ static void em_game_ball_start(const em_game_ball_kick_t* kick)
 
 	timer_set(EM_GAME_BALL_ID, EM_GAME_BALL_ANIM_TICK,
 	          EM_GAME_BALL_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
+	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 static void em_game_ball_advance()
@@ -87,6 +90,7 @@ static void em_game_ball_advance()
 	    EM_GAME_BALL_START_Y +
 	    ((em_game_ball.target_y - EM_GAME_BALL_START_Y) * em_game_ball.frame) /
 	        EM_GAME_BALL_STEP_COUNT;
+	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 
 	if (em_game_ball.frame < EM_GAME_BALL_STEP_COUNT)
 	{
