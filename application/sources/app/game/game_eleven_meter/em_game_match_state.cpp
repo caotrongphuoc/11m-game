@@ -12,9 +12,11 @@ void em_game_match_state_init(em_game_match_state_t* ms)
 void em_game_match_state_reset(em_game_match_state_t* ms)
 {
 	uint32_t random_seed = ms->random_seed;
+	em_game_difficulty_t difficulty = ms->difficulty;
 
 	em_game_match_state_init(ms);
 	ms->random_seed = random_seed;
+	ms->difficulty = difficulty;
 }
 
 void em_game_match_state_build_view(const em_game_match_state_t* ms, em_game_view_t* view)
