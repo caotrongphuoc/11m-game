@@ -29,6 +29,32 @@ enum
 
 static uint8_t s_state;
 
+static void em_game_match_cycle_difficulty_left()
+{
+	if (s_match.difficulty == EM_GAME_DIFFICULTY_EASY)
+	{
+		s_match.difficulty = EM_GAME_DIFFICULTY_HARD;
+	}
+	else
+	{
+		s_match.difficulty =
+		    (em_game_difficulty_t)(s_match.difficulty - 1);
+	}
+}
+
+static void em_game_match_cycle_difficulty_right()
+{
+	if (s_match.difficulty == EM_GAME_DIFFICULTY_HARD)
+	{
+		s_match.difficulty = EM_GAME_DIFFICULTY_EASY;
+	}
+	else
+	{
+		s_match.difficulty =
+		    (em_game_difficulty_t)(s_match.difficulty + 1);
+	}
+}
+
 static uint32_t em_game_match_xorshift32(uint32_t* state)
 {
 	uint32_t value = *state;
@@ -158,6 +184,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		em_game_match_state_init(&s_match);
 		s_state = EM_GAME_STATE_MENU;
 		task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
+		em_game_match_refresh_display();
 		s_match_initialized = true;
 	}
 
@@ -208,6 +235,22 @@ void em_game_match_handle(ak_msg_t* msg)
 			em_game_scoreboard_reset(&s_match.scoreboard);
 			s_state = EM_GAME_STATE_ROUND_START;
 			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
+		}
+		break;
+
+	case EM_GAME_MATCH_MENU_LEFT:
+		if (s_state == EM_GAME_STATE_MENU)
+		{
+			em_game_match_cycle_difficulty_left();
+			em_game_match_refresh_display();
+		}
+		break;
+
+	case EM_GAME_MATCH_MENU_RIGHT:
+		if (s_state == EM_GAME_STATE_MENU)
+		{
+			em_game_match_cycle_difficulty_right();
+			em_game_match_refresh_display();
 		}
 		break;
 

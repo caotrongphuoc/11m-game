@@ -26,6 +26,7 @@ void em_game_match_state_build_view(const em_game_match_state_t* ms, em_game_vie
 	view->saves = ms->scoreboard.saves;
 	view->misses = ms->scoreboard.misses;
 	view->countdown = ms->countdown_seconds;
+	view->difficulty = (uint8_t)ms->difficulty;
 	view->shooter_direction = (uint8_t)ms->shooter.direction;
 	view->keeper_direction = (uint8_t)ms->keeper.direction;
 	view->last_result = (uint8_t)ms->last_result;

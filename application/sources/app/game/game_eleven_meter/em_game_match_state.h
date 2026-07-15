@@ -69,6 +69,7 @@ typedef struct
 	uint8_t saves;
 	uint8_t misses;
 	uint8_t countdown;
+	uint8_t difficulty;
 	uint8_t shooter_direction;
 	uint8_t keeper_direction;
 	uint8_t last_result;
