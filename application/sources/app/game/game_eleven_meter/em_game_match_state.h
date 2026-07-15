@@ -11,6 +11,10 @@
 #include "em_game_types.h"
 #include "em_game_scoreboard.h"
 
+#define EM_GAME_VIEW_FLAG_BALL_VISIBLE (1 << 0)
+#define EM_GAME_VIEW_FLAG_KEEPER_VISIBLE (1 << 1)
+#define EM_GAME_VIEW_FLAG_SHOOTER_VISIBLE (1 << 2)
+
 typedef struct
 {
 	int16_t x;
@@ -75,6 +79,10 @@ typedef struct
 	uint8_t winner;
 	int16_t ball_x;
 	int16_t ball_y;
+	int16_t keeper_x;
+	int16_t keeper_y;
+	int16_t shooter_x;
+	int16_t shooter_y;
 	uint8_t ball_frame;
 	uint8_t keeper_frame;
 	uint8_t shooter_frame;
