@@ -36,6 +36,12 @@ static const buzzer_music_t buzzer_music_table[] = {
 	{BUZZER_SOUND_TONE_5,           sTone5},
 	{BUZZER_SOUND_TONE_6,           sTone6},
 	{BUZZER_SOUND_TONE_7,           sTone7},
+	{BUZZER_SOUND_EM_GAME_KICK,		tones_em_game_kick},
+	{BUZZER_SOUND_EM_GAME_GOAL,		tones_em_game_goal},
+	{BUZZER_SOUND_EM_GAME_SAVE,		tones_em_game_save},
+	{BUZZER_SOUND_EM_GAME_MISS,		tones_em_game_miss},
+	{BUZZER_SOUND_EM_GAME_WIN,		tones_em_game_win},
+	{BUZZER_SOUND_EM_GAME_LOSE,		tones_em_game_lose},
 	{BUZZER_SOUND_MAX,				(const Tone_TypeDef*)0}
 };
 

@@ -11,6 +11,51 @@ const Tone_TypeDef tones_bang[] = {
 	{   0, 0}
 };
 
+const Tone_TypeDef tones_em_game_kick[] = {
+	{392, 8},
+	{  0, 0}
+};
+
+const Tone_TypeDef tones_em_game_goal[] = {
+	{262,  8},
+	{330,  8},
+	{392, 10},
+	{523, 15},
+	{  0,  0}
+};
+
+const Tone_TypeDef tones_em_game_save[] = {
+	{392,  8},
+	{  0,  2},
+	{392,  8},
+	{294, 12},
+	{  0,  0}
+};
+
+const Tone_TypeDef tones_em_game_miss[] = {
+	{392, 10},
+	{294, 12},
+	{262, 15},
+	{  0,  0}
+};
+
+const Tone_TypeDef tones_em_game_win[] = {
+	{262,  8},
+	{294,  8},
+	{330, 10},
+	{392, 12},
+	{523, 15},
+	{  0,  0}
+};
+
+const Tone_TypeDef tones_em_game_lose[] = {
+	{392, 12},
+	{349, 12},
+	{330, 15},
+	{262, 15},
+	{  0,  0}
+};
+
 const Tone_TypeDef tones_usb_connected[] = {
 	{ 400, 4},
 	{   0, 1},

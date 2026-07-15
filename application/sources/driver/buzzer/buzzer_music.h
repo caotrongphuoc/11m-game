@@ -35,6 +35,12 @@ typedef enum {
 	BUZZER_SOUND_TONE_5,
 	BUZZER_SOUND_TONE_6,
 	BUZZER_SOUND_TONE_7,
+	BUZZER_SOUND_EM_GAME_KICK,
+	BUZZER_SOUND_EM_GAME_GOAL,
+	BUZZER_SOUND_EM_GAME_SAVE,
+	BUZZER_SOUND_EM_GAME_MISS,
+	BUZZER_SOUND_EM_GAME_WIN,
+	BUZZER_SOUND_EM_GAME_LOSE,
 	BUZZER_SOUND_MAX
 } buzzer_sound_t;
 
@@ -58,6 +64,12 @@ extern const Tone_TypeDef sTone4[];
 extern const Tone_TypeDef sTone5[];
 extern const Tone_TypeDef sTone6[];
 extern const Tone_TypeDef sTone7[];
+extern const Tone_TypeDef tones_em_game_kick[];
+extern const Tone_TypeDef tones_em_game_goal[];
+extern const Tone_TypeDef tones_em_game_save[];
+extern const Tone_TypeDef tones_em_game_miss[];
+extern const Tone_TypeDef tones_em_game_win[];
+extern const Tone_TypeDef tones_em_game_lose[];
 
 #ifdef __cplusplus
 }
