@@ -17,16 +17,6 @@
 static em_game_match_state_t s_match;
 static bool s_match_initialized = false;
 
-enum
-{
-	EM_GAME_STATE_MENU,
-	EM_GAME_STATE_ROUND_START,
-	EM_GAME_STATE_SHOOTER_WAIT,
-	EM_GAME_STATE_REVEAL,
-	EM_GAME_STATE_ROUND_END,
-	EM_GAME_STATE_GAME_OVER,
-};
-
 static uint8_t s_state;
 
 static void em_game_match_cycle_difficulty_left()
@@ -75,7 +65,7 @@ static void em_game_match_refresh_display()
 	s_match.keeper = em_game_keeper;
 	s_match.shooter = em_game_shooter;
 
-	em_game_match_state_build_view(&s_match, &view);
+	em_game_match_state_build_view(&s_match, s_state, &view);
 	task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_REFRESH,
 	                     (uint8_t*)&view, sizeof(view));
 }

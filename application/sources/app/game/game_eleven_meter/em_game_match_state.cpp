@@ -19,7 +19,7 @@ void em_game_match_state_reset(em_game_match_state_t* ms)
 	ms->difficulty = difficulty;
 }
 
-void em_game_match_state_build_view(const em_game_match_state_t* ms, em_game_view_t* view)
+void em_game_match_state_build_view(const em_game_match_state_t* ms, uint8_t state, em_game_view_t* view)
 {
 	memset(view, 0, sizeof(em_game_view_t));
 
@@ -28,6 +28,7 @@ void em_game_match_state_build_view(const em_game_match_state_t* ms, em_game_vie
 	view->saves = ms->scoreboard.saves;
 	view->misses = ms->scoreboard.misses;
 	view->countdown = ms->countdown_seconds;
+	view->state = state;
 	view->difficulty = (uint8_t)ms->difficulty;
 	view->shooter_direction = (uint8_t)ms->shooter.direction;
 	view->keeper_direction = (uint8_t)ms->keeper.direction;

@@ -14,6 +14,16 @@
 #define EM_GAME_VIEW_FLAG_KEEPER_VISIBLE (1 << 1)
 #define EM_GAME_VIEW_FLAG_SHOOTER_VISIBLE (1 << 2)
 
+enum
+{
+	EM_GAME_STATE_MENU,
+	EM_GAME_STATE_ROUND_START,
+	EM_GAME_STATE_SHOOTER_WAIT,
+	EM_GAME_STATE_REVEAL,
+	EM_GAME_STATE_ROUND_END,
+	EM_GAME_STATE_GAME_OVER,
+};
+
 typedef struct
 {
 	int16_t x;
@@ -69,6 +79,7 @@ typedef struct
 	uint8_t saves;
 	uint8_t misses;
 	uint8_t countdown;
+	uint8_t state;
 	uint8_t difficulty;
 	uint8_t shooter_direction;
 	uint8_t keeper_direction;
@@ -87,6 +98,6 @@ static_assert(sizeof(em_game_view_t) <= AK_COMMON_MSG_DATA_SIZE, "em_game_view_t
 
 extern void em_game_match_state_init(em_game_match_state_t* ms);
 extern void em_game_match_state_reset(em_game_match_state_t* ms);
-extern void em_game_match_state_build_view(const em_game_match_state_t* ms, em_game_view_t* view);
+extern void em_game_match_state_build_view(const em_game_match_state_t* ms, uint8_t state, em_game_view_t* view);
 
 #endif //__EM_GAME_MATCH_STATE_H__
