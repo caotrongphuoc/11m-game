@@ -11,6 +11,9 @@
 #define SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT (14)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH (15)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT (20)
+#define SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE (2)
+#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_X (58)
+#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y (7)
 
 static void view_scr_game_penalty();
 static const unsigned char* scr_game_penalty_get_shooter_bitmap();
@@ -64,9 +67,12 @@ void view_scr_game_penalty()
 	view_render.print((unsigned int)view->round);
 	view_render.print("/5");
 
-	if (view->countdown > 0)
+	if (view->state == EM_GAME_STATE_SHOOTER_WAIT &&
+	    view->countdown > 0)
 	{
-		view_render.setCursor(61, 16);
+		view_render.setTextSize(SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE);
+		view_render.setCursor(SCR_GAME_PENALTY_COUNTDOWN_AXIS_X,
+		                      SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y);
 		view_render.print((unsigned int)view->countdown);
 	}
 
