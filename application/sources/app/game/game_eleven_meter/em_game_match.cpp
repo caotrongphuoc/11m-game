@@ -131,44 +131,54 @@ void em_game_match_handle(ak_msg_t* msg)
 		}
 		break;
 
-	case EM_GAME_MATCH_INPUT_LEFT:
-		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
-		{
-			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
-			em_game_match_start_kick(EM_GAME_DIRECTION_LEFT);
-		}
-		else if (s_state == EM_GAME_STATE_GAME_OVER)
-		{
-			s_state = EM_GAME_STATE_MENU;
-			task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
-		}
-		break;
-
-	case EM_GAME_MATCH_INPUT_CENTER:
+	case EM_GAME_MATCH_START:
 		if (s_state == EM_GAME_STATE_MENU)
 		{
 			em_game_scoreboard_reset(&s_match.scoreboard);
 			s_state = EM_GAME_STATE_ROUND_START;
 			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
 		}
-		else if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
+		break;
+
+	case EM_GAME_MATCH_KICK_LEFT:
+		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
+		{
+			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
+			em_game_match_start_kick(EM_GAME_DIRECTION_LEFT);
+		}
+		break;
+
+	case EM_GAME_MATCH_KICK_CENTER:
+		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
 			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
 			em_game_match_start_kick(EM_GAME_DIRECTION_CENTER);
 		}
-		else if (s_state == EM_GAME_STATE_GAME_OVER)
-		{
-			em_game_match_state_reset(&s_match);
-			s_state = EM_GAME_STATE_MENU;
-			task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
-		}
 		break;
 
-	case EM_GAME_MATCH_INPUT_RIGHT:
+	case EM_GAME_MATCH_KICK_RIGHT:
 		if (s_state == EM_GAME_STATE_SHOOTER_WAIT)
 		{
 			timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
 			em_game_match_start_kick(EM_GAME_DIRECTION_RIGHT);
+		}
+		break;
+
+	case EM_GAME_MATCH_RETRY:
+		if (s_state == EM_GAME_STATE_GAME_OVER)
+		{
+			em_game_match_state_reset(&s_match);
+			s_state = EM_GAME_STATE_ROUND_START;
+			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
+		}
+		break;
+
+	case EM_GAME_MATCH_HOME:
+		if (s_state == EM_GAME_STATE_GAME_OVER)
+		{
+			em_game_match_state_reset(&s_match);
+			s_state = EM_GAME_STATE_MENU;
+			task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
 		}
 		break;
 
