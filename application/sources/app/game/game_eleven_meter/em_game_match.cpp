@@ -1,6 +1,6 @@
 #include "ak.h"
-#include "message.h"
 #include "port.h"
+#include "message.h"
 #include "timer.h"
 
 #include "sys_ctrl.h"
