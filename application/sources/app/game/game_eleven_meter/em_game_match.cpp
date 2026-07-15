@@ -182,7 +182,12 @@ void em_game_match_handle(ak_msg_t* msg)
 {
 	if (!s_match_initialized)
 	{
+		em_game_score_record_t score_record;
+
 		em_game_match_state_init(&s_match);
+		load_score_record(&score_record);
+		s_match.best_goals = score_record.best_goals;
+		s_match.best_difficulty = (em_game_difficulty_t)score_record.best_difficulty;
 		s_state = EM_GAME_STATE_MENU;
 		task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
 		em_game_match_refresh_display();

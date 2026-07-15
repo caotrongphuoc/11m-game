@@ -6,6 +6,7 @@ void em_game_match_state_init(em_game_match_state_t* ms)
 {
 	memset(ms, 0, sizeof(*ms));
 	ms->difficulty = EM_GAME_DIFFICULTY_NORMAL;
+	ms->best_difficulty = EM_GAME_DIFFICULTY_EASY;
 	em_game_scoreboard_reset(&ms->scoreboard);
 }
 
@@ -13,10 +14,14 @@ void em_game_match_state_reset(em_game_match_state_t* ms)
 {
 	uint32_t random_seed = ms->random_seed;
 	em_game_difficulty_t difficulty = ms->difficulty;
+	uint8_t best_goals = ms->best_goals;
+	em_game_difficulty_t best_difficulty = ms->best_difficulty;
 
 	em_game_match_state_init(ms);
 	ms->random_seed = random_seed;
 	ms->difficulty = difficulty;
+	ms->best_goals = best_goals;
+	ms->best_difficulty = best_difficulty;
 }
 
 void em_game_match_state_build_view(const em_game_match_state_t* ms, uint8_t state, em_game_view_t* view)
@@ -30,6 +35,8 @@ void em_game_match_state_build_view(const em_game_match_state_t* ms, uint8_t sta
 	view->countdown = ms->countdown_seconds;
 	view->state = state;
 	view->difficulty = (uint8_t)ms->difficulty;
+	view->best_goals = ms->best_goals;
+	view->best_difficulty = (uint8_t)ms->best_difficulty;
 	view->shooter_direction = (uint8_t)ms->shooter.direction;
 	view->keeper_direction = (uint8_t)ms->keeper.direction;
 	view->last_result = (uint8_t)ms->last_result;
