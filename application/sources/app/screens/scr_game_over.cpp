@@ -19,17 +19,34 @@ view_screen_t scr_game_over = {
 void view_scr_game_over()
 {
 	const em_game_view_t* view = task_display_get_game_view();
+	const char* best_difficulty_text;
 	uint8_t ai_score = view->saves + view->misses;
+
+	switch ((em_game_difficulty_t)view->best_difficulty)
+	{
+	case EM_GAME_DIFFICULTY_HARD:
+		best_difficulty_text = "HARD";
+		break;
+
+	case EM_GAME_DIFFICULTY_NORMAL:
+		best_difficulty_text = "NORMAL";
+		break;
+
+	case EM_GAME_DIFFICULTY_EASY:
+	default:
+		best_difficulty_text = "EASY";
+		break;
+	}
 
 	view_render.clear();
 	view_render.setTextColor(WHITE);
 
 	view_render.setTextSize(2);
-	view_render.setCursor(16, 2);
+	view_render.setCursor(16, 0);
 	view_render.print("GAME OVER");
 
 	view_render.setTextSize(1);
-	view_render.setCursor(22, 27);
+	view_render.setCursor(22, 18);
 	view_render.print("WINNER: ");
 
 	if (view->winner == EM_GAME_WINNER_PLAYER)
@@ -45,11 +62,18 @@ void view_scr_game_over()
 		view_render.print("--");
 	}
 
-	view_render.setCursor(40, 40);
+	view_render.setCursor(40, 30);
 	view_render.print("SCORE ");
 	view_render.print((unsigned int)view->goals);
 	view_render.print("-");
 	view_render.print((unsigned int)ai_score);
+
+	view_render.setCursor(25, 41);
+	view_render.print("BEST ");
+	view_render.print((unsigned int)view->best_goals);
+	view_render.print(" (");
+	view_render.print(best_difficulty_text);
+	view_render.print(")");
 
 	view_render.setCursor(7, 55);
 	view_render.print("MODE:RETRY  UP:HOME");
