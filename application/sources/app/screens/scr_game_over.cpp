@@ -3,18 +3,17 @@
 static void view_scr_game_over();
 
 view_dynamic_t dyn_view_game_over = {
-	{
-		.item_type = ITEM_TYPE_DYNAMIC,
-	},
-	view_scr_game_over
-};
+    {
+        .item_type = ITEM_TYPE_DYNAMIC,
+    },
+    view_scr_game_over};
 
 view_screen_t scr_game_over = {
-	&dyn_view_game_over,
-	ITEM_NULL,
-	ITEM_NULL,
+    &dyn_view_game_over,
+    ITEM_NULL,
+    ITEM_NULL,
 
-	.focus_item = 0,
+    .focus_item = 0,
 };
 
 void view_scr_game_over()

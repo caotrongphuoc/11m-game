@@ -22,27 +22,37 @@ const em_game_view_t* task_display_get_game_view()
 	return &s_em_game_view;
 }
 
-void task_display(ak_msg_t* msg) {
-	switch (msg->sig) {
-	case EM_GAME_DISPLAY_SHOW_MENU: {
+void task_display(ak_msg_t* msg)
+{
+	switch (msg->sig)
+	{
+	case EM_GAME_DISPLAY_SHOW_MENU:
+	{
 		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_MENU\n");
 		SCREEN_TRAN(scr_game_menu_handle, &scr_game_menu);
-	} break;
+	}
+	break;
 
-	case EM_GAME_DISPLAY_SHOW_PENALTY: {
+	case EM_GAME_DISPLAY_SHOW_PENALTY:
+	{
 		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_PENALTY\n");
 		SCREEN_TRAN(scr_game_penalty_handle, &scr_game_penalty);
-	} break;
+	}
+	break;
 
-	case EM_GAME_DISPLAY_SHOW_GAME_OVER: {
+	case EM_GAME_DISPLAY_SHOW_GAME_OVER:
+	{
 		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_GAME_OVER\n");
 		SCREEN_TRAN(scr_game_over_handle, &scr_game_over);
-	} break;
+	}
+	break;
 
-	case EM_GAME_DISPLAY_REFRESH: {
+	case EM_GAME_DISPLAY_REFRESH:
+	{
 		APP_DBG_SIG("EM_GAME_DISPLAY_REFRESH\n");
 
-		if (get_data_len_common_msg(msg) != sizeof(em_game_view_t)) {
+		if (get_data_len_common_msg(msg) != sizeof(em_game_view_t))
+		{
 			return;
 		}
 

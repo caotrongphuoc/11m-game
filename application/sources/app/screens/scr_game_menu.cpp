@@ -3,18 +3,17 @@
 static void view_scr_game_menu();
 
 view_dynamic_t dyn_view_game_menu = {
-	{
-		.item_type = ITEM_TYPE_DYNAMIC,
-	},
-	view_scr_game_menu
-};
+    {
+        .item_type = ITEM_TYPE_DYNAMIC,
+    },
+    view_scr_game_menu};
 
 view_screen_t scr_game_menu = {
-	&dyn_view_game_menu,
-	ITEM_NULL,
-	ITEM_NULL,
+    &dyn_view_game_menu,
+    ITEM_NULL,
+    ITEM_NULL,
 
-	.focus_item = 0,
+    .focus_item = 0,
 };
 
 void view_scr_game_menu()
