@@ -111,7 +111,21 @@ static void em_game_match_handle_hit_result(ak_msg_t* msg)
 
 static void em_game_match_finish_match()
 {
+	em_game_score_record_t score_record;
+
 	em_game_scoreboard_evaluate_winner(&s_match.scoreboard);
+
+	if (s_match.scoreboard.goals > s_match.best_goals)
+	{
+		s_match.best_goals = s_match.scoreboard.goals;
+		s_match.best_difficulty = s_match.difficulty;
+
+		init_score_record(&score_record);
+		score_record.best_goals = s_match.best_goals;
+		score_record.best_difficulty = (uint8_t)s_match.best_difficulty;
+		save_score_record(&score_record);
+	}
+
 	s_state = EM_GAME_STATE_RIP;
 	em_game_match_refresh_display();
 	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_RIP);
