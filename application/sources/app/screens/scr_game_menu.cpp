@@ -20,6 +20,7 @@ void view_scr_game_menu()
 {
 	const em_game_view_t* view = task_display_get_game_view();
 	const char* difficulty_text;
+	const char* best_difficulty_text;
 	uint8_t difficulty_x;
 
 	switch ((em_game_difficulty_t)view->difficulty)
@@ -41,23 +42,45 @@ void view_scr_game_menu()
 		break;
 	}
 
+	switch ((em_game_difficulty_t)view->best_difficulty)
+	{
+	case EM_GAME_DIFFICULTY_HARD:
+		best_difficulty_text = "HARD";
+		break;
+
+	case EM_GAME_DIFFICULTY_NORMAL:
+		best_difficulty_text = "NORMAL";
+		break;
+
+	case EM_GAME_DIFFICULTY_EASY:
+	default:
+		best_difficulty_text = "EASY";
+		break;
+	}
+
 	view_render.clear();
 	view_render.setTextSize(1);
 	view_render.setTextColor(WHITE);
 
-	view_render.setCursor(16, 2);
+	view_render.setCursor(16, 0);
 	view_render.print("PENALTY SHOOTOUT");
 
-	view_render.setCursor(34, 17);
+	view_render.setCursor(34, 13);
 	view_render.print("Difficulty:");
 
-	view_render.setCursor(difficulty_x, 29);
+	view_render.setCursor(difficulty_x, 24);
 	view_render.print(difficulty_text);
 
-	view_render.setCursor(22, 45);
+	view_render.setCursor(22, 36);
+	view_render.print("BEST: ");
+	view_render.print((unsigned int)view->best_goals);
+	view_render.print(" ");
+	view_render.print(best_difficulty_text);
+
+	view_render.setCursor(22, 46);
 	view_render.print("UP/DOWN: CYCLE");
 
-	view_render.setCursor(31, 55);
+	view_render.setCursor(31, 56);
 	view_render.print("MODE: START");
 }
 
