@@ -6,7 +6,6 @@
 #include "sys_ctrl.h"
 
 #include "app.h"
-#include "app_dbg.h"
 #include "task_list.h"
 
 #include "em_game_ball.h"
@@ -207,8 +206,6 @@ void em_game_match_handle(ak_msg_t* msg)
 		em_game_match_refresh_display();
 		s_match_initialized = true;
 	}
-
-	APP_DBG_SIG("em_game_match sig=%d state=%d\n", msg->sig, s_state);
 
 	switch (msg->sig)
 	{

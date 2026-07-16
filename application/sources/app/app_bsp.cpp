@@ -18,8 +18,6 @@ button_t btn_down;
 void btn_mode_callback(void* b)
 {
 	button_t* me_b = (button_t*)b;
-	APP_DBG_SIG("[btn_mode_callback] hw_state=%d sw_state=%d\n", me_b->read(),
-	            me_b->state);
 	switch (me_b->state)
 	{
 	case BUTTON_SW_STATE_PRESSED:
@@ -45,8 +43,6 @@ void btn_mode_callback(void* b)
 void btn_up_callback(void* b)
 {
 	button_t* me_b = (button_t*)b;
-	APP_DBG_SIG("[btn_up_callback] hw_state=%d sw_state=%d\n", me_b->read(),
-	            me_b->state);
 	switch (me_b->state)
 	{
 	case BUTTON_SW_STATE_PRESSED:
@@ -72,8 +68,6 @@ void btn_up_callback(void* b)
 void btn_down_callback(void* b)
 {
 	button_t* me_b = (button_t*)b;
-	APP_DBG_SIG("[btn_down_callback] hw_state=%d sw_state=%d\n", me_b->read(),
-	            me_b->state);
 	switch (me_b->state)
 	{
 	case BUTTON_SW_STATE_PRESSED:
