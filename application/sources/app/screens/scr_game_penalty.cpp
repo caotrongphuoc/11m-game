@@ -11,6 +11,10 @@
 #define SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT (14)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH (15)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT (20)
+#define SCR_GAME_PENALTY_GOAL_BITMAP_WIDTH (128)
+#define SCR_GAME_PENALTY_GOAL_BITMAP_HEIGHT (32)
+#define SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_X (0)
+#define SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_Y (17)
 #define SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE (2)
 #define SCR_GAME_PENALTY_COUNTDOWN_AXIS_X (58)
 #define SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y (7)
@@ -76,9 +80,13 @@ void view_scr_game_penalty()
 		view_render.print((unsigned int)view->countdown);
 	}
 
-	view_render.drawRect(29, 24, 70, 30, WHITE);
-	view_render.drawLine(52, 24, 52, 53, WHITE);
-	view_render.drawLine(75, 24, 75, 53, WHITE);
+	view_render.drawBitmap(
+	    SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_X,
+	    SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_Y,
+	    bitmap_penalty_goal,
+	    SCR_GAME_PENALTY_GOAL_BITMAP_WIDTH,
+	    SCR_GAME_PENALTY_GOAL_BITMAP_HEIGHT,
+	    WHITE);
 
 	if ((view->flags & EM_GAME_VIEW_FLAG_KEEPER_VISIBLE) != 0)
 	{
