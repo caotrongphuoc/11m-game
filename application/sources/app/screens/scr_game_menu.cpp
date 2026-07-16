@@ -2,11 +2,10 @@
 
 static void view_scr_game_menu();
 
-view_dynamic_t dyn_view_game_menu = {
-    {
-        .item_type = ITEM_TYPE_DYNAMIC,
-    },
-    view_scr_game_menu};
+view_dynamic_t dyn_view_game_menu = {{
+                                         .item_type = ITEM_TYPE_DYNAMIC,
+                                     },
+                                     view_scr_game_menu};
 
 view_screen_t scr_game_menu = {
     &dyn_view_game_menu,
@@ -97,14 +96,14 @@ void scr_game_menu_handle(ak_msg_t* msg)
 
 	case AC_DISPLAY_BUTON_UP_PRESSED:
 	{
-		APP_DBG_SIG("AC_DISPLAY_BUTON_UP_PRESSED\n");
+		APP_DBG_SIG("scr_game_menu UP received\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_MENU_LEFT);
 	}
 	break;
 
 	case AC_DISPLAY_BUTON_MODE_PRESSED:
 	{
-		APP_DBG_SIG("AC_DISPLAY_BUTON_MODE_PRESSED\n");
+		APP_DBG_SIG("scr_game_menu MODE received\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_START);
 		SCREEN_TRAN(scr_game_penalty_handle, &scr_game_penalty);
 	}
@@ -112,7 +111,7 @@ void scr_game_menu_handle(ak_msg_t* msg)
 
 	case AC_DISPLAY_BUTON_DOWN_PRESSED:
 	{
-		APP_DBG_SIG("AC_DISPLAY_BUTON_DOWN_PRESSED\n");
+		APP_DBG_SIG("scr_game_menu DOWN received\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_MENU_RIGHT);
 	}
 	break;

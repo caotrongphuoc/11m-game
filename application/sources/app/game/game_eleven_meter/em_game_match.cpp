@@ -1,11 +1,12 @@
 #include "ak.h"
-#include "port.h"
 #include "message.h"
+#include "port.h"
 #include "timer.h"
 
 #include "sys_ctrl.h"
 
 #include "app.h"
+#include "app_dbg.h"
 #include "task_list.h"
 
 #include "em_game_ball.h"
@@ -27,8 +28,7 @@ static void em_game_match_cycle_difficulty_left()
 	}
 	else
 	{
-		s_match.difficulty =
-		    (em_game_difficulty_t)(s_match.difficulty - 1);
+		s_match.difficulty = (em_game_difficulty_t)(s_match.difficulty - 1);
 	}
 }
 
@@ -40,8 +40,7 @@ static void em_game_match_cycle_difficulty_right()
 	}
 	else
 	{
-		s_match.difficulty =
-		    (em_game_difficulty_t)(s_match.difficulty + 1);
+		s_match.difficulty = (em_game_difficulty_t)(s_match.difficulty + 1);
 	}
 }
 
@@ -201,12 +200,15 @@ void em_game_match_handle(ak_msg_t* msg)
 		em_game_match_state_init(&s_match);
 		load_score_record(&score_record);
 		s_match.best_goals = score_record.best_goals;
-		s_match.best_difficulty = (em_game_difficulty_t)score_record.best_difficulty;
+		s_match.best_difficulty =
+		    (em_game_difficulty_t)score_record.best_difficulty;
 		s_state = EM_GAME_STATE_MENU;
 		task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
 		em_game_match_refresh_display();
 		s_match_initialized = true;
 	}
+
+	APP_DBG_SIG("em_game_match sig=%d state=%d\n", msg->sig, s_state);
 
 	switch (msg->sig)
 	{
