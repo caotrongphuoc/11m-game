@@ -7,7 +7,7 @@
 #include "em_game_match_state.h"
 
 #define EM_GAME_BALL_START_X (64)
-#define EM_GAME_BALL_START_Y (60)
+#define EM_GAME_BALL_START_Y (59)
 #define EM_GAME_BALL_TARGET_Y (28)
 #define EM_GAME_BALL_TARGET_LEFT_X (40)
 #define EM_GAME_BALL_TARGET_CENTER_X (64)

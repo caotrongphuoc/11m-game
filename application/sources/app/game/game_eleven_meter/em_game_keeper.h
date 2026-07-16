@@ -7,7 +7,7 @@
 #include "em_game_match_state.h"
 
 #define EM_GAME_KEEPER_START_X (64)
-#define EM_GAME_KEEPER_START_Y (26)
+#define EM_GAME_KEEPER_START_Y (25)
 #define EM_GAME_KEEPER_TARGET_LEFT_X (41)
 #define EM_GAME_KEEPER_TARGET_CENTER_X (64)
 #define EM_GAME_KEEPER_TARGET_RIGHT_X (87)

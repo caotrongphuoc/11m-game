@@ -6,8 +6,8 @@
 
 #include "em_game_match_state.h"
 
-#define EM_GAME_SHOOTER_START_X (64)
-#define EM_GAME_SHOOTER_START_Y (58)
+#define EM_GAME_SHOOTER_START_X (44)
+#define EM_GAME_SHOOTER_START_Y (63)
 #define EM_GAME_SHOOTER_STEP_COUNT (4)
 
 extern em_game_shooter_t em_game_shooter;

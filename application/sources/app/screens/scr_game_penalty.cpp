@@ -126,17 +126,6 @@ void view_scr_game_penalty()
 		}
 	}
 
-	if ((view->flags & EM_GAME_VIEW_FLAG_BALL_VISIBLE) != 0)
-	{
-		view_render.drawBitmap(
-			view->ball_x - (SCR_GAME_PENALTY_BALL_BITMAP_WIDTH / 2),
-			view->ball_y - (SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT / 2),
-			bitmap_penalty_ball,
-			SCR_GAME_PENALTY_BALL_BITMAP_WIDTH,
-			SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT,
-			WHITE);
-	}
-
 	if ((view->flags & EM_GAME_VIEW_FLAG_SHOOTER_VISIBLE) != 0)
 	{
 		view_render.drawBitmap(
@@ -145,6 +134,17 @@ void view_scr_game_penalty()
 			scr_game_penalty_get_shooter_bitmap(),
 			SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH,
 			SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT,
+			WHITE);
+	}
+
+	if ((view->flags & EM_GAME_VIEW_FLAG_BALL_VISIBLE) != 0)
+	{
+		view_render.drawBitmap(
+			view->ball_x - (SCR_GAME_PENALTY_BALL_BITMAP_WIDTH / 2),
+			view->ball_y - (SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT / 2),
+			bitmap_penalty_ball,
+			SCR_GAME_PENALTY_BALL_BITMAP_WIDTH,
+			SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT,
 			WHITE);
 	}
 }
