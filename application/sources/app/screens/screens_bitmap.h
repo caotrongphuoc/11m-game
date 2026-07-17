@@ -6,9 +6,8 @@
 /*
  * Penalty sprites are sized for the 128x64 OLED layout:
  * - The 7x7 ball remains visible without crowding a 23-pixel goal zone.
- * - The 15x20 idle keeper fits inside the 30-pixel goal frame.
- * - The 21x14 dive keeper emphasizes horizontal motion while fitting one zone.
- * - The 15x20 shooter frames remain readable in the lower screen area.
+ * - The idle and dive keeper frames are 40x40 pixels.
+ * - The shooter frames are 30x30 pixels.
  */
 extern const unsigned char PROGMEM bitmap_penalty_ball[];
 extern const unsigned char PROGMEM bitmap_penalty_keeper_idle[];

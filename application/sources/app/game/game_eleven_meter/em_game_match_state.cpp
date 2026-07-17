@@ -56,7 +56,7 @@ void em_game_match_state_build_view(const em_game_match_state_t* ms, uint8_t sta
 	{
 		view->flags |= EM_GAME_VIEW_FLAG_KEEPER_VISIBLE;
 	}
-	if (ms->shooter.visible && !ms->ball.moving)
+	if (ms->shooter.visible && (!ms->ball.moving || ms->shooter.moving))
 	{
 		view->flags |= EM_GAME_VIEW_FLAG_SHOOTER_VISIBLE;
 	}

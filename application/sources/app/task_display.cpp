@@ -56,8 +56,6 @@ void task_display(ak_msg_t* msg)
 
 	case EM_GAME_DISPLAY_REFRESH:
 	{
-		APP_DBG_SIG("EM_GAME_DISPLAY_REFRESH\n");
-
 		if (get_data_len_common_msg(msg) != sizeof(em_game_view_t))
 		{
 			return;

@@ -57,7 +57,6 @@ static void em_game_keeper_reset()
 	em_game_keeper.moving = false;
 	em_game_keeper.direction = EM_GAME_DIRECTION_NONE;
 
-	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 static void em_game_keeper_pick_direction(em_game_direction_t shooter_direction,
@@ -125,7 +124,6 @@ static void em_game_keeper_pick_direction(em_game_direction_t shooter_direction,
 	em_game_keeper.visible = true;
 
 	timer_set(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK, EM_GAME_KEEPER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
-	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 static void em_game_keeper_advance()
@@ -151,7 +149,6 @@ static void em_game_keeper_advance()
 		timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK);
 	}
 
-	task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_DISPLAY_REFRESH);
 }
 
 em_game_direction_t em_game_keeper_get_direction()
