@@ -7,8 +7,10 @@
 #define SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT (7)
 #define SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH (30)
 #define SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_HEIGHT (30)
-#define SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH (30)
-#define SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT (30)
+#define SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH (40)
+#define SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT (40)
+#define SCR_GAME_PENALTY_KEEPER_DIVE_LEFT_Y_OFFSET (-9)
+#define SCR_GAME_PENALTY_KEEPER_DIVE_RIGHT_Y_OFFSET (-8)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH (40)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT (40)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING (6)
@@ -105,7 +107,27 @@ void view_scr_game_penalty()
 
 	if ((view->flags & EM_GAME_VIEW_FLAG_KEEPER_VISIBLE) != 0)
 	{
-		if (em_game_keeper.direction == EM_GAME_DIRECTION_NONE)
+		if (em_game_keeper.direction == EM_GAME_DIRECTION_LEFT)
+		{
+			view_render.drawBitmap(
+				view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
+				view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_LEFT_Y_OFFSET,
+				bitmap_penalty_keeper_dive_left,
+				SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
+				SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT,
+				WHITE);
+		}
+		else if (em_game_keeper.direction == EM_GAME_DIRECTION_RIGHT)
+		{
+			view_render.drawBitmap(
+				view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
+				view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_RIGHT_Y_OFFSET,
+				bitmap_penalty_keeper_dive_right,
+				SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
+				SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT,
+				WHITE);
+		}
+		else
 		{
 			view_render.drawBitmap(
 				view->keeper_x - (SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH / 2),
@@ -113,16 +135,6 @@ void view_scr_game_penalty()
 				bitmap_penalty_keeper_idle,
 				SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH,
 				SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_HEIGHT,
-				WHITE);
-		}
-		else
-		{
-			view_render.drawBitmap(
-				view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
-				view->keeper_y,
-				bitmap_penalty_keeper_dive,
-				SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
-				SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT,
 				WHITE);
 		}
 	}

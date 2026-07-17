@@ -11,7 +11,8 @@
  */
 extern const unsigned char PROGMEM bitmap_penalty_ball[];
 extern const unsigned char PROGMEM bitmap_penalty_keeper_idle[];
-extern const unsigned char PROGMEM bitmap_penalty_keeper_dive[];
+extern const unsigned char PROGMEM bitmap_penalty_keeper_dive_left[];
+extern const unsigned char PROGMEM bitmap_penalty_keeper_dive_right[];
 extern const unsigned char PROGMEM bitmap_penalty_shooter_prepare[];
 extern const unsigned char PROGMEM bitmap_penalty_shooter_kick[];
 extern const unsigned char PROGMEM bitmap_penalty_shooter_follow[];
