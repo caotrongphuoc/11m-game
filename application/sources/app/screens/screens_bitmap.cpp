@@ -250,13 +250,13 @@ const unsigned char PROGMEM bitmap_penalty_shooter_kick[] = {
 };
 // 'bitmap_penalty_ball', 7x7px
 const unsigned char PROGMEM bitmap_penalty_ball[] = {
+	0x38,
 	0x7C,
-	0xD6,
-	0xBA,
-	0xEE,
-	0xBA,
-	0xD6,
+	0xFE,
+	0xFE,
+	0xFE,
 	0x7C,
+	0x38,
 };
 // 'bitmap_penalty_keeper_idle', 30x30px
 const unsigned char PROGMEM bitmap_penalty_keeper_idle[] = {

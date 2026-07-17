@@ -22,7 +22,7 @@ static void em_game_ball_reset()
 	em_game_ball.target_x = EM_GAME_BALL_START_X;
 	em_game_ball.target_y = EM_GAME_BALL_START_Y;
 	em_game_ball.frame = 0;
-	em_game_ball.visible = false;
+	em_game_ball.visible = true;
 	em_game_ball.moving = false;
 	em_game_ball.wide = false;
 	em_game_ball.direction = EM_GAME_DIRECTION_NONE;
