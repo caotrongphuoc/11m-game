@@ -24,6 +24,7 @@
 |---|---|
 | [README.md](README.md) | Main project overview, hardware information, gameplay rules, and game-object descriptions. |
 | [docs/02-guide-coding-rules.md](docs/02-guide-coding-rules.md) | Coding conventions used by the project. |
+| [docs/03-design-sequence-object.md](docs/03-design-sequence-object.md) | State ownership and runtime message sequences for the gameplay objects. |
 
 ## Introduction
 
@@ -176,7 +177,7 @@ Start Match -> Round Setup -> Three-Second Selection
                                          Retry or Home
 ```
 
-> Detailed object and runtime sequence diagrams will be added under `docs/` as the design documentation is completed.
+> See [Eleven Meter object sequences](docs/03-design-sequence-object.md) for the detailed task and message flow.
 
 ## Project Structure
 
