@@ -95,6 +95,24 @@ Eleven Meter recreates a five-round penalty shootout. The player selects a shoot
 | **Goal** | Resolves the ball and goalkeeper directions into a goal, save, or miss result. |
 | **Scoreboard** | Tracks rounds, goals, saves, misses, and the final winner across five kicks. |
 
+Each gameplay task owns its mutable state inside its implementation file. Objects do not read another task's state through shared globals; they exchange commands, animation snapshots, and results through AK messages.
+
+```text
+Match
+  └── kick request ──> Shooter
+                         ├── ball target ──> Ball ───────┐
+                         └── shot zone ────> Keeper ─────┤
+                                                        v
+                                                       Goal
+                                                        │
+                                              goal/save/miss result
+                                                        │
+                                                        v
+                                                      Match
+
+Match / Shooter / Ball / Keeper ── view messages ──> Display
+```
+
 ### III. How to Play
 
 #### Main Menu
@@ -140,10 +158,13 @@ Start Match -> Round Setup -> Three-Second Selection
                        +----------+----------+
                                   |
                                   v
-                      Shooter / Ball / Keeper
-                                  |
-                                  v
-                         Goal Result Evaluation
+                              Shooter
+                             /       \
+                            v         v
+                          Ball      Keeper
+                            \         /
+                             v       v
+                        Goal Evaluation
                                   |
                     +-------------+-------------+
                     |                           |
@@ -163,7 +184,7 @@ Start Match -> Round Setup -> Three-Second Selection
 11m-game/
 ├── application/                         # Eleven Meter application firmware
 │   └── sources/app/
-│       ├── game/game_eleven_meter/       # Gameplay objects and match state
+│       ├── game/game_eleven_meter/       # Message-driven gameplay objects
 │       └── screens/                      # OLED screens and game rendering
 ├── boot/                                # AK bootloader source
 ├── docs/                                # Project guides and design documents
