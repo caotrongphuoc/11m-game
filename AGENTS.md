@@ -1,11 +1,3 @@
-<!--
-Copy this file to .github/copilot-instructions.md in your AK firmware project.
-It "steers" the AI agent to always consult the AK MCP docs server before writing
-firmware, so generated code follows kernel conventions and stays out of the core.
-(Cursor: copy the same text into .cursor/rules/ak.md. Claude Code: into CLAUDE.md.
-Codex: into AGENTS.md.)
--->
-
 # AK firmware — agent instructions
 
 This project is firmware for the **AK (Active Kernel)** event-driven MCU framework.
@@ -46,6 +38,8 @@ Hard rules (also returned by `get_ak_guardrails`):
 - User signals start at `AK_USER_DEFINE_SIG` (10); task priorities are `LEVEL_1..7`
   (0 is reserved).
 - Common message payload ≤ 64 bytes; max 7 references per message; pools are fixed size.
+
+# Eleven Meter project instructions
 
 ## Project context
 
