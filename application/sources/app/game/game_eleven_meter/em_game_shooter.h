@@ -34,6 +34,9 @@ typedef struct
 	uint8_t kick;
 } em_game_shooter_view_t;
 
+static_assert(sizeof(em_game_shooter_view_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_shooter_view_t exceeds AK common message payload");
+
 extern void em_game_shooter_handle(ak_msg_t* msg);
 
 #endif //__EM_GAME_SHOOTER_H__

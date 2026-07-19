@@ -62,18 +62,34 @@ void em_game_goal_handle(ak_msg_t* msg)
 	case EM_GAME_GOAL_BALL_ARRIVED:
 		if (get_data_len_common_msg(msg) == sizeof(em_game_goal_ball_t))
 		{
-			s_ball = *(em_game_goal_ball_t*)get_data_common_msg(msg);
-			s_ball_ready = true;
-			em_game_goal_resolve();
+			em_game_goal_ball_t* ball =
+			    (em_game_goal_ball_t*)get_data_common_msg(msg);
+
+			if ((ball->is_wide <= 1) &&
+			    ((ball->is_wide != 0) ||
+			     ((ball->zone >= EM_GAME_GOAL_ZONE_LEFT) &&
+			      (ball->zone <= EM_GAME_GOAL_ZONE_RIGHT))))
+			{
+				s_ball = *ball;
+				s_ball_ready = true;
+				em_game_goal_resolve();
+			}
 		}
 		break;
 
 	case EM_GAME_GOAL_KEEPER_READY:
 		if (get_data_len_common_msg(msg) == sizeof(em_game_goal_keeper_t))
 		{
-			s_keeper = *(em_game_goal_keeper_t*)get_data_common_msg(msg);
-			s_keeper_ready = true;
-			em_game_goal_resolve();
+			em_game_goal_keeper_t* keeper =
+			    (em_game_goal_keeper_t*)get_data_common_msg(msg);
+
+			if ((keeper->zone >= EM_GAME_GOAL_ZONE_LEFT) &&
+			    (keeper->zone <= EM_GAME_GOAL_ZONE_RIGHT))
+			{
+				s_keeper = *keeper;
+				s_keeper_ready = true;
+				em_game_goal_resolve();
+			}
 		}
 		break;
 

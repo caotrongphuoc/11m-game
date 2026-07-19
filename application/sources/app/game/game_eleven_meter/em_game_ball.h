@@ -32,6 +32,9 @@ typedef struct
 	uint8_t target;
 } em_game_ball_kick_t;
 
+static_assert(sizeof(em_game_ball_kick_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_ball_kick_t exceeds AK common message payload");
+
 typedef struct
 {
 	int16_t x;
@@ -41,6 +44,9 @@ typedef struct
 	bool moving;
 	uint8_t target;
 } em_game_ball_view_t;
+
+static_assert(sizeof(em_game_ball_view_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_ball_view_t exceeds AK common message payload");
 
 extern void em_game_ball_handle(ak_msg_t* msg);
 

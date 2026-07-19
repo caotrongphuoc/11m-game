@@ -47,6 +47,9 @@ typedef struct
 	uint8_t shot_zone;
 } em_game_keeper_react_t;
 
+static_assert(sizeof(em_game_keeper_react_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_keeper_react_t exceeds AK common message payload");
+
 typedef struct
 {
 	int16_t x;
@@ -56,6 +59,9 @@ typedef struct
 	bool moving;
 	uint8_t dive;
 } em_game_keeper_view_t;
+
+static_assert(sizeof(em_game_keeper_view_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_keeper_view_t exceeds AK common message payload");
 
 extern void em_game_keeper_handle(ak_msg_t* msg);
 

@@ -28,10 +28,16 @@ typedef struct
 	uint8_t is_wide;
 } em_game_goal_ball_t;
 
+static_assert(sizeof(em_game_goal_ball_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_goal_ball_t exceeds AK common message payload");
+
 typedef struct
 {
 	uint8_t zone;
 } em_game_goal_keeper_t;
+
+static_assert(sizeof(em_game_goal_keeper_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_goal_keeper_t exceeds AK common message payload");
 
 extern void em_game_goal_handle(ak_msg_t* msg);
 
