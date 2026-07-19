@@ -45,10 +45,10 @@ Hard rules (also returned by `get_ak_guardrails`):
 
 This is a penalty shootout game (11-meter penalty kick) built on top of a blank **AK Embedded Base Kit** for STM32L151. Prefix for this game: `em_game_*` (Eleven Meter).
 
-### Base source (starting point — DEV FROM HERE)
+### Base source
 - Upstream: https://github.com/the-ak-foundation/ak-base-kit-stm32l151
 - The base kit ships as an empty template: only `application/`, `boot/`, `hardware/`.
-- Folders like `application/sources/app/game/` and `application/sources/app/screens/` do NOT exist yet — they must be created following the pattern below.
+- This project has already created and wired its game objects under `application/sources/app/game/game_eleven_meter/` and its screens under `application/sources/app/screens/`. Extend the existing modules; do not scaffold them again.
 
 ### Reference (READ-ONLY — for rules and patterns, do NOT copy code)
 - Sample project: https://github.com/caotrongphuoc/zomwar-game
@@ -56,12 +56,13 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
   - Study `application/sources/app/screens/` for screen file layout
   - Study `application/sources/app/app.h` and `task_list.h/cpp` for signal & task registration
 - Coding rules: `docs/02-guide-coding-rules.md` (copied from zomwar-game)
+- Object ownership and message sequences: `docs/03-design-sequence-object.md`
 
 **Important**: study the patterns and re-implement with `em_game_*` prefix. Do not blindly copy zomwar sources into this repo.
 
 ## Naming for this project (em_game_*)
-- Game folder: `application/sources/app/game/game_eleven_meter/` (to be created)
-- Screens folder: `application/sources/app/screens/` (already exists)
+- Game folder: `application/sources/app/game/game_eleven_meter/`
+- Screens folder: `application/sources/app/screens/`
 - Object files: `em_game_<object>.h/cpp` (e.g. `em_game_ball.h`)
 - Screen files: `scr_game_<name>.h/cpp` (follow zomwar pattern, e.g. `scr_game_penalty.cpp`)
 - Header guards: `__EM_GAME_<OBJECT>_H__` for game objects, `__SCR_GAME_<NAME>_H__` for screens
@@ -70,6 +71,17 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 - Typedefs: `em_game_<object>_t`
 - Functions: `em_game_<object>_<action>()`
 - Project-level macros: `EM_GAME_*`
+
+## Object ownership and communication
+
+- Each gameplay task owns its mutable state as `static` data in its `.cpp` file.
+- Do not expose mutable task state with `extern`, getters, or direct cross-task function calls.
+- Headers expose task handlers, object-owned enums, and message payload contracts only.
+- Match coordinates rounds and forwards accepted input; Shooter owns kick selection; Ball owns movement; Keeper owns dive selection; Goal resolves Ball and Keeper reports; Display owns render snapshots.
+- Tasks exchange commands, results, and view snapshots only through `task_post_*` messages.
+- Validate incoming common-message lengths and values before using their payloads.
+- Protect every common-message payload with a `static_assert` against `AK_COMMON_MSG_DATA_SIZE`.
+- Follow `docs/03-design-sequence-object.md` when changing gameplay message flow.
 
 ## Coding style
 Follow `docs/02-guide-coding-rules.md` — Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
