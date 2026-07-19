@@ -198,26 +198,26 @@ int8_t zw_game_car_find_nearest(uint8_t zy);
 
 Use `lower_snake_case`. Do not start names with an underscore.
 
-- **Globals shared between modules:** declare `extern` in the header, define exactly once in the `.cpp` of the owning module.
+- **Mutable task state:** declare it `static` in the owning task's `.cpp`. Never expose mutable task state with `extern` or a getter. Another task must receive the required value through a message.
 
   ```cpp
-  // zw_game_border.h
-  extern uint16_t zw_game_score;
-  extern uint8_t  wave_level;
-  extern bool     wave_warning_active;
+  // em_game_ball.cpp
+  static em_game_ball_view_t s_ball;
+  static int16_t s_target_x;
   ```
 
-- **Module-internal variables:** declare `static` in the `.cpp`.
+- **Read-only shared data:** immutable tables, bitmaps, and other constant data may be declared `extern const` in a header and defined once in the owning `.cpp`.
 
   ```cpp
-  // scr_game_zomwar.cpp
-  static uint8_t zw_game_state;
-  static uint8_t gunner_dir = GUNNER_DIR_NONE;
+  // screens_bitmap.h
+  extern const unsigned char bitmap_penalty_ball[];
   ```
 
 - **Local variables:** short, describe the role accurately. Loop counters can use `i`, `j`, `k` when the scope is clear.
 
-State belonging to a task's object should carry that object's name (`gunner.y`, `bang[i].visible`, `wave_warning_timer`); do not stash cross-cutting state inside another module's `.cpp`.
+Headers may expose task handlers, object-owned enums, message payload types, and stateless helper functions. They must not provide direct access to another task's mutable state.
+
+State belonging to a task's object should carry that object's name (`s_ball`, `s_keeper`, `s_scoreboard`) and remain inside the owning module. Do not duplicate or cache mutable object state in another gameplay task; send an explicit snapshot message to consumers such as Display.
 
 ---
 
