@@ -1,0 +1,15 @@
+Language: Cpp
+BasedOnStyle: LLVM
+UseTab: ForIndentation
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 0
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+PointerAlignment: Left
+SpaceBeforeParens: ControlStatements
+IndentCaseLabels: false
+SortIncludes: false

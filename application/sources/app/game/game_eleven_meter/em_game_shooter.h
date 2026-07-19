@@ -16,22 +16,24 @@
 #define EM_GAME_SHOOTER_FAST_REACTION_INTERVAL (500)
 #define EM_GAME_SHOOTER_RANDOM_FALLBACK (0xA341316CUL)
 
-typedef enum {
-  EM_GAME_SHOOTER_KICK_NONE,
-  EM_GAME_SHOOTER_KICK_LEFT,
-  EM_GAME_SHOOTER_KICK_CENTER,
-  EM_GAME_SHOOTER_KICK_RIGHT
+typedef enum
+{
+	EM_GAME_SHOOTER_KICK_NONE,
+	EM_GAME_SHOOTER_KICK_LEFT,
+	EM_GAME_SHOOTER_KICK_CENTER,
+	EM_GAME_SHOOTER_KICK_RIGHT
 } em_game_shooter_kick_t;
 
-typedef struct {
-  int16_t x;
-  int16_t y;
-  uint8_t frame;
-  bool visible;
-  bool moving;
-  uint8_t kick;
+typedef struct
+{
+	int16_t x;
+	int16_t y;
+	uint8_t frame;
+	bool visible;
+	bool moving;
+	uint8_t kick;
 } em_game_shooter_view_t;
 
-extern void em_game_shooter_handle(ak_msg_t *msg);
+extern void em_game_shooter_handle(ak_msg_t* msg);
 
 #endif //__EM_GAME_SHOOTER_H__

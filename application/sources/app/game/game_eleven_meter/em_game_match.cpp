@@ -23,290 +23,336 @@ static em_game_match_difficulty_t s_best_difficulty =
 static uint8_t s_countdown_seconds;
 static bool s_initialized;
 
-static void em_game_match_publish_view() {
-  em_game_match_view_t view;
+static void em_game_match_publish_view()
+{
+	em_game_match_view_t view;
 
-  view.round = s_scoreboard.round;
-  view.goals = s_scoreboard.goals;
-  view.saves = s_scoreboard.saves;
-  view.misses = s_scoreboard.misses;
-  view.countdown = s_countdown_seconds;
-  view.state = (uint8_t)s_state;
-  view.difficulty = (uint8_t)s_difficulty;
-  view.best_goals = s_best_goals;
-  view.best_difficulty = (uint8_t)s_best_difficulty;
-  view.last_result = (uint8_t)s_last_result;
-  view.winner = (uint8_t)s_scoreboard.winner;
+	view.round = s_scoreboard.round;
+	view.goals = s_scoreboard.goals;
+	view.saves = s_scoreboard.saves;
+	view.misses = s_scoreboard.misses;
+	view.countdown = s_countdown_seconds;
+	view.state = (uint8_t)s_state;
+	view.difficulty = (uint8_t)s_difficulty;
+	view.best_goals = s_best_goals;
+	view.best_difficulty = (uint8_t)s_best_difficulty;
+	view.last_result = (uint8_t)s_last_result;
+	view.winner = (uint8_t)s_scoreboard.winner;
 
-  task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_UPDATE_MATCH,
-                       (uint8_t *)&view, sizeof(view));
+	task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_UPDATE_MATCH,
+	                     (uint8_t*)&view, sizeof(view));
 }
 
-static void em_game_match_set_keeper_difficulty() {
-  uint8_t difficulty = (uint8_t)s_difficulty;
+static void em_game_match_set_keeper_difficulty()
+{
+	uint8_t difficulty = (uint8_t)s_difficulty;
 
-  task_post_common_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_SET_DIFFICULTY,
-                       &difficulty, sizeof(difficulty));
+	task_post_common_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_SET_DIFFICULTY,
+	                     &difficulty, sizeof(difficulty));
 }
 
-static void em_game_match_cycle_difficulty_left() {
-  if (s_difficulty == EM_GAME_MATCH_DIFFICULTY_EASY) {
-    s_difficulty = EM_GAME_MATCH_DIFFICULTY_HARD;
-  } else {
-    s_difficulty = (em_game_match_difficulty_t)(s_difficulty - 1);
-  }
+static void em_game_match_cycle_difficulty_left()
+{
+	if (s_difficulty == EM_GAME_MATCH_DIFFICULTY_EASY)
+	{
+		s_difficulty = EM_GAME_MATCH_DIFFICULTY_HARD;
+	}
+	else
+	{
+		s_difficulty = (em_game_match_difficulty_t)(s_difficulty - 1);
+	}
 
-  em_game_match_set_keeper_difficulty();
-  em_game_match_publish_view();
+	em_game_match_set_keeper_difficulty();
+	em_game_match_publish_view();
 }
 
-static void em_game_match_cycle_difficulty_right() {
-  if (s_difficulty == EM_GAME_MATCH_DIFFICULTY_HARD) {
-    s_difficulty = EM_GAME_MATCH_DIFFICULTY_EASY;
-  } else {
-    s_difficulty = (em_game_match_difficulty_t)(s_difficulty + 1);
-  }
+static void em_game_match_cycle_difficulty_right()
+{
+	if (s_difficulty == EM_GAME_MATCH_DIFFICULTY_HARD)
+	{
+		s_difficulty = EM_GAME_MATCH_DIFFICULTY_EASY;
+	}
+	else
+	{
+		s_difficulty = (em_game_match_difficulty_t)(s_difficulty + 1);
+	}
 
-  em_game_match_set_keeper_difficulty();
-  em_game_match_publish_view();
+	em_game_match_set_keeper_difficulty();
+	em_game_match_publish_view();
 }
 
-static void em_game_match_reset() {
-  em_game_scoreboard_reset(&s_scoreboard);
-  s_last_result = EM_GAME_GOAL_RESULT_NONE;
-  s_countdown_seconds = 0;
+static void em_game_match_reset()
+{
+	em_game_scoreboard_reset(&s_scoreboard);
+	s_last_result = EM_GAME_GOAL_RESULT_NONE;
+	s_countdown_seconds = 0;
 }
 
-static void em_game_match_handle_hit_result(ak_msg_t *msg) {
-  em_game_goal_result_t result;
-  uint8_t buzzer_signal;
+static void em_game_match_handle_hit_result(ak_msg_t* msg)
+{
+	em_game_goal_result_t result;
+	uint8_t buzzer_signal;
 
-  if (get_data_len_common_msg(msg) != sizeof(uint8_t)) {
-    return;
-  }
+	if (get_data_len_common_msg(msg) != sizeof(uint8_t))
+	{
+		return;
+	}
 
-  result = (em_game_goal_result_t)(*get_data_common_msg(msg));
+	result = (em_game_goal_result_t)(*get_data_common_msg(msg));
 
-  switch (result) {
-  case EM_GAME_GOAL_RESULT_GOAL:
-    buzzer_signal = EM_GAME_BUZZER_GOAL;
-    break;
+	switch (result)
+	{
+	case EM_GAME_GOAL_RESULT_GOAL:
+		buzzer_signal = EM_GAME_BUZZER_GOAL;
+		break;
 
-  case EM_GAME_GOAL_RESULT_SAVE:
-    buzzer_signal = EM_GAME_BUZZER_SAVE;
-    break;
+	case EM_GAME_GOAL_RESULT_SAVE:
+		buzzer_signal = EM_GAME_BUZZER_SAVE;
+		break;
 
-  case EM_GAME_GOAL_RESULT_MISS:
-    buzzer_signal = EM_GAME_BUZZER_MISS;
-    break;
+	case EM_GAME_GOAL_RESULT_MISS:
+		buzzer_signal = EM_GAME_BUZZER_MISS;
+		break;
 
-  default:
-    return;
-  }
+	default:
+		return;
+	}
 
-  s_last_result = result;
-  em_game_scoreboard_record_result(&s_scoreboard, result);
-  task_post_pure_msg(AC_TASK_BUZZER_ID, buzzer_signal);
-  timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_ROUND_END,
-            EM_GAME_MATCH_ROUND_END_INTERVAL, TIMER_ONE_SHOT);
-  s_state = EM_GAME_MATCH_STATE_ROUND_END;
-  em_game_match_publish_view();
+	s_last_result = result;
+	em_game_scoreboard_record_result(&s_scoreboard, result);
+	task_post_pure_msg(AC_TASK_BUZZER_ID, buzzer_signal);
+	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_ROUND_END,
+	          EM_GAME_MATCH_ROUND_END_INTERVAL, TIMER_ONE_SHOT);
+	s_state = EM_GAME_MATCH_STATE_ROUND_END;
+	em_game_match_publish_view();
 }
 
-static void em_game_match_finish() {
-  em_game_score_record_t score_record;
+static void em_game_match_finish()
+{
+	em_game_score_record_t score_record;
 
-  em_game_scoreboard_evaluate_winner(&s_scoreboard);
+	em_game_scoreboard_evaluate_winner(&s_scoreboard);
 
-  if (s_scoreboard.goals > s_best_goals) {
-    s_best_goals = s_scoreboard.goals;
-    s_best_difficulty = s_difficulty;
+	if (s_scoreboard.goals > s_best_goals)
+	{
+		s_best_goals = s_scoreboard.goals;
+		s_best_difficulty = s_difficulty;
 
-    init_score_record(&score_record);
-    score_record.best_goals = s_best_goals;
-    score_record.best_difficulty = (uint8_t)s_best_difficulty;
-    save_score_record(&score_record);
-  }
+		init_score_record(&score_record);
+		score_record.best_goals = s_best_goals;
+		score_record.best_difficulty = (uint8_t)s_best_difficulty;
+		save_score_record(&score_record);
+	}
 
-  s_state = EM_GAME_MATCH_STATE_RIP;
-  em_game_match_publish_view();
-  task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_RIP);
-  timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT,
-            EM_GAME_MATCH_RIP_DURATION, TIMER_ONE_SHOT);
+	s_state = EM_GAME_MATCH_STATE_RIP;
+	em_game_match_publish_view();
+	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_RIP);
+	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT,
+	          EM_GAME_MATCH_RIP_DURATION, TIMER_ONE_SHOT);
 }
 
-static void em_game_match_show_game_over() {
-  timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT);
-  s_state = EM_GAME_MATCH_STATE_GAME_OVER;
-  em_game_match_publish_view();
-  task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_GAME_OVER);
+static void em_game_match_show_game_over()
+{
+	timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT);
+	s_state = EM_GAME_MATCH_STATE_GAME_OVER;
+	em_game_match_publish_view();
+	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_GAME_OVER);
 
-  if (s_scoreboard.winner == EM_GAME_SCOREBOARD_WINNER_PLAYER) {
-    task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_WIN);
-  } else {
-    task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_LOSE);
-  }
+	if (s_scoreboard.winner == EM_GAME_SCOREBOARD_WINNER_PLAYER)
+	{
+		task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_WIN);
+	}
+	else
+	{
+		task_post_pure_msg(AC_TASK_BUZZER_ID, EM_GAME_BUZZER_LOSE);
+	}
 }
 
-static void em_game_match_request_kick(uint8_t shooter_signal) {
-  timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
-  timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
-  s_countdown_seconds = 0;
-  s_state = EM_GAME_MATCH_STATE_REVEAL;
-  task_post_pure_msg(EM_GAME_SHOOTER_ID, shooter_signal);
-  em_game_match_publish_view();
+static void em_game_match_request_kick(uint8_t shooter_signal)
+{
+	timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT);
+	timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
+	s_countdown_seconds = 0;
+	s_state = EM_GAME_MATCH_STATE_REVEAL;
+	task_post_pure_msg(EM_GAME_SHOOTER_ID, shooter_signal);
+	em_game_match_publish_view();
 }
 
-static void em_game_match_initialize() {
-  em_game_score_record_t score_record;
+static void em_game_match_initialize()
+{
+	em_game_score_record_t score_record;
 
-  em_game_match_reset();
-  load_score_record(&score_record);
-  s_best_goals = score_record.best_goals;
+	em_game_match_reset();
+	load_score_record(&score_record);
+	s_best_goals = score_record.best_goals;
 
-  if (score_record.best_difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD) {
-    s_best_difficulty =
-        (em_game_match_difficulty_t)score_record.best_difficulty;
-  }
+	if (score_record.best_difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD)
+	{
+		s_best_difficulty =
+		    (em_game_match_difficulty_t)score_record.best_difficulty;
+	}
 
-  s_state = EM_GAME_MATCH_STATE_MENU;
-  em_game_match_set_keeper_difficulty();
-  em_game_match_publish_view();
-  task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
-  s_initialized = true;
+	s_state = EM_GAME_MATCH_STATE_MENU;
+	em_game_match_set_keeper_difficulty();
+	em_game_match_publish_view();
+	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
+	s_initialized = true;
 }
 
-void em_game_match_handle(ak_msg_t *msg) {
-  if (!s_initialized) {
-    em_game_match_initialize();
-  }
+void em_game_match_handle(ak_msg_t* msg)
+{
+	if (!s_initialized)
+	{
+		em_game_match_initialize();
+	}
 
-  switch (msg->sig) {
-  case EM_GAME_MATCH_SETUP:
-    if (s_state == EM_GAME_MATCH_STATE_ROUND_START) {
-      em_game_scoreboard_advance_round(&s_scoreboard);
-      s_last_result = EM_GAME_GOAL_RESULT_NONE;
-      task_post_pure_msg(EM_GAME_GOAL_ID, EM_GAME_GOAL_RESET);
-      task_post_pure_msg(EM_GAME_BALL_ID, EM_GAME_BALL_RESET);
-      task_post_pure_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_RESET);
-      task_post_pure_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_RESET);
-      task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_START_ROUND);
-      em_game_match_publish_view();
-    }
-    break;
+	switch (msg->sig)
+	{
+	case EM_GAME_MATCH_SETUP:
+		if (s_state == EM_GAME_MATCH_STATE_ROUND_START)
+		{
+			em_game_scoreboard_advance_round(&s_scoreboard);
+			s_last_result = EM_GAME_GOAL_RESULT_NONE;
+			task_post_pure_msg(EM_GAME_GOAL_ID, EM_GAME_GOAL_RESET);
+			task_post_pure_msg(EM_GAME_BALL_ID, EM_GAME_BALL_RESET);
+			task_post_pure_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_RESET);
+			task_post_pure_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_RESET);
+			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_START_ROUND);
+			em_game_match_publish_view();
+		}
+		break;
 
-  case EM_GAME_MATCH_START_ROUND:
-    if (s_state == EM_GAME_MATCH_STATE_ROUND_START) {
-      s_countdown_seconds = 3;
-      s_state = EM_GAME_MATCH_STATE_SHOOTER_WAIT;
-      task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_PENALTY);
-      timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT,
-                EM_GAME_MATCH_SELECTION_TIMEOUT, TIMER_ONE_SHOT);
-      timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK,
-                EM_GAME_MATCH_COUNTDOWN_TICK_INTERVAL, TIMER_PERIODIC);
-      em_game_match_publish_view();
-    }
-    break;
+	case EM_GAME_MATCH_START_ROUND:
+		if (s_state == EM_GAME_MATCH_STATE_ROUND_START)
+		{
+			s_countdown_seconds = 3;
+			s_state = EM_GAME_MATCH_STATE_SHOOTER_WAIT;
+			task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_PENALTY);
+			timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_SHOOTER_TIMEOUT,
+			          EM_GAME_MATCH_SELECTION_TIMEOUT, TIMER_ONE_SHOT);
+			timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK,
+			          EM_GAME_MATCH_COUNTDOWN_TICK_INTERVAL, TIMER_PERIODIC);
+			em_game_match_publish_view();
+		}
+		break;
 
-  case EM_GAME_MATCH_START:
-    if (s_state == EM_GAME_MATCH_STATE_MENU) {
-      em_game_match_reset();
-      s_state = EM_GAME_MATCH_STATE_ROUND_START;
-      task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
-    }
-    break;
+	case EM_GAME_MATCH_START:
+		if (s_state == EM_GAME_MATCH_STATE_MENU)
+		{
+			em_game_match_reset();
+			s_state = EM_GAME_MATCH_STATE_ROUND_START;
+			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
+		}
+		break;
 
-  case EM_GAME_MATCH_MENU_LEFT:
-    if (s_state == EM_GAME_MATCH_STATE_MENU) {
-      em_game_match_cycle_difficulty_left();
-    }
-    break;
+	case EM_GAME_MATCH_MENU_LEFT:
+		if (s_state == EM_GAME_MATCH_STATE_MENU)
+		{
+			em_game_match_cycle_difficulty_left();
+		}
+		break;
 
-  case EM_GAME_MATCH_MENU_RIGHT:
-    if (s_state == EM_GAME_MATCH_STATE_MENU) {
-      em_game_match_cycle_difficulty_right();
-    }
-    break;
+	case EM_GAME_MATCH_MENU_RIGHT:
+		if (s_state == EM_GAME_MATCH_STATE_MENU)
+		{
+			em_game_match_cycle_difficulty_right();
+		}
+		break;
 
-  case EM_GAME_MATCH_KICK_LEFT:
-    if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT) {
-      em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_LEFT);
-    }
-    break;
+	case EM_GAME_MATCH_KICK_LEFT:
+		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
+		{
+			em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_LEFT);
+		}
+		break;
 
-  case EM_GAME_MATCH_KICK_CENTER:
-    if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT) {
-      em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_CENTER);
-    }
-    break;
+	case EM_GAME_MATCH_KICK_CENTER:
+		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
+		{
+			em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_CENTER);
+		}
+		break;
 
-  case EM_GAME_MATCH_KICK_RIGHT:
-    if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT) {
-      em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_RIGHT);
-    }
-    break;
+	case EM_GAME_MATCH_KICK_RIGHT:
+		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
+		{
+			em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_RIGHT);
+		}
+		break;
 
-  case EM_GAME_MATCH_RETRY:
-    if (s_state == EM_GAME_MATCH_STATE_GAME_OVER) {
-      em_game_match_reset();
-      s_state = EM_GAME_MATCH_STATE_ROUND_START;
-      task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
-    }
-    break;
+	case EM_GAME_MATCH_RETRY:
+		if (s_state == EM_GAME_MATCH_STATE_GAME_OVER)
+		{
+			em_game_match_reset();
+			s_state = EM_GAME_MATCH_STATE_ROUND_START;
+			task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
+		}
+		break;
 
-  case EM_GAME_MATCH_HOME:
-    if (s_state == EM_GAME_MATCH_STATE_GAME_OVER) {
-      em_game_match_reset();
-      s_state = EM_GAME_MATCH_STATE_MENU;
-      em_game_match_publish_view();
-      task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
-    }
-    break;
+	case EM_GAME_MATCH_HOME:
+		if (s_state == EM_GAME_MATCH_STATE_GAME_OVER)
+		{
+			em_game_match_reset();
+			s_state = EM_GAME_MATCH_STATE_MENU;
+			em_game_match_publish_view();
+			task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
+		}
+		break;
 
-  case EM_GAME_MATCH_SHOOTER_TIMEOUT:
-    if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT) {
-      em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_CENTER);
-    }
-    break;
+	case EM_GAME_MATCH_SHOOTER_TIMEOUT:
+		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
+		{
+			em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_CENTER);
+		}
+		break;
 
-  case EM_GAME_MATCH_COUNTDOWN_TICK:
-    if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT) {
-      if (s_countdown_seconds > 1) {
-        s_countdown_seconds--;
-        em_game_match_publish_view();
-      }
+	case EM_GAME_MATCH_COUNTDOWN_TICK:
+		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
+		{
+			if (s_countdown_seconds > 1)
+			{
+				s_countdown_seconds--;
+				em_game_match_publish_view();
+			}
 
-      if (s_countdown_seconds <= 1) {
-        timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
-      }
-    }
-    break;
+			if (s_countdown_seconds <= 1)
+			{
+				timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_COUNTDOWN_TICK);
+			}
+		}
+		break;
 
-  case EM_GAME_MATCH_HIT_RESULT:
-    if (s_state == EM_GAME_MATCH_STATE_REVEAL) {
-      em_game_match_handle_hit_result(msg);
-    }
-    break;
+	case EM_GAME_MATCH_HIT_RESULT:
+		if (s_state == EM_GAME_MATCH_STATE_REVEAL)
+		{
+			em_game_match_handle_hit_result(msg);
+		}
+		break;
 
-  case EM_GAME_MATCH_ROUND_END:
-    if (s_state == EM_GAME_MATCH_STATE_ROUND_END) {
-      if (em_game_scoreboard_is_complete(&s_scoreboard)) {
-        em_game_match_finish();
-      } else {
-        s_state = EM_GAME_MATCH_STATE_ROUND_START;
-        task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
-      }
-    }
-    break;
+	case EM_GAME_MATCH_ROUND_END:
+		if (s_state == EM_GAME_MATCH_STATE_ROUND_END)
+		{
+			if (em_game_scoreboard_is_complete(&s_scoreboard))
+			{
+				em_game_match_finish();
+			}
+			else
+			{
+				s_state = EM_GAME_MATCH_STATE_ROUND_START;
+				task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SETUP);
+			}
+		}
+		break;
 
-  case EM_GAME_MATCH_RIP_TIMEOUT:
-  case EM_GAME_MATCH_SKIP_RIP:
-    if (s_state == EM_GAME_MATCH_STATE_RIP) {
-      em_game_match_show_game_over();
-    }
-    break;
+	case EM_GAME_MATCH_RIP_TIMEOUT:
+	case EM_GAME_MATCH_SKIP_RIP:
+		if (s_state == EM_GAME_MATCH_STATE_RIP)
+		{
+			em_game_match_show_game_over();
+		}
+		break;
 
-  default:
-    break;
-  }
+	default:
+		break;
+	}
 }
