@@ -1,6 +1,6 @@
 #include "ak.h"
-#include "port.h"
 #include "message.h"
+#include "port.h"
 #include "timer.h"
 
 #include "sys_ctrl.h"
@@ -8,188 +8,212 @@
 #include "app.h"
 #include "task_list.h"
 
+#include "em_game_goal.h"
 #include "em_game_keeper.h"
 
-em_game_keeper_t em_game_keeper;
+static em_game_keeper_view_t s_keeper;
+static em_game_keeper_difficulty_t s_difficulty =
+    EM_GAME_KEEPER_DIFFICULTY_NORMAL;
+static int16_t s_target_x;
+static uint32_t s_random_seed;
 
-static uint32_t s_keeper_random_seed;
+static uint32_t em_game_keeper_xorshift32() {
+  uint32_t value = s_random_seed;
 
-static uint32_t em_game_keeper_xorshift32()
-{
-	uint32_t value = s_keeper_random_seed;
+  value ^= value << 13;
+  value ^= value >> 17;
+  value ^= value << 5;
+  s_random_seed = value;
 
-	value ^= value << 13;
-	value ^= value >> 17;
-	value ^= value << 5;
-	s_keeper_random_seed = value;
-
-	return value;
+  return value;
 }
 
-static int16_t em_game_keeper_get_target_x(em_game_direction_t direction)
-{
-	switch (direction)
-	{
-	case EM_GAME_DIRECTION_LEFT:
-		return EM_GAME_KEEPER_TARGET_LEFT_X;
-
-	case EM_GAME_DIRECTION_CENTER:
-		return EM_GAME_KEEPER_TARGET_CENTER_X;
-
-	case EM_GAME_DIRECTION_RIGHT:
-		return EM_GAME_KEEPER_TARGET_RIGHT_X;
-
-	default:
-		return EM_GAME_KEEPER_START_X;
-	}
+static void em_game_keeper_publish_view() {
+  task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_UPDATE_KEEPER,
+                       (uint8_t *)&s_keeper, sizeof(s_keeper));
 }
 
-static void em_game_keeper_reset()
-{
-	timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK);
+static int16_t em_game_keeper_get_target_x(em_game_keeper_dive_t dive) {
+  switch (dive) {
+  case EM_GAME_KEEPER_DIVE_LEFT:
+    return EM_GAME_KEEPER_TARGET_LEFT_X;
 
-	em_game_keeper.x = EM_GAME_KEEPER_START_X;
-	em_game_keeper.y = EM_GAME_KEEPER_START_Y;
-	em_game_keeper.target_x = EM_GAME_KEEPER_START_X;
-	em_game_keeper.target_y = EM_GAME_KEEPER_START_Y;
-	em_game_keeper.frame = 0;
-	em_game_keeper.visible = true;
-	em_game_keeper.moving = false;
-	em_game_keeper.direction = EM_GAME_DIRECTION_NONE;
+  case EM_GAME_KEEPER_DIVE_RIGHT:
+    return EM_GAME_KEEPER_TARGET_RIGHT_X;
 
+  case EM_GAME_KEEPER_DIVE_CENTER:
+  default:
+    return EM_GAME_KEEPER_TARGET_CENTER_X;
+  }
 }
 
-static void em_game_keeper_pick_direction(em_game_direction_t shooter_direction,
-                                          em_game_difficulty_t difficulty)
-{
-	uint32_t tick = sys_ctrl_millis();
-	em_game_direction_t direction;
-	uint8_t roll;
+static void em_game_keeper_reset() {
+  timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK);
 
-	s_keeper_random_seed ^= tick;
-	if (s_keeper_random_seed == 0)
-	{
-		s_keeper_random_seed = EM_GAME_KEEPER_RANDOM_FALLBACK;
-	}
+  s_keeper.x = EM_GAME_KEEPER_START_X;
+  s_keeper.y = EM_GAME_KEEPER_START_Y;
+  s_keeper.frame = 0;
+  s_keeper.visible = true;
+  s_keeper.moving = false;
+  s_keeper.dive = EM_GAME_KEEPER_DIVE_NONE;
+  s_target_x = EM_GAME_KEEPER_START_X;
 
-	direction =
-	    (em_game_direction_t)((em_game_keeper_xorshift32() %
-	                           EM_GAME_KEEPER_DIRECTION_COUNT) +
-	                          EM_GAME_DIRECTION_LEFT);
-
-	switch (difficulty)
-	{
-	case EM_GAME_DIFFICULTY_EASY:
-		if (direction == shooter_direction)
-		{
-			roll = em_game_keeper_xorshift32() % 100;
-			if (roll < EM_GAME_KEEPER_EASY_MATCH_FLIP_CHANCE)
-			{
-				uint8_t offset =
-				    (em_game_keeper_xorshift32() %
-				     (EM_GAME_KEEPER_DIRECTION_COUNT - 1)) +
-				    1;
-
-				direction =
-				    (em_game_direction_t)(((direction -
-				                            EM_GAME_DIRECTION_LEFT +
-				                            offset) %
-				                           EM_GAME_KEEPER_DIRECTION_COUNT) +
-				                          EM_GAME_DIRECTION_LEFT);
-			}
-		}
-		break;
-
-	case EM_GAME_DIFFICULTY_HARD:
-		if (direction != shooter_direction)
-		{
-			roll = em_game_keeper_xorshift32() % 100;
-			if (roll < EM_GAME_KEEPER_HARD_MISS_OVERRIDE_CHANCE)
-			{
-				direction = shooter_direction;
-			}
-		}
-		break;
-
-	case EM_GAME_DIFFICULTY_NORMAL:
-	default:
-		break;
-	}
-
-	em_game_keeper.direction = direction;
-	em_game_keeper.target_x = em_game_keeper_get_target_x(em_game_keeper.direction);
-	em_game_keeper.target_y = EM_GAME_KEEPER_TARGET_Y;
-	em_game_keeper.frame = 0;
-	em_game_keeper.moving = true;
-	em_game_keeper.visible = true;
-
-	timer_set(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK, EM_GAME_KEEPER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
+  em_game_keeper_publish_view();
 }
 
-static void em_game_keeper_advance()
-{
-	if (!em_game_keeper.moving)
-	{
-		return;
-	}
+static em_game_keeper_dive_t
+em_game_keeper_shot_to_dive(em_game_keeper_shot_t shot) {
+  switch (shot) {
+  case EM_GAME_KEEPER_SHOT_LEFT:
+    return EM_GAME_KEEPER_DIVE_LEFT;
 
-	em_game_keeper.frame++;
-	em_game_keeper.x = EM_GAME_KEEPER_START_X +
-	                   ((em_game_keeper.target_x - EM_GAME_KEEPER_START_X) * em_game_keeper.frame) /
-	                       EM_GAME_KEEPER_STEP_COUNT;
-	em_game_keeper.y = EM_GAME_KEEPER_START_Y +
-	                   ((em_game_keeper.target_y - EM_GAME_KEEPER_START_Y) * em_game_keeper.frame) /
-	                       EM_GAME_KEEPER_STEP_COUNT;
+  case EM_GAME_KEEPER_SHOT_RIGHT:
+    return EM_GAME_KEEPER_DIVE_RIGHT;
 
-	if (em_game_keeper.frame >= EM_GAME_KEEPER_STEP_COUNT)
-	{
-		em_game_keeper.x = em_game_keeper.target_x;
-		em_game_keeper.y = em_game_keeper.target_y;
-		em_game_keeper.moving = false;
-		timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK);
-	}
-
+  case EM_GAME_KEEPER_SHOT_CENTER:
+  default:
+    return EM_GAME_KEEPER_DIVE_CENTER;
+  }
 }
 
-em_game_direction_t em_game_keeper_get_direction()
-{
-	return em_game_keeper.direction;
+static em_game_keeper_dive_t
+em_game_keeper_pick_dive(em_game_keeper_shot_t shot) {
+  em_game_keeper_dive_t shot_dive = em_game_keeper_shot_to_dive(shot);
+  em_game_keeper_dive_t dive;
+  uint8_t roll;
+
+  s_random_seed ^= sys_ctrl_millis();
+  if (s_random_seed == 0) {
+    s_random_seed = EM_GAME_KEEPER_RANDOM_FALLBACK;
+  }
+
+  dive = (em_game_keeper_dive_t)((em_game_keeper_xorshift32() %
+                                  EM_GAME_KEEPER_DIRECTION_COUNT) +
+                                 EM_GAME_KEEPER_DIVE_LEFT);
+
+  switch (s_difficulty) {
+  case EM_GAME_KEEPER_DIFFICULTY_EASY:
+    if (dive == shot_dive) {
+      roll = em_game_keeper_xorshift32() % 100;
+      if (roll < EM_GAME_KEEPER_EASY_MATCH_FLIP_CHANCE) {
+        uint8_t offset = (em_game_keeper_xorshift32() %
+                          (EM_GAME_KEEPER_DIRECTION_COUNT - 1)) +
+                         1;
+
+        dive = (em_game_keeper_dive_t)(((dive - EM_GAME_KEEPER_DIVE_LEFT +
+                                         offset) %
+                                        EM_GAME_KEEPER_DIRECTION_COUNT) +
+                                       EM_GAME_KEEPER_DIVE_LEFT);
+      }
+    }
+    break;
+
+  case EM_GAME_KEEPER_DIFFICULTY_HARD:
+    if (dive != shot_dive) {
+      roll = em_game_keeper_xorshift32() % 100;
+      if (roll < EM_GAME_KEEPER_HARD_MISS_OVERRIDE_CHANCE) {
+        dive = shot_dive;
+      }
+    }
+    break;
+
+  case EM_GAME_KEEPER_DIFFICULTY_NORMAL:
+  default:
+    break;
+  }
+
+  return dive;
 }
 
-void em_game_keeper_handle(ak_msg_t* msg)
-{
-	switch (msg->sig)
-	{
-	case EM_GAME_KEEPER_RESET:
-		em_game_keeper_reset();
-		break;
+static void em_game_keeper_start(em_game_keeper_shot_t shot) {
+  em_game_keeper_dive_t dive = em_game_keeper_pick_dive(shot);
 
-	case EM_GAME_KEEPER_AI_PICK:
-		if (get_data_len_common_msg(msg) == sizeof(em_game_keeper_ai_pick_t))
-		{
-			em_game_keeper_ai_pick_t* keeper_pick =
-			    (em_game_keeper_ai_pick_t*)get_data_common_msg(msg);
-			em_game_direction_t shooter_direction =
-			    (em_game_direction_t)keeper_pick->shooter_direction;
-			em_game_difficulty_t difficulty =
-			    (em_game_difficulty_t)keeper_pick->difficulty;
+  s_keeper.dive = (uint8_t)dive;
+  s_keeper.frame = 0;
+  s_keeper.visible = true;
+  s_keeper.moving = true;
+  s_target_x = em_game_keeper_get_target_x(dive);
 
-			if ((shooter_direction >= EM_GAME_DIRECTION_LEFT) &&
-			    (shooter_direction <= EM_GAME_DIRECTION_RIGHT) &&
-			    (difficulty >= EM_GAME_DIFFICULTY_EASY) &&
-			    (difficulty <= EM_GAME_DIFFICULTY_HARD))
-			{
-				em_game_keeper_pick_direction(shooter_direction,
-				                              difficulty);
-			}
-		}
-		break;
+  timer_set(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK,
+            EM_GAME_KEEPER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
+  em_game_keeper_publish_view();
+}
 
-	case EM_GAME_KEEPER_ANIM_TICK:
-		em_game_keeper_advance();
-		break;
+static void em_game_keeper_report_ready() {
+  em_game_goal_keeper_t keeper;
 
-	default:
-		break;
-	}
+  switch ((em_game_keeper_dive_t)s_keeper.dive) {
+  case EM_GAME_KEEPER_DIVE_LEFT:
+    keeper.zone = EM_GAME_GOAL_ZONE_LEFT;
+    break;
+
+  case EM_GAME_KEEPER_DIVE_RIGHT:
+    keeper.zone = EM_GAME_GOAL_ZONE_RIGHT;
+    break;
+
+  case EM_GAME_KEEPER_DIVE_CENTER:
+  default:
+    keeper.zone = EM_GAME_GOAL_ZONE_CENTER;
+    break;
+  }
+
+  task_post_common_msg(EM_GAME_GOAL_ID, EM_GAME_GOAL_KEEPER_READY,
+                       (uint8_t *)&keeper, sizeof(keeper));
+}
+
+static void em_game_keeper_advance() {
+  if (!s_keeper.moving) {
+    return;
+  }
+
+  s_keeper.frame++;
+  s_keeper.x = EM_GAME_KEEPER_START_X +
+               ((s_target_x - EM_GAME_KEEPER_START_X) * s_keeper.frame) /
+                   EM_GAME_KEEPER_STEP_COUNT;
+
+  if (s_keeper.frame >= EM_GAME_KEEPER_STEP_COUNT) {
+    s_keeper.x = s_target_x;
+    s_keeper.moving = false;
+    timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK);
+    em_game_keeper_report_ready();
+  }
+
+  em_game_keeper_publish_view();
+}
+
+void em_game_keeper_handle(ak_msg_t *msg) {
+  switch (msg->sig) {
+  case EM_GAME_KEEPER_RESET:
+    em_game_keeper_reset();
+    break;
+
+  case EM_GAME_KEEPER_SET_DIFFICULTY:
+    if (get_data_len_common_msg(msg) == sizeof(uint8_t)) {
+      uint8_t difficulty = *get_data_common_msg(msg);
+
+      if (difficulty <= EM_GAME_KEEPER_DIFFICULTY_HARD) {
+        s_difficulty = (em_game_keeper_difficulty_t)difficulty;
+      }
+    }
+    break;
+
+  case EM_GAME_KEEPER_REACT:
+    if (get_data_len_common_msg(msg) == sizeof(em_game_keeper_react_t)) {
+      em_game_keeper_react_t *react =
+          (em_game_keeper_react_t *)get_data_common_msg(msg);
+
+      if ((react->shot_zone >= EM_GAME_KEEPER_SHOT_LEFT) &&
+          (react->shot_zone <= EM_GAME_KEEPER_SHOT_RIGHT)) {
+        em_game_keeper_start((em_game_keeper_shot_t)react->shot_zone);
+      }
+    }
+    break;
+
+  case EM_GAME_KEEPER_ANIM_TICK:
+    em_game_keeper_advance();
+    break;
+
+  default:
+    break;
+  }
 }

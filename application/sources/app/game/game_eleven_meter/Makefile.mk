@@ -10,4 +10,3 @@ SOURCES_CPP += sources/app/game/game_eleven_meter/em_game_keeper.cpp
 SOURCES_CPP += sources/app/game/game_eleven_meter/em_game_ball.cpp
 SOURCES_CPP += sources/app/game/game_eleven_meter/em_game_goal.cpp
 SOURCES_CPP += sources/app/game/game_eleven_meter/em_game_scoreboard.cpp
-SOURCES_CPP += sources/app/game/game_eleven_meter/em_game_match_state.cpp

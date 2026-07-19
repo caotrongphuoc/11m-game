@@ -6,12 +6,29 @@
 #include "ak.h"
 #include "message.h"
 
-typedef struct
-{
-	uint8_t ball_direction;
-	uint8_t keeper_direction;
-} em_game_goal_hit_t;
+typedef enum {
+  EM_GAME_GOAL_ZONE_NONE,
+  EM_GAME_GOAL_ZONE_LEFT,
+  EM_GAME_GOAL_ZONE_CENTER,
+  EM_GAME_GOAL_ZONE_RIGHT
+} em_game_goal_zone_t;
 
-extern void em_game_goal_handle(ak_msg_t* msg);
+typedef enum {
+  EM_GAME_GOAL_RESULT_NONE,
+  EM_GAME_GOAL_RESULT_GOAL,
+  EM_GAME_GOAL_RESULT_SAVE,
+  EM_GAME_GOAL_RESULT_MISS
+} em_game_goal_result_t;
+
+typedef struct {
+  uint8_t zone;
+  uint8_t is_wide;
+} em_game_goal_ball_t;
+
+typedef struct {
+  uint8_t zone;
+} em_game_goal_keeper_t;
+
+extern void em_game_goal_handle(ak_msg_t *msg);
 
 #endif //__EM_GAME_GOAL_H__

@@ -1,10 +1,11 @@
 #ifndef __EM_GAME_BALL_H__
 #define __EM_GAME_BALL_H__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "ak.h"
 #include "message.h"
-
-#include "em_game_match_state.h"
 
 #define EM_GAME_BALL_START_X (64)
 #define EM_GAME_BALL_START_Y (59)
@@ -16,14 +17,28 @@
 #define EM_GAME_BALL_TARGET_WIDE_RIGHT_X (108)
 #define EM_GAME_BALL_STEP_COUNT (10)
 
-typedef struct
-{
-	uint8_t direction;
-	uint8_t is_wide;
+typedef enum {
+  EM_GAME_BALL_TARGET_NONE,
+  EM_GAME_BALL_TARGET_LEFT,
+  EM_GAME_BALL_TARGET_CENTER,
+  EM_GAME_BALL_TARGET_RIGHT,
+  EM_GAME_BALL_TARGET_WIDE_LEFT,
+  EM_GAME_BALL_TARGET_WIDE_RIGHT
+} em_game_ball_target_t;
+
+typedef struct {
+  uint8_t target;
 } em_game_ball_kick_t;
 
-extern em_game_ball_t em_game_ball;
+typedef struct {
+  int16_t x;
+  int16_t y;
+  uint8_t frame;
+  bool visible;
+  bool moving;
+  uint8_t target;
+} em_game_ball_view_t;
 
-extern void em_game_ball_handle(ak_msg_t* msg);
+extern void em_game_ball_handle(ak_msg_t *msg);
 
 #endif //__EM_GAME_BALL_H__
