@@ -55,7 +55,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
   - Study `application/sources/app/game/game_zomwar/` for object file layout
   - Study `application/sources/app/screens/` for screen file layout
   - Study `application/sources/app/app.h` and `task_list.h/cpp` for signal & task registration
-- Coding rules: `docs/02-guide-coding-rules.md` (copied from zomwar-game)
+  - Coding rules reference: https://github.com/caotrongphuoc/zomwar-game/blob/main/docs/02-guide-coding-rules.md
 - Object ownership and message sequences: `docs/03-design-sequence-object.md`
 
 **Important**: study the patterns and re-implement with `em_game_*` prefix. Do not blindly copy zomwar sources into this repo.
@@ -84,7 +84,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 - Follow `docs/03-design-sequence-object.md` when changing gameplay message flow.
 
 ## Coding style
-Follow `docs/02-guide-coding-rules.md` — Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
+Use the root `.clang-format` as the source of truth: Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
 
 ## Commit message workflow
 
