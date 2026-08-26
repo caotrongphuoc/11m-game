@@ -48,7 +48,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 ### Base source
 - Upstream: https://github.com/the-ak-foundation/ak-base-kit-stm32l151
 - The base kit ships as an empty template: only `application/`, `boot/`, `hardware/`.
-- This project has already created and wired its game objects under `application/sources/app/game/game_eleven_meter/` and its screens under `application/sources/app/screens/`. Extend the existing modules; do not scaffold them again.
+- This project has already created and wired its game objects under `application/sources/app/game_eleven_meter/` and its screens under `application/sources/app/screens/`. Extend the existing modules; do not scaffold them again.
 
 ### Reference (READ-ONLY — for rules and patterns, do NOT copy code)
 - Sample project: https://github.com/caotrongphuoc/zomwar-game
@@ -61,7 +61,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 **Important**: study the patterns and re-implement with `em_game_*` prefix. Do not blindly copy zomwar sources into this repo.
 
 ## Naming for this project (em_game_*)
-- Game folder: `application/sources/app/game/game_eleven_meter/`
+- Game folder: `application/sources/app/game_eleven_meter/`
 - Screens folder: `application/sources/app/screens/`
 - Object files: `em_game_<object>.h/cpp` (e.g. `em_game_ball.h`)
 - Screen files: `scr_game_<name>.h/cpp` (follow zomwar pattern, e.g. `scr_game_penalty.cpp`)

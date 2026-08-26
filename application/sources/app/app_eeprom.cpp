@@ -1,7 +1,7 @@
 #include "app_eeprom.h"
 #include "eeprom.h"
 
-#include "game/game_eleven_meter/em_game_match.h"
+#include "game_eleven_meter/em_game_match.h"
 
 typedef struct __attribute__((packed))
 {

@@ -166,7 +166,7 @@ Start Match -> Round Setup -> Three-Second Selection
 11m-game/
 ├── application/                         # Eleven Meter application firmware
 │   └── sources/app/
-│       ├── game/game_eleven_meter/       # Message-driven gameplay objects
+│       ├── game_eleven_meter/            # Message-driven gameplay objects
 │       └── screens/                      # OLED screens and game rendering
 ├── boot/                                # AK bootloader source
 ├── docs/                                # Project guides and design documents

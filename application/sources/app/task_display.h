@@ -4,11 +4,11 @@
 #include "screen_manager.h"
 #include "screens.h"
 
-#include "game/game_eleven_meter/em_game_ball.h"
-#include "game/game_eleven_meter/em_game_keeper.h"
-#include "game/game_eleven_meter/em_game_match.h"
-#include "game/game_eleven_meter/em_game_scoreboard.h"
-#include "game/game_eleven_meter/em_game_shooter.h"
+#include "game_eleven_meter/em_game_ball.h"
+#include "game_eleven_meter/em_game_keeper.h"
+#include "game_eleven_meter/em_game_match.h"
+#include "game_eleven_meter/em_game_scoreboard.h"
+#include "game_eleven_meter/em_game_shooter.h"
 
 #define EM_GAME_VIEW_FLAG_BALL_VISIBLE (1 << 0)
 #define EM_GAME_VIEW_FLAG_KEEPER_VISIBLE (1 << 1)

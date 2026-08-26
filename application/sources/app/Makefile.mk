@@ -1,5 +1,5 @@
 include sources/app/screens/Makefile.mk
-include sources/app/game/Makefile.mk
+include sources/app/game_eleven_meter/Makefile.mk
 
 CFLAGS		+= -I./sources/app
 CPPFLAGS	+= -I./sources/app
