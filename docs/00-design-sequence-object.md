@@ -95,10 +95,14 @@ sequenceDiagram
     Goal->>Match: EM_GAME_MATCH_HIT_RESULT
     Match->>Match: Update scoreboard
     Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
-    Match->>Match: EM_GAME_MATCH_ROUND_END
+    Display->>Match: EM_GAME_MATCH_UPDATE
 ```
 
 The order of the Ball and Keeper arrival messages is not significant. Goal stores the first valid report and waits for the other one.
+
+While the penalty screen is active, its periodic `EM_GAME_TIME_TICK` posts
+`EM_GAME_MATCH_UPDATE` to Match. Match uses that single game-loop signal to advance the
+selection countdown and result phase without blocking a task handler.
 
 ## Display snapshots
 

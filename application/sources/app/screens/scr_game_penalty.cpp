@@ -166,6 +166,14 @@ void scr_game_penalty_handle(ak_msg_t* msg)
 	{
 		APP_DBG_SIG("SCREEN_ENTRY\n");
 		timer_remove_attr(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_IDLE);
+		timer_set(AC_TASK_DISPLAY_ID, EM_GAME_TIME_TICK,
+		          EM_GAME_TIME_TICK_INTERVAL, TIMER_PERIODIC);
+	}
+	break;
+
+	case EM_GAME_TIME_TICK:
+	{
+		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_UPDATE);
 	}
 	break;
 
