@@ -44,7 +44,7 @@ static int16_t em_game_ball_get_target_x(em_game_ball_target_t target)
 
 static void em_game_ball_reset()
 {
-	timer_remove_attr(EM_GAME_BALL_ID, EM_GAME_BALL_ANIM_TICK);
+	timer_remove_attr(EM_GAME_BALL_ID, EM_GAME_BALL_UPDATE);
 
 	s_ball.x = EM_GAME_BALL_START_X;
 	s_ball.y = EM_GAME_BALL_START_Y;
@@ -75,7 +75,7 @@ static void em_game_ball_start(const em_game_ball_kick_t* kick)
 	s_ball.target = (uint8_t)target;
 	s_target_x = em_game_ball_get_target_x(target);
 
-	timer_set(EM_GAME_BALL_ID, EM_GAME_BALL_ANIM_TICK,
+	timer_set(EM_GAME_BALL_ID, EM_GAME_BALL_UPDATE,
 	          EM_GAME_BALL_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
 	em_game_ball_publish_view();
 }
@@ -133,7 +133,7 @@ static void em_game_ball_advance()
 		s_ball.x = s_target_x;
 		s_ball.y = EM_GAME_BALL_TARGET_Y;
 		s_ball.moving = false;
-		timer_remove_attr(EM_GAME_BALL_ID, EM_GAME_BALL_ANIM_TICK);
+		timer_remove_attr(EM_GAME_BALL_ID, EM_GAME_BALL_UPDATE);
 		em_game_ball_report_arrival();
 	}
 
@@ -144,6 +144,7 @@ void em_game_ball_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
+	case EM_GAME_BALL_SETUP:
 	case EM_GAME_BALL_RESET:
 		em_game_ball_reset();
 		break;
@@ -155,7 +156,7 @@ void em_game_ball_handle(ak_msg_t* msg)
 		}
 		break;
 
-	case EM_GAME_BALL_ANIM_TICK:
+	case EM_GAME_BALL_UPDATE:
 		em_game_ball_advance();
 		break;
 

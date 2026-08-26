@@ -36,7 +36,7 @@ static void em_game_shooter_publish_view()
 
 static void em_game_shooter_reset()
 {
-	timer_remove_attr(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_ANIM_TICK);
+	timer_remove_attr(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_UPDATE);
 
 	s_shooter.x = EM_GAME_SHOOTER_START_X;
 	s_shooter.y = EM_GAME_SHOOTER_START_Y;
@@ -132,7 +132,7 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 		break;
 	}
 
-	timer_set(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_ANIM_TICK,
+	timer_set(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_UPDATE,
 	          EM_GAME_SHOOTER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
 	task_post_common_msg(EM_GAME_BALL_ID, EM_GAME_BALL_KICK,
 	                     (uint8_t*)&ball_kick, sizeof(ball_kick));
@@ -155,7 +155,7 @@ static void em_game_shooter_advance()
 	{
 		s_shooter.frame = EM_GAME_SHOOTER_STEP_COUNT;
 		s_shooter.moving = false;
-		timer_remove_attr(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_ANIM_TICK);
+		timer_remove_attr(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_UPDATE);
 	}
 
 	em_game_shooter_publish_view();
@@ -165,6 +165,7 @@ void em_game_shooter_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
+	case EM_GAME_SHOOTER_SETUP:
 	case EM_GAME_SHOOTER_RESET:
 		em_game_shooter_reset();
 		break;
@@ -181,7 +182,7 @@ void em_game_shooter_handle(ak_msg_t* msg)
 		em_game_shooter_start(EM_GAME_SHOOTER_KICK_RIGHT);
 		break;
 
-	case EM_GAME_SHOOTER_ANIM_TICK:
+	case EM_GAME_SHOOTER_UPDATE:
 		em_game_shooter_advance();
 		break;
 

@@ -55,6 +55,7 @@ void em_game_goal_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
+	case EM_GAME_GOAL_SETUP:
 	case EM_GAME_GOAL_RESET:
 		em_game_goal_reset();
 		break;

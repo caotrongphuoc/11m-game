@@ -53,7 +53,7 @@ static int16_t em_game_keeper_get_target_x(em_game_keeper_dive_t dive)
 
 static void em_game_keeper_reset()
 {
-	timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK);
+	timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_UPDATE);
 
 	s_keeper.x = EM_GAME_KEEPER_START_X;
 	s_keeper.y = EM_GAME_KEEPER_START_Y;
@@ -149,7 +149,7 @@ static void em_game_keeper_start(em_game_keeper_shot_t shot)
 	s_keeper.moving = true;
 	s_target_x = em_game_keeper_get_target_x(dive);
 
-	timer_set(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK,
+	timer_set(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_UPDATE,
 	          EM_GAME_KEEPER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
 	em_game_keeper_publish_view();
 }
@@ -194,7 +194,7 @@ static void em_game_keeper_advance()
 	{
 		s_keeper.x = s_target_x;
 		s_keeper.moving = false;
-		timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_ANIM_TICK);
+		timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_UPDATE);
 		em_game_keeper_report_ready();
 	}
 
@@ -205,6 +205,7 @@ void em_game_keeper_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
+	case EM_GAME_KEEPER_SETUP:
 	case EM_GAME_KEEPER_RESET:
 		em_game_keeper_reset();
 		break;
@@ -235,7 +236,7 @@ void em_game_keeper_handle(ak_msg_t* msg)
 		}
 		break;
 
-	case EM_GAME_KEEPER_ANIM_TICK:
+	case EM_GAME_KEEPER_UPDATE:
 		em_game_keeper_advance();
 		break;
 
