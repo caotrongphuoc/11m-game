@@ -11,6 +11,7 @@
 static em_game_ball_view_t s_ball;
 static int16_t s_target_x;
 static uint8_t s_update_elapsed_ms;
+static bool s_kick_started;
 
 static void em_game_ball_publish_view()
 {
@@ -52,6 +53,7 @@ static void em_game_ball_reset()
 	s_ball.target = EM_GAME_BALL_TARGET_NONE;
 	s_target_x = EM_GAME_BALL_START_X;
 	s_update_elapsed_ms = 0;
+	s_kick_started = false;
 
 	em_game_ball_publish_view();
 }
@@ -60,7 +62,7 @@ static void em_game_ball_start(const em_game_ball_kick_t* kick)
 {
 	em_game_ball_target_t target = (em_game_ball_target_t)kick->target;
 
-	if ((target < EM_GAME_BALL_TARGET_LEFT) ||
+	if (s_kick_started || (target < EM_GAME_BALL_TARGET_LEFT) ||
 	    (target > EM_GAME_BALL_TARGET_WIDE_RIGHT))
 	{
 		return;
@@ -74,6 +76,7 @@ static void em_game_ball_start(const em_game_ball_kick_t* kick)
 	s_ball.target = (uint8_t)target;
 	s_target_x = em_game_ball_get_target_x(target);
 	s_update_elapsed_ms = 0;
+	s_kick_started = true;
 
 	em_game_ball_publish_view();
 }

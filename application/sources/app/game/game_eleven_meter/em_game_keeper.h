@@ -34,6 +34,14 @@ typedef enum
 	EM_GAME_KEEPER_DIFFICULTY_HARD
 } em_game_keeper_difficulty_t;
 
+typedef struct
+{
+	uint8_t difficulty;
+} em_game_keeper_difficulty_msg_t;
+
+static_assert(sizeof(em_game_keeper_difficulty_msg_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_keeper_difficulty_msg_t exceeds AK common message payload");
+
 typedef enum
 {
 	EM_GAME_KEEPER_SHOT_NONE,

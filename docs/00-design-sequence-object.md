@@ -117,7 +117,7 @@ sequenceDiagram
 
     Goal->>Goal: Validate both payloads
     Goal->>Goal: Resolve GOAL / SAVE / MISS
-    Goal->>Match: EM_GAME_MATCH_HIT_RESULT
+    Goal->>Match: EM_GAME_MATCH_HIT_RESULT<br/>em_game_goal_result_msg_t
     Match->>Match: Update scoreboard
     Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
     Display->>Match: EM_GAME_MATCH_UPDATE

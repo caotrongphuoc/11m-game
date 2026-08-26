@@ -39,6 +39,14 @@ typedef struct
 static_assert(sizeof(em_game_goal_keeper_t) <= AK_COMMON_MSG_DATA_SIZE,
               "em_game_goal_keeper_t exceeds AK common message payload");
 
+typedef struct
+{
+	uint8_t result;
+} em_game_goal_result_msg_t;
+
+static_assert(sizeof(em_game_goal_result_msg_t) <= AK_COMMON_MSG_DATA_SIZE,
+              "em_game_goal_result_msg_t exceeds AK common message payload");
+
 extern void em_game_goal_handle(ak_msg_t* msg);
 
 #endif //__EM_GAME_GOAL_H__

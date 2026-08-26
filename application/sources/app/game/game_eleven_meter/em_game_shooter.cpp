@@ -15,6 +15,7 @@ static em_game_shooter_view_t s_shooter;
 static uint32_t s_random_seed;
 static uint32_t s_selection_start_tick;
 static uint8_t s_update_elapsed_ms;
+static bool s_kick_started;
 
 static uint32_t em_game_shooter_xorshift32()
 {
@@ -44,6 +45,7 @@ static void em_game_shooter_reset()
 	s_shooter.kick = EM_GAME_SHOOTER_KICK_NONE;
 	s_selection_start_tick = sys_ctrl_millis();
 	s_update_elapsed_ms = 0;
+	s_kick_started = false;
 
 	if (s_random_seed == 0)
 	{
@@ -108,11 +110,17 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 	em_game_ball_kick_t ball_kick;
 	em_game_keeper_react_t keeper_react;
 
+	if (s_kick_started)
+	{
+		return;
+	}
+
 	s_shooter.frame = 0;
 	s_shooter.moving = true;
 	s_shooter.visible = true;
 	s_shooter.kick = (uint8_t)kick;
 	s_update_elapsed_ms = 0;
+	s_kick_started = true;
 
 	ball_kick.target = (uint8_t)em_game_shooter_pick_ball_target(kick);
 

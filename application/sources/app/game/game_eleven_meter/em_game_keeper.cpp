@@ -16,6 +16,7 @@ static em_game_keeper_difficulty_t s_difficulty =
 static int16_t s_target_x;
 static uint32_t s_random_seed;
 static uint8_t s_update_elapsed_ms;
+static bool s_reaction_started;
 
 static uint32_t em_game_keeper_xorshift32()
 {
@@ -61,6 +62,7 @@ static void em_game_keeper_reset()
 	s_keeper.dive = EM_GAME_KEEPER_DIVE_NONE;
 	s_target_x = EM_GAME_KEEPER_START_X;
 	s_update_elapsed_ms = 0;
+	s_reaction_started = false;
 
 	em_game_keeper_publish_view();
 }
@@ -140,6 +142,11 @@ em_game_keeper_pick_dive(em_game_keeper_shot_t shot)
 
 static void em_game_keeper_start(em_game_keeper_shot_t shot)
 {
+	if (s_reaction_started)
+	{
+		return;
+	}
+
 	em_game_keeper_dive_t dive = em_game_keeper_pick_dive(shot);
 
 	s_keeper.dive = (uint8_t)dive;
@@ -148,6 +155,7 @@ static void em_game_keeper_start(em_game_keeper_shot_t shot)
 	s_keeper.moving = true;
 	s_target_x = em_game_keeper_get_target_x(dive);
 	s_update_elapsed_ms = 0;
+	s_reaction_started = true;
 
 	em_game_keeper_publish_view();
 }
@@ -208,13 +216,16 @@ void em_game_keeper_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_KEEPER_SET_DIFFICULTY:
-		if (get_data_len_common_msg(msg) == sizeof(uint8_t))
+		if (get_data_len_common_msg(msg) ==
+		    sizeof(em_game_keeper_difficulty_msg_t))
 		{
-			uint8_t difficulty = *get_data_common_msg(msg);
+			em_game_keeper_difficulty_msg_t* difficulty_msg =
+			    (em_game_keeper_difficulty_msg_t*)get_data_common_msg(msg);
 
-			if (difficulty <= EM_GAME_KEEPER_DIFFICULTY_HARD)
+			if (difficulty_msg->difficulty <= EM_GAME_KEEPER_DIFFICULTY_HARD)
 			{
-				s_difficulty = (em_game_keeper_difficulty_t)difficulty;
+				s_difficulty = (em_game_keeper_difficulty_t)
+				                   difficulty_msg->difficulty;
 			}
 		}
 		break;

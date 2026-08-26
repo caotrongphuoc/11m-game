@@ -52,10 +52,11 @@ static void em_game_match_publish_view()
 
 static void em_game_match_set_keeper_difficulty()
 {
-	uint8_t difficulty = (uint8_t)s_difficulty;
+	em_game_keeper_difficulty_msg_t difficulty_msg;
 
+	difficulty_msg.difficulty = (uint8_t)s_difficulty;
 	task_post_common_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_SET_DIFFICULTY,
-	                     &difficulty, sizeof(difficulty));
+	                     (uint8_t*)&difficulty_msg, sizeof(difficulty_msg));
 }
 
 static void em_game_match_cycle_difficulty_left()
@@ -97,15 +98,17 @@ static void em_game_match_reset()
 
 static void em_game_match_handle_hit_result(ak_msg_t* msg)
 {
+	em_game_goal_result_msg_t* result_msg;
 	em_game_goal_result_t result;
 	uint8_t buzzer_signal;
 
-	if (get_data_len_common_msg(msg) != sizeof(uint8_t))
+	if (get_data_len_common_msg(msg) != sizeof(em_game_goal_result_msg_t))
 	{
 		return;
 	}
 
-	result = (em_game_goal_result_t)(*get_data_common_msg(msg));
+	result_msg = (em_game_goal_result_msg_t*)get_data_common_msg(msg);
+	result = (em_game_goal_result_t)result_msg->result;
 
 	switch (result)
 	{
