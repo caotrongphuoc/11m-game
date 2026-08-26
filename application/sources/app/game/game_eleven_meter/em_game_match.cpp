@@ -125,8 +125,12 @@ static void em_game_match_handle_hit_result(ak_msg_t* msg)
 		return;
 	}
 
+	if (!em_game_scoreboard_record_result(&s_scoreboard, result))
+	{
+		return;
+	}
+
 	s_last_result = result;
-	em_game_scoreboard_record_result(&s_scoreboard, result);
 	task_post_pure_msg(AC_TASK_BUZZER_ID, buzzer_signal);
 	em_game_match_set_state(EM_GAME_MATCH_STATE_ROUND_END);
 	em_game_match_publish_view();
@@ -138,7 +142,9 @@ static void em_game_match_finish()
 
 	em_game_scoreboard_evaluate_winner(&s_scoreboard);
 
-	if (s_scoreboard.goals > s_best_goals)
+	if ((s_scoreboard.goals > s_best_goals) ||
+	    ((s_scoreboard.goals == s_best_goals) &&
+	     (s_difficulty > s_best_difficulty)))
 	{
 		s_best_goals = s_scoreboard.goals;
 		s_best_difficulty = s_difficulty;
@@ -187,13 +193,18 @@ static void em_game_match_initialize()
 	em_game_score_record_t score_record;
 
 	em_game_match_reset();
-	load_score_record(&score_record);
-	s_best_goals = score_record.best_goals;
-
-	if (score_record.best_difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD)
+	if (load_score_record(&score_record) &&
+	    (score_record.best_goals <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
+	    (score_record.best_difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD))
 	{
+		s_best_goals = score_record.best_goals;
 		s_best_difficulty =
 		    (em_game_match_difficulty_t)score_record.best_difficulty;
+	}
+	else
+	{
+		s_best_goals = 0;
+		s_best_difficulty = EM_GAME_MATCH_DIFFICULTY_EASY;
 	}
 
 	em_game_match_set_state(EM_GAME_MATCH_STATE_MENU);

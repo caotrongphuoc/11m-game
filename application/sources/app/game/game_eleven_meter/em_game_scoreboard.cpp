@@ -9,25 +9,32 @@ void em_game_scoreboard_reset(em_game_scoreboard_t* sb)
 	sb->winner = EM_GAME_SCOREBOARD_WINNER_NONE;
 }
 
-void em_game_scoreboard_record_result(em_game_scoreboard_t* sb,
+bool em_game_scoreboard_record_result(em_game_scoreboard_t* sb,
                                       em_game_goal_result_t result)
 {
+	uint8_t result_count = sb->goals + sb->saves + sb->misses;
+
+	if ((sb->round == 0) || (result_count >= sb->round))
+	{
+		return false;
+	}
+
 	switch (result)
 	{
 	case EM_GAME_GOAL_RESULT_GOAL:
 		sb->goals++;
-		break;
+		return true;
 
 	case EM_GAME_GOAL_RESULT_SAVE:
 		sb->saves++;
-		break;
+		return true;
 
 	case EM_GAME_GOAL_RESULT_MISS:
 		sb->misses++;
-		break;
+		return true;
 
 	default:
-		break;
+		return false;
 	}
 }
 

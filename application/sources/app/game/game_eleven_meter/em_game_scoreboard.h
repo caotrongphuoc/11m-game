@@ -26,7 +26,7 @@ typedef struct
 } em_game_scoreboard_t;
 
 extern void em_game_scoreboard_reset(em_game_scoreboard_t* sb);
-extern void em_game_scoreboard_record_result(em_game_scoreboard_t* sb,
+extern bool em_game_scoreboard_record_result(em_game_scoreboard_t* sb,
                                              em_game_goal_result_t result);
 extern void em_game_scoreboard_advance_round(em_game_scoreboard_t* sb);
 extern bool em_game_scoreboard_is_complete(em_game_scoreboard_t* sb);
