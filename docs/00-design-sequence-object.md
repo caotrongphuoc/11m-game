@@ -24,6 +24,8 @@ sequenceDiagram
     participant Keeper
     participant Goal
 
+    Display->>Match: EM_GAME_MATCH_INIT
+    Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
     Display->>Match: EM_GAME_MATCH_START
     Match->>Match: EM_GAME_MATCH_SETUP
     Match->>Match: EM_GAME_MATCH_START_ROUND
@@ -40,6 +42,8 @@ sequenceDiagram
 
 The penalty screen is entered once when a match starts. Later rounds stay on the same screen;
 Match posts `RESET` to Goal, Ball, Keeper, and Shooter before starting the next round.
+Match owns all gameplay transitions: screens post input signals and wait for Match to request the
+menu, penalty, RIP, or game-over screen.
 
 ## Shared game loop
 

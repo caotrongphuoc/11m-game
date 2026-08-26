@@ -42,8 +42,8 @@ typedef struct
 static_assert(sizeof(em_game_view_t) <= AK_COMMON_MSG_DATA_SIZE,
               "em_game_view_t exceeds AK common message payload");
 
-#define LCD_WIDTH (124)
-#define LCD_HEIGHT (60)
+#define LCD_WIDTH (128)
+#define LCD_HEIGHT (64)
 
 #define NUMFLAKES (10)
 #define XPOS (0)

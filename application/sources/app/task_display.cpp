@@ -20,6 +20,47 @@ static em_game_ball_view_t s_em_game_ball_view;
 static em_game_keeper_view_t s_em_game_keeper_view;
 static em_game_shooter_view_t s_em_game_shooter_view;
 
+static bool task_display_match_view_is_valid(const em_game_match_view_t* view)
+{
+	uint8_t result_count = view->goals + view->saves + view->misses;
+
+	return (view->round <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
+	       (result_count <= view->round) &&
+	       (view->countdown <= 3) &&
+	       (view->state <= EM_GAME_MATCH_STATE_RIP) &&
+	       (view->difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD) &&
+	       (view->best_goals <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
+	       (view->best_difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD) &&
+	       (view->last_result <= EM_GAME_GOAL_RESULT_MISS) &&
+	       (view->winner <= EM_GAME_SCOREBOARD_WINNER_AI);
+}
+
+static bool task_display_shooter_view_is_valid(
+    const em_game_shooter_view_t* view)
+{
+	return (view->x >= 0) && (view->x < LCD_WIDTH) && (view->y >= 0) &&
+	       (view->y < LCD_HEIGHT) &&
+	       (view->frame <= EM_GAME_SHOOTER_STEP_COUNT) &&
+	       (view->kick <= EM_GAME_SHOOTER_KICK_RIGHT);
+}
+
+static bool task_display_keeper_view_is_valid(
+    const em_game_keeper_view_t* view)
+{
+	return (view->x >= 0) && (view->x < LCD_WIDTH) && (view->y >= 0) &&
+	       (view->y < LCD_HEIGHT) &&
+	       (view->frame <= EM_GAME_KEEPER_STEP_COUNT) &&
+	       (view->dive <= EM_GAME_KEEPER_DIVE_RIGHT);
+}
+
+static bool task_display_ball_view_is_valid(const em_game_ball_view_t* view)
+{
+	return (view->x >= 0) && (view->x < LCD_WIDTH) && (view->y >= 0) &&
+	       (view->y < LCD_HEIGHT) &&
+	       (view->frame <= EM_GAME_BALL_STEP_COUNT) &&
+	       (view->target <= EM_GAME_BALL_TARGET_WIDE_RIGHT);
+}
+
 static void task_display_update_visibility()
 {
 	s_em_game_view.flags = 0;
@@ -85,6 +126,10 @@ void task_display(ak_msg_t* msg)
 
 		em_game_match_view_t* view =
 		    (em_game_match_view_t*)get_data_common_msg(msg);
+		if (!task_display_match_view_is_valid(view))
+		{
+			return;
+		}
 
 		s_em_game_view.round = view->round;
 		s_em_game_view.goals = view->goals;
@@ -107,7 +152,14 @@ void task_display(ak_msg_t* msg)
 			return;
 		}
 
-		memcpy(&s_em_game_shooter_view, get_data_common_msg(msg),
+		em_game_shooter_view_t* view =
+		    (em_game_shooter_view_t*)get_data_common_msg(msg);
+		if (!task_display_shooter_view_is_valid(view))
+		{
+			return;
+		}
+
+		memcpy(&s_em_game_shooter_view, view,
 		       sizeof(s_em_game_shooter_view));
 		s_em_game_view.shooter_x = s_em_game_shooter_view.x;
 		s_em_game_view.shooter_y = s_em_game_shooter_view.y;
@@ -124,7 +176,14 @@ void task_display(ak_msg_t* msg)
 			return;
 		}
 
-		memcpy(&s_em_game_keeper_view, get_data_common_msg(msg),
+		em_game_keeper_view_t* view =
+		    (em_game_keeper_view_t*)get_data_common_msg(msg);
+		if (!task_display_keeper_view_is_valid(view))
+		{
+			return;
+		}
+
+		memcpy(&s_em_game_keeper_view, view,
 		       sizeof(s_em_game_keeper_view));
 		s_em_game_view.keeper_x = s_em_game_keeper_view.x;
 		s_em_game_view.keeper_y = s_em_game_keeper_view.y;
@@ -140,7 +199,14 @@ void task_display(ak_msg_t* msg)
 			return;
 		}
 
-		memcpy(&s_em_game_ball_view, get_data_common_msg(msg),
+		em_game_ball_view_t* view =
+		    (em_game_ball_view_t*)get_data_common_msg(msg);
+		if (!task_display_ball_view_is_valid(view))
+		{
+			return;
+		}
+
+		memcpy(&s_em_game_ball_view, view,
 		       sizeof(s_em_game_ball_view));
 		s_em_game_view.ball_x = s_em_game_ball_view.x;
 		s_em_game_view.ball_y = s_em_game_ball_view.y;

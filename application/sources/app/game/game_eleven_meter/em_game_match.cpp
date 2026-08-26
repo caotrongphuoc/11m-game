@@ -213,7 +213,6 @@ static void em_game_match_initialize()
 	em_game_match_set_state(EM_GAME_MATCH_STATE_MENU);
 	em_game_match_set_keeper_difficulty();
 	em_game_match_publish_view();
-	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_MENU);
 	s_initialized = true;
 }
 
@@ -226,6 +225,9 @@ void em_game_match_handle(ak_msg_t* msg)
 
 	switch (msg->sig)
 	{
+	case EM_GAME_MATCH_INIT:
+		break;
+
 	case EM_GAME_MATCH_SETUP:
 		if (s_state == EM_GAME_MATCH_STATE_ROUND_START)
 		{
