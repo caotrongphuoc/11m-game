@@ -1,5 +1,9 @@
 #include "scr_game_rip.h"
 
+/*****************************************************************************/
+/* View - Game RIP */
+/*****************************************************************************/
+
 static void view_scr_game_rip();
 
 view_dynamic_t dyn_view_game_rip = {
@@ -33,13 +37,17 @@ void view_scr_game_rip()
 	view_render.print("MODE: continue");
 }
 
+/*****************************************************************************/
+/* Handle - Game RIP */
+/*****************************************************************************/
+
 void scr_game_rip_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case SCREEN_ENTRY:
 	{
-		APP_DBG_SIG("SCREEN_ENTRY\n");
+		APP_DBG_SIG("EM_GAME RIP SCREEN_ENTRY\n");
 		timer_remove_attr(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_IDLE);
 	}
 	break;

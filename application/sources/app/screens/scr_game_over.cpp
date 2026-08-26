@@ -1,5 +1,9 @@
 #include "scr_game_over.h"
 
+/*****************************************************************************/
+/* View - Game over */
+/*****************************************************************************/
+
 static void view_scr_game_over();
 
 view_dynamic_t dyn_view_game_over = {{
@@ -78,13 +82,17 @@ void view_scr_game_over()
 	view_render.print("MODE:RETRY  UP:HOME");
 }
 
+/*****************************************************************************/
+/* Handle - Game over */
+/*****************************************************************************/
+
 void scr_game_over_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case SCREEN_ENTRY:
 	{
-		APP_DBG_SIG("SCREEN_ENTRY\n");
+		APP_DBG_SIG("EM_GAME OVER SCREEN_ENTRY\n");
 		timer_remove_attr(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_IDLE);
 	}
 	break;

@@ -1,5 +1,9 @@
 #include "scr_game_penalty.h"
 
+/*****************************************************************************/
+/* Variable declaration - Penalty screen */
+/*****************************************************************************/
+
 #define SCR_GAME_PENALTY_BALL_BITMAP_WIDTH (7)
 #define SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT (7)
 #define SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH (40)
@@ -25,6 +29,10 @@
 #define SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE (2)
 #define SCR_GAME_PENALTY_COUNTDOWN_AXIS_X (58)
 #define SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y (7)
+
+/*****************************************************************************/
+/* View - Penalty screen */
+/*****************************************************************************/
 
 static void view_scr_game_penalty();
 static const unsigned char*
@@ -59,12 +67,10 @@ view_screen_t scr_game_penalty = {
     .focus_item = 0,
 };
 
-void view_scr_game_penalty()
+static void scr_game_penalty_frame_display(const em_game_view_t* view)
 {
-	const em_game_view_t* view = task_display_get_game_view();
 	uint8_t ai_score = view->saves + view->misses;
 
-	view_render.clear();
 	view_render.setTextSize(1);
 	view_render.setTextColor(WHITE);
 
@@ -106,57 +112,87 @@ void view_scr_game_penalty()
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_RIGHT_AXIS_X,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
+}
 
-	if ((view->flags & EM_GAME_VIEW_FLAG_KEEPER_VISIBLE) != 0)
+static void scr_game_penalty_keeper_display(const em_game_view_t* view)
+{
+	if ((view->flags & EM_GAME_VIEW_FLAG_KEEPER_VISIBLE) == 0)
 	{
-		if (view->keeper_dive == EM_GAME_KEEPER_DIVE_LEFT)
-		{
-			view_render.drawBitmap(
-			    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
-			    view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_LEFT_Y_OFFSET,
-			    bitmap_penalty_keeper_dive_left,
-			    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
-			    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
-		}
-		else if (view->keeper_dive == EM_GAME_KEEPER_DIVE_RIGHT)
-		{
-			view_render.drawBitmap(
-			    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
-			    view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_RIGHT_Y_OFFSET,
-			    bitmap_penalty_keeper_dive_right,
-			    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
-			    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
-		}
-		else
-		{
-			view_render.drawBitmap(
-			    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH / 2),
-			    view->keeper_y + SCR_GAME_PENALTY_KEEPER_IDLE_Y_OFFSET,
-			    bitmap_penalty_keeper_idle, SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH,
-			    SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_HEIGHT, WHITE);
-		}
+		return;
 	}
 
-	if ((view->flags & EM_GAME_VIEW_FLAG_SHOOTER_VISIBLE) != 0)
+	if (view->keeper_dive == EM_GAME_KEEPER_DIVE_LEFT)
 	{
 		view_render.drawBitmap(
-		    view->shooter_x - (SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH / 2),
-		    view->shooter_y - SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT +
-		        SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING,
-		    scr_game_penalty_get_shooter_bitmap(view),
-		    SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH,
-		    SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT, WHITE);
+		    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
+		    view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_LEFT_Y_OFFSET,
+		    bitmap_penalty_keeper_dive_left,
+		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
+		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
 	}
-
-	if ((view->flags & EM_GAME_VIEW_FLAG_BALL_VISIBLE) != 0)
+	else if (view->keeper_dive == EM_GAME_KEEPER_DIVE_RIGHT)
 	{
 		view_render.drawBitmap(
-		    view->ball_x - (SCR_GAME_PENALTY_BALL_BITMAP_WIDTH / 2),
-		    view->ball_y - (SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT / 2),
-		    bitmap_penalty_ball, SCR_GAME_PENALTY_BALL_BITMAP_WIDTH,
-		    SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT, WHITE);
+		    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
+		    view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_RIGHT_Y_OFFSET,
+		    bitmap_penalty_keeper_dive_right,
+		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
+		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
+	}
+	else
+	{
+		view_render.drawBitmap(
+		    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH / 2),
+		    view->keeper_y + SCR_GAME_PENALTY_KEEPER_IDLE_Y_OFFSET,
+		    bitmap_penalty_keeper_idle, SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH,
+		    SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_HEIGHT, WHITE);
 	}
 }
+
+static void scr_game_penalty_shooter_display(const em_game_view_t* view)
+{
+	if ((view->flags & EM_GAME_VIEW_FLAG_SHOOTER_VISIBLE) == 0)
+	{
+		return;
+	}
+
+	view_render.drawBitmap(
+	    view->shooter_x - (SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH / 2),
+	    view->shooter_y - SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT +
+	        SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING,
+	    scr_game_penalty_get_shooter_bitmap(view),
+	    SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH,
+	    SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT, WHITE);
+}
+
+static void scr_game_penalty_ball_display(const em_game_view_t* view)
+{
+	if ((view->flags & EM_GAME_VIEW_FLAG_BALL_VISIBLE) == 0)
+	{
+		return;
+	}
+
+	view_render.drawBitmap(
+	    view->ball_x - (SCR_GAME_PENALTY_BALL_BITMAP_WIDTH / 2),
+	    view->ball_y - (SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT / 2),
+	    bitmap_penalty_ball, SCR_GAME_PENALTY_BALL_BITMAP_WIDTH,
+	    SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT, WHITE);
+}
+
+void view_scr_game_penalty()
+{
+	const em_game_view_t* view = task_display_get_game_view();
+
+	view_render.clear();
+	scr_game_penalty_frame_display(view);
+	scr_game_penalty_keeper_display(view);
+	scr_game_penalty_shooter_display(view);
+	scr_game_penalty_ball_display(view);
+}
+
+/*****************************************************************************/
+/* Handle - Penalty screen */
+/*****************************************************************************/
 
 void scr_game_penalty_handle(ak_msg_t* msg)
 {
@@ -164,7 +200,7 @@ void scr_game_penalty_handle(ak_msg_t* msg)
 	{
 	case SCREEN_ENTRY:
 	{
-		APP_DBG_SIG("SCREEN_ENTRY\n");
+		APP_DBG_SIG("EM_GAME PENALTY SCREEN_ENTRY\n");
 		timer_remove_attr(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_IDLE);
 		task_post_pure_msg(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_SETUP);
 		task_post_pure_msg(EM_GAME_BALL_ID, EM_GAME_BALL_SETUP);

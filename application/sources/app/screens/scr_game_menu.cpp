@@ -1,5 +1,9 @@
 #include "scr_game_menu.h"
 
+/*****************************************************************************/
+/* View - Game menu */
+/*****************************************************************************/
+
 static void view_scr_game_menu();
 
 view_dynamic_t dyn_view_game_menu = {{
@@ -83,13 +87,17 @@ void view_scr_game_menu()
 	view_render.print("MODE: START");
 }
 
+/*****************************************************************************/
+/* Handle - Game menu */
+/*****************************************************************************/
+
 void scr_game_menu_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case SCREEN_ENTRY:
 	{
-		APP_DBG_SIG("SCREEN_ENTRY\n");
+		APP_DBG_SIG("EM_GAME MENU SCREEN_ENTRY\n");
 		timer_remove_attr(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_IDLE);
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_INIT);
 	}
@@ -97,18 +105,21 @@ void scr_game_menu_handle(ak_msg_t* msg)
 
 	case AC_DISPLAY_BUTTON_UP_PRESSED:
 	{
+		APP_DBG_SIG("AC_DISPLAY_BUTTON_UP_PRESSED\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_MENU_LEFT);
 	}
 	break;
 
 	case AC_DISPLAY_BUTTON_MODE_PRESSED:
 	{
+		APP_DBG_SIG("AC_DISPLAY_BUTTON_MODE_PRESSED\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_START);
 	}
 	break;
 
 	case AC_DISPLAY_BUTTON_DOWN_PRESSED:
 	{
+		APP_DBG_SIG("AC_DISPLAY_BUTTON_DOWN_PRESSED\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_MENU_RIGHT);
 	}
 	break;
