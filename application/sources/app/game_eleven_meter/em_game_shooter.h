@@ -7,6 +7,10 @@
 #include "ak.h"
 #include "message.h"
 
+/*****************************************************************************/
+/* Shooter geometry, animation, and accuracy tuning */
+/*****************************************************************************/
+
 #define EM_GAME_SHOOTER_START_X (40)
 #define EM_GAME_SHOOTER_START_Y (63)
 #define EM_GAME_SHOOTER_STEP_COUNT (4)
@@ -15,6 +19,10 @@
 #define EM_GAME_SHOOTER_MISS_MAX_CHANCE (30)
 #define EM_GAME_SHOOTER_FAST_REACTION_INTERVAL (500)
 #define EM_GAME_SHOOTER_RANDOM_FALLBACK (0xA341316CUL)
+
+/*****************************************************************************/
+/* Shooter action and display snapshot */
+/*****************************************************************************/
 
 typedef enum
 {

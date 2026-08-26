@@ -4,6 +4,7 @@
 #include "timer.h"
 
 #include "app.h"
+#include "app_dbg.h"
 #include "app_eeprom.h"
 #include "task_list.h"
 
@@ -11,6 +12,10 @@
 #include "em_game_keeper.h"
 #include "em_game_match.h"
 #include "em_game_scoreboard.h"
+
+/*****************************************************************************/
+/* Private state - Match */
+/*****************************************************************************/
 
 static em_game_scoreboard_t s_scoreboard;
 static em_game_match_difficulty_t s_difficulty =
@@ -23,6 +28,10 @@ static em_game_match_difficulty_t s_best_difficulty =
 static uint8_t s_countdown_seconds;
 static uint16_t s_state_elapsed_ms;
 static bool s_initialized;
+
+/*****************************************************************************/
+/* Private helpers - Match */
+/*****************************************************************************/
 
 static void em_game_match_set_state(em_game_match_state_t state)
 {
@@ -216,6 +225,10 @@ static void em_game_match_initialize()
 	s_initialized = true;
 }
 
+/*****************************************************************************/
+/* Handle - Match */
+/*****************************************************************************/
+
 void em_game_match_handle(ak_msg_t* msg)
 {
 	if (!s_initialized)
@@ -226,9 +239,11 @@ void em_game_match_handle(ak_msg_t* msg)
 	switch (msg->sig)
 	{
 	case EM_GAME_MATCH_INIT:
+		APP_DBG_SIG("EM_GAME_MATCH_INIT\n");
 		break;
 
 	case EM_GAME_MATCH_SETUP:
+		APP_DBG_SIG("EM_GAME_MATCH_SETUP\n");
 		if (s_state == EM_GAME_MATCH_STATE_ROUND_START)
 		{
 			em_game_scoreboard_advance_round(&s_scoreboard);
@@ -248,6 +263,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_START_ROUND:
+		APP_DBG_SIG("EM_GAME_MATCH_START_ROUND\n");
 		if (s_state == EM_GAME_MATCH_STATE_ROUND_START)
 		{
 			s_countdown_seconds = 3;
@@ -262,6 +278,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_START:
+		APP_DBG_SIG("EM_GAME_MATCH_START\n");
 		if (s_state == EM_GAME_MATCH_STATE_MENU)
 		{
 			em_game_match_reset();
@@ -271,6 +288,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_MENU_LEFT:
+		APP_DBG_SIG("EM_GAME_MATCH_MENU_LEFT\n");
 		if (s_state == EM_GAME_MATCH_STATE_MENU)
 		{
 			em_game_match_cycle_difficulty_left();
@@ -278,6 +296,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_MENU_RIGHT:
+		APP_DBG_SIG("EM_GAME_MATCH_MENU_RIGHT\n");
 		if (s_state == EM_GAME_MATCH_STATE_MENU)
 		{
 			em_game_match_cycle_difficulty_right();
@@ -285,6 +304,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_KICK_LEFT:
+		APP_DBG_SIG("EM_GAME_MATCH_KICK_LEFT\n");
 		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
 		{
 			em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_LEFT);
@@ -292,6 +312,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_KICK_CENTER:
+		APP_DBG_SIG("EM_GAME_MATCH_KICK_CENTER\n");
 		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
 		{
 			em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_CENTER);
@@ -299,6 +320,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_KICK_RIGHT:
+		APP_DBG_SIG("EM_GAME_MATCH_KICK_RIGHT\n");
 		if (s_state == EM_GAME_MATCH_STATE_SHOOTER_WAIT)
 		{
 			em_game_match_request_kick(EM_GAME_SHOOTER_REQUEST_KICK_RIGHT);
@@ -306,6 +328,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_RETRY:
+		APP_DBG_SIG("EM_GAME_MATCH_RETRY\n");
 		if (s_state == EM_GAME_MATCH_STATE_GAME_OVER)
 		{
 			em_game_match_reset();
@@ -315,6 +338,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_HOME:
+		APP_DBG_SIG("EM_GAME_MATCH_HOME\n");
 		if (s_state == EM_GAME_MATCH_STATE_GAME_OVER)
 		{
 			em_game_match_reset();
@@ -369,6 +393,7 @@ void em_game_match_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_MATCH_HIT_RESULT:
+		APP_DBG_SIG("EM_GAME_MATCH_HIT_RESULT\n");
 		if (s_state == EM_GAME_MATCH_STATE_REVEAL)
 		{
 			em_game_match_handle_hit_result(msg);
@@ -377,6 +402,7 @@ void em_game_match_handle(ak_msg_t* msg)
 
 	case EM_GAME_MATCH_RIP_TIMEOUT:
 	case EM_GAME_MATCH_SKIP_RIP:
+		APP_DBG_SIG("EM_GAME_MATCH_RIP_COMPLETE\n");
 		if (s_state == EM_GAME_MATCH_STATE_RIP)
 		{
 			em_game_match_show_game_over();

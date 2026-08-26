@@ -7,6 +7,10 @@
 #include "ak.h"
 #include "message.h"
 
+/*****************************************************************************/
+/* Keeper geometry, animation, and difficulty tuning */
+/*****************************************************************************/
+
 #define EM_GAME_KEEPER_START_X (64)
 #define EM_GAME_KEEPER_START_Y (29)
 #define EM_GAME_KEEPER_TARGET_LEFT_X (41)
@@ -18,6 +22,10 @@
 #define EM_GAME_KEEPER_EASY_MATCH_FLIP_CHANCE (60)
 #define EM_GAME_KEEPER_HARD_MISS_OVERRIDE_CHANCE (30)
 #define EM_GAME_KEEPER_RANDOM_FALLBACK (0x6D2B79F5UL)
+
+/*****************************************************************************/
+/* Keeper message contracts and display snapshot */
+/*****************************************************************************/
 
 typedef enum
 {

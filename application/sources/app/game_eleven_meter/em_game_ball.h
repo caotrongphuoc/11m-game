@@ -7,6 +7,10 @@
 #include "ak.h"
 #include "message.h"
 
+/*****************************************************************************/
+/* Ball geometry and animation */
+/*****************************************************************************/
+
 #define EM_GAME_BALL_START_X (64)
 #define EM_GAME_BALL_START_Y (59)
 #define EM_GAME_BALL_TARGET_Y (47)
@@ -16,6 +20,10 @@
 #define EM_GAME_BALL_TARGET_WIDE_LEFT_X (20)
 #define EM_GAME_BALL_TARGET_WIDE_RIGHT_X (108)
 #define EM_GAME_BALL_STEP_COUNT (10)
+
+/*****************************************************************************/
+/* Ball message contracts and display snapshot */
+/*****************************************************************************/
 
 typedef enum
 {

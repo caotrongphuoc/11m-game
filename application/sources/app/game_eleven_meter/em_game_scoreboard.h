@@ -6,6 +6,10 @@
 
 #include "em_game_goal.h"
 
+/*****************************************************************************/
+/* Scoreboard rules and state */
+/*****************************************************************************/
+
 #define EM_GAME_SCOREBOARD_TOTAL_KICKS (5)
 #define EM_GAME_SCOREBOARD_WIN_THRESHOLD (3)
 

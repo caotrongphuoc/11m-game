@@ -5,17 +5,26 @@
 #include "sys_ctrl.h"
 
 #include "app.h"
+#include "app_dbg.h"
 #include "task_list.h"
 
 #include "em_game_ball.h"
 #include "em_game_keeper.h"
 #include "em_game_shooter.h"
 
+/*****************************************************************************/
+/* Private state - Shooter */
+/*****************************************************************************/
+
 static em_game_shooter_view_t s_shooter;
 static uint32_t s_random_seed;
 static uint32_t s_selection_start_tick;
 static uint8_t s_update_elapsed_ms;
 static bool s_kick_started;
+
+/*****************************************************************************/
+/* Private helpers - Shooter */
+/*****************************************************************************/
 
 static uint32_t em_game_shooter_xorshift32()
 {
@@ -166,24 +175,36 @@ static void em_game_shooter_advance()
 	em_game_shooter_publish_view();
 }
 
+/*****************************************************************************/
+/* Handle - Shooter */
+/*****************************************************************************/
+
 void em_game_shooter_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case EM_GAME_SHOOTER_SETUP:
+		APP_DBG_SIG("EM_GAME_SHOOTER_SETUP\n");
+		em_game_shooter_reset();
+		break;
+
 	case EM_GAME_SHOOTER_RESET:
+		APP_DBG_SIG("EM_GAME_SHOOTER_RESET\n");
 		em_game_shooter_reset();
 		break;
 
 	case EM_GAME_SHOOTER_REQUEST_KICK_LEFT:
+		APP_DBG_SIG("EM_GAME_SHOOTER_REQUEST_KICK_LEFT\n");
 		em_game_shooter_start(EM_GAME_SHOOTER_KICK_LEFT);
 		break;
 
 	case EM_GAME_SHOOTER_REQUEST_KICK_CENTER:
+		APP_DBG_SIG("EM_GAME_SHOOTER_REQUEST_KICK_CENTER\n");
 		em_game_shooter_start(EM_GAME_SHOOTER_KICK_CENTER);
 		break;
 
 	case EM_GAME_SHOOTER_REQUEST_KICK_RIGHT:
+		APP_DBG_SIG("EM_GAME_SHOOTER_REQUEST_KICK_RIGHT\n");
 		em_game_shooter_start(EM_GAME_SHOOTER_KICK_RIGHT);
 		break;
 

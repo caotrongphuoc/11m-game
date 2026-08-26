@@ -6,6 +6,10 @@
 #include "ak.h"
 #include "message.h"
 
+/*****************************************************************************/
+/* Goal zones, results, and message contracts */
+/*****************************************************************************/
+
 typedef enum
 {
 	EM_GAME_GOAL_ZONE_NONE,

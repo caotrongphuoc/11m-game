@@ -1,5 +1,9 @@
 #include "em_game_scoreboard.h"
 
+/*****************************************************************************/
+/* Scoreboard operations */
+/*****************************************************************************/
+
 void em_game_scoreboard_reset(em_game_scoreboard_t* sb)
 {
 	sb->round = 0;

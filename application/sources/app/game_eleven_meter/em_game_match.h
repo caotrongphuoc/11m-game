@@ -6,6 +6,10 @@
 #include "ak.h"
 #include "message.h"
 
+/*****************************************************************************/
+/* Match state and difficulty */
+/*****************************************************************************/
+
 typedef enum
 {
 	EM_GAME_MATCH_STATE_MENU,
@@ -23,6 +27,10 @@ typedef enum
 	EM_GAME_MATCH_DIFFICULTY_NORMAL,
 	EM_GAME_MATCH_DIFFICULTY_HARD
 } em_game_match_difficulty_t;
+
+/*****************************************************************************/
+/* Match display snapshot */
+/*****************************************************************************/
 
 typedef struct
 {

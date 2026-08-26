@@ -3,15 +3,24 @@
 #include "port.h"
 
 #include "app.h"
+#include "app_dbg.h"
 #include "task_list.h"
 
 #include "em_game_goal.h"
+
+/*****************************************************************************/
+/* Private state - Goal */
+/*****************************************************************************/
 
 static em_game_goal_ball_t s_ball;
 static em_game_goal_keeper_t s_keeper;
 static bool s_ball_ready;
 static bool s_keeper_ready;
 static bool s_resolved;
+
+/*****************************************************************************/
+/* Private helpers - Goal */
+/*****************************************************************************/
 
 static void em_game_goal_reset()
 {
@@ -52,16 +61,26 @@ static void em_game_goal_resolve()
 	                     (uint8_t*)&result_msg, sizeof(result_msg));
 }
 
+/*****************************************************************************/
+/* Handle - Goal */
+/*****************************************************************************/
+
 void em_game_goal_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case EM_GAME_GOAL_SETUP:
+		APP_DBG_SIG("EM_GAME_GOAL_SETUP\n");
+		em_game_goal_reset();
+		break;
+
 	case EM_GAME_GOAL_RESET:
+		APP_DBG_SIG("EM_GAME_GOAL_RESET\n");
 		em_game_goal_reset();
 		break;
 
 	case EM_GAME_GOAL_BALL_ARRIVED:
+		APP_DBG_SIG("EM_GAME_GOAL_BALL_ARRIVED\n");
 		if (!s_resolved && !s_ball_ready &&
 		    (get_data_len_common_msg(msg) == sizeof(em_game_goal_ball_t)))
 		{
@@ -82,6 +101,7 @@ void em_game_goal_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_GOAL_KEEPER_READY:
+		APP_DBG_SIG("EM_GAME_GOAL_KEEPER_READY\n");
 		if (!s_resolved && !s_keeper_ready &&
 		    (get_data_len_common_msg(msg) == sizeof(em_game_goal_keeper_t)))
 		{

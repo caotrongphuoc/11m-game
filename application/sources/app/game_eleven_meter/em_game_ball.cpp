@@ -3,15 +3,24 @@
 #include "port.h"
 
 #include "app.h"
+#include "app_dbg.h"
 #include "task_list.h"
 
 #include "em_game_ball.h"
 #include "em_game_goal.h"
 
+/*****************************************************************************/
+/* Private state - Ball */
+/*****************************************************************************/
+
 static em_game_ball_view_t s_ball;
 static int16_t s_target_x;
 static uint8_t s_update_elapsed_ms;
 static bool s_kick_started;
+
+/*****************************************************************************/
+/* Private helpers - Ball */
+/*****************************************************************************/
 
 static void em_game_ball_publish_view()
 {
@@ -140,16 +149,26 @@ static void em_game_ball_advance()
 	em_game_ball_publish_view();
 }
 
+/*****************************************************************************/
+/* Handle - Ball */
+/*****************************************************************************/
+
 void em_game_ball_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case EM_GAME_BALL_SETUP:
+		APP_DBG_SIG("EM_GAME_BALL_SETUP\n");
+		em_game_ball_reset();
+		break;
+
 	case EM_GAME_BALL_RESET:
+		APP_DBG_SIG("EM_GAME_BALL_RESET\n");
 		em_game_ball_reset();
 		break;
 
 	case EM_GAME_BALL_KICK:
+		APP_DBG_SIG("EM_GAME_BALL_KICK\n");
 		if (get_data_len_common_msg(msg) == sizeof(em_game_ball_kick_t))
 		{
 			em_game_ball_start((em_game_ball_kick_t*)get_data_common_msg(msg));

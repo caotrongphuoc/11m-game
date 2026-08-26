@@ -5,10 +5,15 @@
 #include "sys_ctrl.h"
 
 #include "app.h"
+#include "app_dbg.h"
 #include "task_list.h"
 
 #include "em_game_goal.h"
 #include "em_game_keeper.h"
+
+/*****************************************************************************/
+/* Private state - Keeper */
+/*****************************************************************************/
 
 static em_game_keeper_view_t s_keeper;
 static em_game_keeper_difficulty_t s_difficulty =
@@ -17,6 +22,10 @@ static int16_t s_target_x;
 static uint32_t s_random_seed;
 static uint8_t s_update_elapsed_ms;
 static bool s_reaction_started;
+
+/*****************************************************************************/
+/* Private helpers - Keeper */
+/*****************************************************************************/
 
 static uint32_t em_game_keeper_xorshift32()
 {
@@ -206,16 +215,26 @@ static void em_game_keeper_advance()
 	em_game_keeper_publish_view();
 }
 
+/*****************************************************************************/
+/* Handle - Keeper */
+/*****************************************************************************/
+
 void em_game_keeper_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case EM_GAME_KEEPER_SETUP:
+		APP_DBG_SIG("EM_GAME_KEEPER_SETUP\n");
+		em_game_keeper_reset();
+		break;
+
 	case EM_GAME_KEEPER_RESET:
+		APP_DBG_SIG("EM_GAME_KEEPER_RESET\n");
 		em_game_keeper_reset();
 		break;
 
 	case EM_GAME_KEEPER_SET_DIFFICULTY:
+		APP_DBG_SIG("EM_GAME_KEEPER_SET_DIFFICULTY\n");
 		if (get_data_len_common_msg(msg) ==
 		    sizeof(em_game_keeper_difficulty_msg_t))
 		{
@@ -231,6 +250,7 @@ void em_game_keeper_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_KEEPER_REACT:
+		APP_DBG_SIG("EM_GAME_KEEPER_REACT\n");
 		if (get_data_len_common_msg(msg) == sizeof(em_game_keeper_react_t))
 		{
 			em_game_keeper_react_t* react =
