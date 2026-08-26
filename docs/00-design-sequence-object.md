@@ -26,21 +26,46 @@ sequenceDiagram
 
     Display->>Match: EM_GAME_MATCH_START
     Match->>Match: EM_GAME_MATCH_SETUP
-    Match->>Goal: EM_GAME_GOAL_RESET
-    Match->>Ball: EM_GAME_BALL_RESET
-    Match->>Keeper: EM_GAME_KEEPER_RESET
-    Match->>Shooter: EM_GAME_SHOOTER_RESET
     Match->>Match: EM_GAME_MATCH_START_ROUND
     Match->>Display: EM_GAME_DISPLAY_SHOW_PENALTY
+    Display->>Goal: EM_GAME_GOAL_SETUP
+    Display->>Ball: EM_GAME_BALL_SETUP
+    Display->>Keeper: EM_GAME_KEEPER_SETUP
+    Display->>Shooter: EM_GAME_SHOOTER_SETUP
     Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
     Ball->>Display: EM_GAME_DISPLAY_UPDATE_BALL
     Keeper->>Display: EM_GAME_DISPLAY_UPDATE_KEEPER
     Shooter->>Display: EM_GAME_DISPLAY_UPDATE_SHOOTER
 ```
 
+The penalty screen is entered once when a match starts. Later rounds stay on the same screen;
+Match posts `RESET` to Goal, Ball, Keeper, and Shooter before starting the next round.
+
+## Shared game loop
+
+```mermaid
+sequenceDiagram
+    participant Penalty as Penalty screen
+    participant Match
+    participant Shooter
+    participant Ball
+    participant Keeper
+
+    loop Every EM_GAME_TIME_TICK_INTERVAL
+        Penalty->>Match: EM_GAME_MATCH_UPDATE
+        Penalty->>Shooter: EM_GAME_SHOOTER_UPDATE
+        Penalty->>Ball: EM_GAME_BALL_UPDATE
+        Penalty->>Keeper: EM_GAME_KEEPER_UPDATE
+    end
+```
+
+Match advances countdown and result timing from this tick. Animated objects use local elapsed
+accumulators, so Ball keeps its 50 ms update interval while Shooter and Keeper keep their 80 ms
+intervals. The shared periodic timer is stopped when Match leaves gameplay.
+
 ## Select and execute a kick
 
-The screen sends the player's input to Match first. Match accepts it only while the round is in `EM_GAME_MATCH_STATE_SHOOTER_WAIT`, removes the selection timers, and forwards one object-specific request to Shooter.
+The screen sends the player's input to Match first. Match accepts it only while the round is in `EM_GAME_MATCH_STATE_SHOOTER_WAIT`, clears the countdown, and forwards one object-specific request to Shooter.
 
 ```mermaid
 sequenceDiagram
@@ -100,9 +125,8 @@ sequenceDiagram
 
 The order of the Ball and Keeper arrival messages is not significant. Goal stores the first valid report and waits for the other one.
 
-While the penalty screen is active, its periodic `EM_GAME_TIME_TICK` posts
-`EM_GAME_MATCH_UPDATE` to Match. Match uses that single game-loop signal to advance the
-selection countdown and result phase without blocking a task handler.
+While the penalty screen is active, its periodic `EM_GAME_TIME_TICK` drives Match and the
+animated gameplay objects without blocking a task handler.
 
 ## Display snapshots
 
