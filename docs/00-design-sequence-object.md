@@ -30,20 +30,22 @@ sequenceDiagram
     Match->>Match: EM_GAME_MATCH_SETUP
     Match->>Match: EM_GAME_MATCH_START_ROUND
     Match->>Display: EM_GAME_DISPLAY_SHOW_PENALTY
-    Display->>Goal: EM_GAME_GOAL_SETUP
+    Note over Display: Penalty screen entry
+    Display->>Shooter: EM_GAME_SHOOTER_SETUP
     Display->>Ball: EM_GAME_BALL_SETUP
     Display->>Keeper: EM_GAME_KEEPER_SETUP
-    Display->>Shooter: EM_GAME_SHOOTER_SETUP
+    Display->>Goal: EM_GAME_GOAL_SETUP
     Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
     Ball->>Display: EM_GAME_DISPLAY_UPDATE_BALL
     Keeper->>Display: EM_GAME_DISPLAY_UPDATE_KEEPER
     Shooter->>Display: EM_GAME_DISPLAY_UPDATE_SHOOTER
 ```
 
-The penalty screen is entered once when a match starts. Later rounds stay on the same screen;
-Match posts `RESET` to Goal, Ball, Keeper, and Shooter before starting the next round.
-Match owns all gameplay transitions: screens post input signals and wait for Match to request the
-menu, penalty, RIP, or game-over screen.
+The menu screen initializes Match and forwards button input. Match requests the penalty screen only
+for round one. Penalty screen entry sets up the four animated/resolution objects and starts the shared
+tick. Later rounds remain on that screen; Match posts `RESET` to Goal, Ball, Keeper, and Shooter
+before starting them. Match owns all gameplay transitions: screens post input and wait for Match to
+request the menu, penalty, RIP, or game-over screen.
 
 ## Shared game loop
 
@@ -65,7 +67,7 @@ sequenceDiagram
 
 Match advances countdown and result timing from this tick. Animated objects use local elapsed
 accumulators, so Ball keeps its 50 ms update interval while Shooter and Keeper keep their 80 ms
-intervals. The shared periodic timer is stopped when Match leaves gameplay.
+intervals. The shared periodic timer is owned by Display and stopped by Match when gameplay ends.
 
 ## Select and execute a kick
 
@@ -129,8 +131,9 @@ sequenceDiagram
 
 The order of the Ball and Keeper arrival messages is not significant. Goal stores the first valid report and waits for the other one.
 
-While the penalty screen is active, its periodic `EM_GAME_TIME_TICK` drives Match and the
-animated gameplay objects without blocking a task handler.
+While the penalty screen is active, its periodic `EM_GAME_TIME_TICK` drives Match and the animated
+gameplay objects without blocking a task handler. Match accepts exactly one valid result while in
+`EM_GAME_MATCH_STATE_REVEAL`; duplicate or late result messages are ignored.
 
 ## Display snapshots
 

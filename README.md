@@ -1,22 +1,14 @@
 <div align="center">
 
-![Repo Traffic](https://komarev.com/ghpvc/?username=11m-game&label=Repo+Traffic&color=blue&style=flat-square)
+![Game](https://img.shields.io/badge/game-penalty_shootout-1f6feb?style=flat-square)
+![Target](https://img.shields.io/badge/target-STM32L151CBT6-2ea44f?style=flat-square)
+![Framework](https://img.shields.io/badge/framework-AK_event_driven-f97316?style=flat-square)
 
 </div>
 
 # Eleven Meter - Game built on AK Embedded Base Kit
 
-<!-- Add the Eleven Meter banner or gameplay GIF here when available.
-<p align="center">
-  <img src="resources/images/screens/banner_game_eleven_meter.gif" alt="Eleven Meter" width="960"/>
-</p>
--->
-
 <hr>
-
-## Gameplay Demo
-
-> Gameplay video will be added when the first public demo is available.
 
 ## Documentation
 
@@ -24,6 +16,7 @@
 |---|---|
 | [README.md](README.md) | Main project overview, hardware information, gameplay rules, and game-object descriptions. |
 | [docs/00-design-sequence-object.md](docs/00-design-sequence-object.md) | State ownership and runtime message sequences for the gameplay objects. |
+| [docs/01-ak-mcp-deployment.md](docs/01-ak-mcp-deployment.md) | Deploy and connect the AK documentation MCP server. |
 
 ## Introduction
 
@@ -33,7 +26,7 @@ While developing and playing Eleven Meter, the project demonstrates several embe
 
 - **Event-driven design:** Gameplay components react to signals and messages instead of blocking the processor.
 - **Task coordination:** The match, shooter, goalkeeper, ball, goal, and display run as cooperating AK tasks.
-- **State management:** Match progression is represented by explicit states from the menu to game over.
+- **Tick-driven gameplay:** One 20 ms display-owned timer posts update messages; each object advances its own timing without blocking.
 - **Real-time interaction:** Buttons, timers, animations, and OLED rendering respond throughout each penalty round.
 
 ### I. Hardware
@@ -78,12 +71,6 @@ Flash Partitions Layout
 
 Eleven Meter recreates a five-round penalty shootout. The player selects a shooting direction before the countdown expires, while the goalkeeper uses difficulty-dependent logic to choose a dive direction. Each kick is evaluated as a goal, save, or miss, and the scoreboard determines the winner when the shootout is complete.
 
-<!-- Add a menu or gameplay screenshot here when available.
-<p align="center">
-  <img src="resources/images/screens/scr_game_penalty.png" alt="Eleven Meter gameplay" width="600"/>
-</p>
--->
-
 #### Objects in the Game
 
 | Object | Description |
@@ -98,19 +85,14 @@ Eleven Meter recreates a five-round penalty shootout. The player selects a shoot
 Each gameplay task owns its mutable state inside its implementation file. Objects do not read another task's state through shared globals; they exchange commands, animation snapshots, and results through AK messages.
 
 ```text
-Match
-  └── kick request ──> Shooter
-                         ├── ball target ──> Ball ───────┐
-                         └── shot zone ────> Keeper ─────┤
-                                                        v
-                                                       Goal
-                                                        │
-                                              goal/save/miss result
-                                                        │
-                                                        v
-                                                      Match
+Penalty screen ── shared tick ──> Match / Shooter / Ball / Keeper
+Match ── accepted kick ──> Shooter
+Shooter ── target ──> Ball ───────┐
+Shooter ── shot zone ──> Keeper ──┤
+                                  v
+                                 Goal ── result ──> Match
 
-Match / Shooter / Ball / Keeper ── view messages ──> Display
+Match / Shooter / Ball / Keeper ── snapshots ──> Display
 ```
 
 ### III. How to Play
@@ -192,6 +174,41 @@ Start Match -> Round Setup -> Three-Second Selection
 └── AGENTS.md                            # Instructions for coding agents
 ```
 
+## Build and Flash
+
+The firmware expects the Arm GNU Toolchain 10.3 and STM32CubeProgrammer. Tool locations can be supplied without editing the Makefile:
+
+```bash
+make -C application \
+  GCC_PATH=/path/to/gcc-arm-none-eabi-10.3-2021.10 \
+  PROGRAMMER_PATH=/path/to/STM32CubeProgrammer/bin
+```
+
+The generated binary is `application/build_ak-base-kit-stm32l151-application/ak-base-kit-stm32l151-application.bin`.
+
+Flash through the AK bootloader with `ak-flash` and the board UART port:
+
+```bash
+make -C application flash dev=/dev/ttyUSB0
+```
+
+Alternatively, omit `dev` to flash over ST-Link with STM32CubeProgrammer:
+
+```bash
+make -C application flash PROGRAMMER_PATH=/path/to/STM32CubeProgrammer/bin
+```
+
+Run `make -C application clean` before a full rebuild. The UART console uses 115200 baud, 8 data bits, no parity, and 1 stop bit.
+
+## Development Rules
+
+- Treat the [AK documentation MCP server](docs/01-ak-mcp-deployment.md) as the source of truth for kernel APIs and recipes.
+- Keep handlers non-blocking; use timers and posted signals instead of delays or busy-waits.
+- Keep mutable gameplay state inside its owning task implementation.
+- Exchange gameplay commands, results, and render snapshots only through AK messages.
+- Restrict feature work to `application/sources/app/` and `application/sources/driver/`; do not modify protected base-kit modules.
+- Format changed C and C++ files with the root `.clang-format` before committing.
+
 ## References
 
 | Topic | Link |
@@ -207,10 +224,4 @@ Start Match -> Round Setup -> Three-Second Selection
 
 Thank you for visiting this repository. If you have questions, suggestions, or feedback about Eleven Meter or embedded firmware development, feel free to get in touch.
 
-<a href="https://github.com/caotrongphuoc">
-  <img src="https://img.shields.io/badge/GitHub-caotrongphuoc-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
-</a>
-
-<a href="https://www.linkedin.com/in/cao-trong-phuoc/">
-  <img src="https://img.shields.io/badge/LinkedIn-Cao%20Trong%20Phuoc-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
-</a>
+[GitHub](https://github.com/caotrongphuoc) · [LinkedIn](https://www.linkedin.com/in/cao-trong-phuoc/)

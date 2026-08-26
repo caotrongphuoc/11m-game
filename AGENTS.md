@@ -83,6 +83,22 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 - Protect every common-message payload with a `static_assert` against `AK_COMMON_MSG_DATA_SIZE`.
 - Follow `docs/00-design-sequence-object.md` when changing gameplay message flow.
 
+## Current runtime architecture
+
+- `scr_game_penalty` owns the single periodic `EM_GAME_TIME_TICK` timer at 20 ms.
+- Each tick posts `UPDATE` signals to Match, Shooter, Ball, and Keeper. Objects use local elapsed-time accumulators for their own animation intervals.
+- Match owns round coordination and every game screen transition. Screens only translate button input into Match signals.
+- Shooter owns kick selection, Ball owns movement, Keeper owns dive selection, Goal resolves the two reports, and Display owns validated render snapshots.
+- Extend this message-driven loop. Do not introduce direct object calls, shared mutable gameplay data, blocking delays, or a second gameplay timer.
+
+## Build and validation
+
+- Build the application with `make -C application`. Tool paths may be overridden with `GCC_PATH` and `PROGRAMMER_PATH`.
+- Before handing off firmware changes, run `make -C application clean`, `make -C application`, and `git diff --check`.
+- Report Flash and RAM usage from the successful build.
+- Hardware validation uses the UART console at 115200 8N1. Display validation should include an `lcd d` framebuffer dump when a board is available.
+- Never claim on-device validation when only compilation was performed.
+
 ## Coding style
 Use the root `.clang-format` as the source of truth: Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
 
@@ -106,6 +122,8 @@ If a chunk of work naturally splits into multiple commits (e.g. signals in
 app.h vs task registration vs stubs), provide the commits in ORDER, each as
 its own code block. Never merge unrelated changes into one commit —
 one [ACTION] = one topic.
+
+When work follows an agreed TODO list, complete one TODO, provide one commit command for that TODO, and wait for the engineer to confirm the commit before continuing. Split it only when the engineer explicitly requests multiple commits.
 
 Example output after finishing a phase:
 
