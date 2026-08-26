@@ -1,7 +1,6 @@
 #include "ak.h"
 #include "message.h"
 #include "port.h"
-#include "timer.h"
 
 #include "sys_ctrl.h"
 
@@ -16,6 +15,7 @@ static em_game_keeper_difficulty_t s_difficulty =
     EM_GAME_KEEPER_DIFFICULTY_NORMAL;
 static int16_t s_target_x;
 static uint32_t s_random_seed;
+static uint8_t s_update_elapsed_ms;
 
 static uint32_t em_game_keeper_xorshift32()
 {
@@ -53,8 +53,6 @@ static int16_t em_game_keeper_get_target_x(em_game_keeper_dive_t dive)
 
 static void em_game_keeper_reset()
 {
-	timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_UPDATE);
-
 	s_keeper.x = EM_GAME_KEEPER_START_X;
 	s_keeper.y = EM_GAME_KEEPER_START_Y;
 	s_keeper.frame = 0;
@@ -62,6 +60,7 @@ static void em_game_keeper_reset()
 	s_keeper.moving = false;
 	s_keeper.dive = EM_GAME_KEEPER_DIVE_NONE;
 	s_target_x = EM_GAME_KEEPER_START_X;
+	s_update_elapsed_ms = 0;
 
 	em_game_keeper_publish_view();
 }
@@ -148,9 +147,8 @@ static void em_game_keeper_start(em_game_keeper_shot_t shot)
 	s_keeper.visible = true;
 	s_keeper.moving = true;
 	s_target_x = em_game_keeper_get_target_x(dive);
+	s_update_elapsed_ms = 0;
 
-	timer_set(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_UPDATE,
-	          EM_GAME_KEEPER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
 	em_game_keeper_publish_view();
 }
 
@@ -194,7 +192,6 @@ static void em_game_keeper_advance()
 	{
 		s_keeper.x = s_target_x;
 		s_keeper.moving = false;
-		timer_remove_attr(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_UPDATE);
 		em_game_keeper_report_ready();
 	}
 
@@ -237,7 +234,15 @@ void em_game_keeper_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_KEEPER_UPDATE:
-		em_game_keeper_advance();
+		if (s_keeper.moving)
+		{
+			s_update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+			if (s_update_elapsed_ms >= EM_GAME_KEEPER_ANIM_TICK_INTERVAL)
+			{
+				s_update_elapsed_ms -= EM_GAME_KEEPER_ANIM_TICK_INTERVAL;
+				em_game_keeper_advance();
+			}
+		}
 		break;
 
 	default:

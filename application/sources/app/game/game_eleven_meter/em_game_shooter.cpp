@@ -1,7 +1,6 @@
 #include "ak.h"
 #include "message.h"
 #include "port.h"
-#include "timer.h"
 
 #include "sys_ctrl.h"
 
@@ -15,6 +14,7 @@
 static em_game_shooter_view_t s_shooter;
 static uint32_t s_random_seed;
 static uint32_t s_selection_start_tick;
+static uint8_t s_update_elapsed_ms;
 
 static uint32_t em_game_shooter_xorshift32()
 {
@@ -36,8 +36,6 @@ static void em_game_shooter_publish_view()
 
 static void em_game_shooter_reset()
 {
-	timer_remove_attr(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_UPDATE);
-
 	s_shooter.x = EM_GAME_SHOOTER_START_X;
 	s_shooter.y = EM_GAME_SHOOTER_START_Y;
 	s_shooter.frame = 0;
@@ -45,6 +43,7 @@ static void em_game_shooter_reset()
 	s_shooter.moving = false;
 	s_shooter.kick = EM_GAME_SHOOTER_KICK_NONE;
 	s_selection_start_tick = sys_ctrl_millis();
+	s_update_elapsed_ms = 0;
 
 	if (s_random_seed == 0)
 	{
@@ -113,6 +112,7 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 	s_shooter.moving = true;
 	s_shooter.visible = true;
 	s_shooter.kick = (uint8_t)kick;
+	s_update_elapsed_ms = 0;
 
 	ball_kick.target = (uint8_t)em_game_shooter_pick_ball_target(kick);
 
@@ -132,8 +132,6 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 		break;
 	}
 
-	timer_set(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_UPDATE,
-	          EM_GAME_SHOOTER_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
 	task_post_common_msg(EM_GAME_BALL_ID, EM_GAME_BALL_KICK,
 	                     (uint8_t*)&ball_kick, sizeof(ball_kick));
 	task_post_common_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_REACT,
@@ -155,7 +153,6 @@ static void em_game_shooter_advance()
 	{
 		s_shooter.frame = EM_GAME_SHOOTER_STEP_COUNT;
 		s_shooter.moving = false;
-		timer_remove_attr(EM_GAME_SHOOTER_ID, EM_GAME_SHOOTER_UPDATE);
 	}
 
 	em_game_shooter_publish_view();
@@ -183,7 +180,15 @@ void em_game_shooter_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_SHOOTER_UPDATE:
-		em_game_shooter_advance();
+		if (s_shooter.moving)
+		{
+			s_update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+			if (s_update_elapsed_ms >= EM_GAME_SHOOTER_ANIM_TICK_INTERVAL)
+			{
+				s_update_elapsed_ms -= EM_GAME_SHOOTER_ANIM_TICK_INTERVAL;
+				em_game_shooter_advance();
+			}
+		}
 		break;
 
 	default:

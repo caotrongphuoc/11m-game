@@ -1,7 +1,6 @@
 #include "ak.h"
 #include "message.h"
 #include "port.h"
-#include "timer.h"
 
 #include "app.h"
 #include "task_list.h"
@@ -11,6 +10,7 @@
 
 static em_game_ball_view_t s_ball;
 static int16_t s_target_x;
+static uint8_t s_update_elapsed_ms;
 
 static void em_game_ball_publish_view()
 {
@@ -44,8 +44,6 @@ static int16_t em_game_ball_get_target_x(em_game_ball_target_t target)
 
 static void em_game_ball_reset()
 {
-	timer_remove_attr(EM_GAME_BALL_ID, EM_GAME_BALL_UPDATE);
-
 	s_ball.x = EM_GAME_BALL_START_X;
 	s_ball.y = EM_GAME_BALL_START_Y;
 	s_ball.frame = 0;
@@ -53,6 +51,7 @@ static void em_game_ball_reset()
 	s_ball.moving = false;
 	s_ball.target = EM_GAME_BALL_TARGET_NONE;
 	s_target_x = EM_GAME_BALL_START_X;
+	s_update_elapsed_ms = 0;
 
 	em_game_ball_publish_view();
 }
@@ -74,9 +73,8 @@ static void em_game_ball_start(const em_game_ball_kick_t* kick)
 	s_ball.moving = true;
 	s_ball.target = (uint8_t)target;
 	s_target_x = em_game_ball_get_target_x(target);
+	s_update_elapsed_ms = 0;
 
-	timer_set(EM_GAME_BALL_ID, EM_GAME_BALL_UPDATE,
-	          EM_GAME_BALL_ANIM_TICK_INTERVAL, TIMER_PERIODIC);
 	em_game_ball_publish_view();
 }
 
@@ -133,7 +131,6 @@ static void em_game_ball_advance()
 		s_ball.x = s_target_x;
 		s_ball.y = EM_GAME_BALL_TARGET_Y;
 		s_ball.moving = false;
-		timer_remove_attr(EM_GAME_BALL_ID, EM_GAME_BALL_UPDATE);
 		em_game_ball_report_arrival();
 	}
 
@@ -157,7 +154,15 @@ void em_game_ball_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_BALL_UPDATE:
-		em_game_ball_advance();
+		if (s_ball.moving)
+		{
+			s_update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+			if (s_update_elapsed_ms >= EM_GAME_BALL_ANIM_TICK_INTERVAL)
+			{
+				s_update_elapsed_ms -= EM_GAME_BALL_ANIM_TICK_INTERVAL;
+				em_game_ball_advance();
+			}
+		}
 		break;
 
 	default:
