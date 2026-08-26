@@ -1,10 +1,15 @@
 <div align="center">
 
-![Game](https://img.shields.io/badge/game-penalty_shootout-1f6feb?style=flat-square)
-![Target](https://img.shields.io/badge/target-STM32L151CBT6-2ea44f?style=flat-square)
-![Framework](https://img.shields.io/badge/framework-AK_event_driven-f97316?style=flat-square)
+![Repo Traffic](https://komarev.com/ghpvc/?username=11m-game&label=Repo+Traffic&color=red&style=flat-square)
 
 </div>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/language-C%2B%2B-red?style=flat-square" alt="Language">
+  <img src="https://img.shields.io/badge/mcu-STM32L151-red?style=flat-square" alt="MCU">
+  <img src="https://img.shields.io/badge/framework-Active%20Kernel-red?style=flat-square" alt="Framework">
+  <img src="https://img.shields.io/badge/hardware-AK%20Base%20Kit-red?style=flat-square" alt="Hardware">
+</p>
 
 # Eleven Meter - Game built on AK Embedded Base Kit
 
@@ -60,6 +65,22 @@ Flash Partitions Layout
 => Eleven Meter firmware
 ```
 
+**MCU naming convention:**
+
+<div align="center">
+
+| Part | Meaning |
+|---|---|
+| `STM32` | STMicroelectronics 32-bit MCU family. |
+| `L` | Low-power series. |
+| `151` | STM32L151 product line. |
+| `C` | 48-pin package. |
+| `B` | 128 KB Flash memory. |
+| `T` | LQFP package. |
+| `6` | Industrial temperature grade. |
+
+</div>
+
 <table align="center">
   <tr>
     <td align="center"><img src="hardware/images/board-view-top-bottom.png" alt="AK Embedded Base Kit top and bottom views" width="900"/></td>
@@ -71,7 +92,7 @@ Flash Partitions Layout
 
 Eleven Meter recreates a five-round penalty shootout. The player selects a shooting direction before the countdown expires, while the goalkeeper uses difficulty-dependent logic to choose a dive direction. Each kick is evaluated as a goal, save, or miss, and the scoreboard determines the winner when the shootout is complete.
 
-#### Objects in the Game
+#### Objects in the Game:
 
 | Object | Description |
 |---|---|
@@ -95,7 +116,9 @@ Shooter ── shot zone ──> Keeper ──┤
 Match / Shooter / Ball / Keeper ── snapshots ──> Display
 ```
 
-### III. How to Play
+> **Note:** See [Eleven Meter object sequences](docs/00-design-sequence-object.md) for detailed runtime message flows.
+
+### III. How to Play:
 
 #### Main Menu
 
@@ -158,7 +181,7 @@ Start Match -> Round Setup -> Three-Second Selection
                                          Retry or Home
 ```
 
-> See [Eleven Meter object sequences](docs/00-design-sequence-object.md) for the detailed task and message flow.
+> **Note:** See [Eleven Meter object sequences](docs/00-design-sequence-object.md) for the detailed task and message flow.
 
 ## Project Structure
 
