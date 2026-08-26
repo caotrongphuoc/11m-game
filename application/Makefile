@@ -6,7 +6,7 @@
 # Learn Makefiles at https://makefiletutorial.com/
 # using find PATH -type d -print to list subdirectories recursively
 
-# Utilitis define
+# Utilities definition
 Print = @echo "~"
 
 # SOC, flash and RAM info
@@ -36,14 +36,14 @@ CONSOLE_BAUDRATE_DEF = -DSYS_CONSOLE_BAUDRATE=$(SYS_CONSOLE_BAUDRATE)
 #|---------------------------------------------------------------------------------------------------|
 #| OPTIMIZE LEVELS                                                                                   |
 #|------------|----------------------------------|--------------|---------|------------|-------------|
-#|   option   | optimization levels              |execution time|code size|memory usage|complile time|
+#|   option   | optimization levels              |execution time|code size|memory usage|compile time|
 #|------------|----------------------------------|--------------|---------|------------|-------------|
 #|   -O0      | compilation time                 |     (+)      |   (+)   |     (-)    |    (-)      |
 #| -O1 || -O  | code size && execution time      |     (-)      |   (-)   |     (+)    |    (+)      |
 #|   -O2      | more code size && execution time |     (--)     |         |     (+)    |    (++)     |
 #|   -O3      | more code size && execution time |     (---)    |         |     (+)    |    (+++)    |
 #|   -Os      | code size                        |              |   (--)  |            |    (++)     |
-#|  -Ofast    | O3 with none math cals           |     (---)    |         |     (+)    |    (+++)    |
+#|  -Ofast    | O3 with nonstandard math calls   |     (---)    |         |     (+)    |    (+++)    |
 #|------------|----------------------------------|--------------|---------|------------|-------------|
 OPTIMIZE_OPTION = -g -Os
 
@@ -56,7 +56,7 @@ RELEASE_OPTION = -URELEASE
 # Enable PIN (using led life) interrupt analyzer function [entry IRQ -> led life ON] and [exit IRQ -> led life OFF].
 IRQ_DEBUG_OPTION = -UAK_IO_IRQ_ANALYZER
 
-# Enable to using USB hareware configuration.
+# Enable USB hardware configuration.
 USB_OPTION = -UUSING_USB_MOD
 
 # Interface compile option.

@@ -44,9 +44,9 @@ void scr_game_rip_handle(ak_msg_t* msg)
 	}
 	break;
 
-	case AC_DISPLAY_BUTON_MODE_PRESSED:
+	case AC_DISPLAY_BUTTON_MODE_PRESSED:
 	{
-		APP_DBG_SIG("AC_DISPLAY_BUTON_MODE_PRESSED\n");
+		APP_DBG_SIG("AC_DISPLAY_BUTTON_MODE_PRESSED\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SKIP_RIP);
 	}
 	break;

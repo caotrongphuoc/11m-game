@@ -95,19 +95,19 @@ void scr_game_menu_handle(ak_msg_t* msg)
 	}
 	break;
 
-	case AC_DISPLAY_BUTON_UP_PRESSED:
+	case AC_DISPLAY_BUTTON_UP_PRESSED:
 	{
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_MENU_LEFT);
 	}
 	break;
 
-	case AC_DISPLAY_BUTON_MODE_PRESSED:
+	case AC_DISPLAY_BUTTON_MODE_PRESSED:
 	{
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_START);
 	}
 	break;
 
-	case AC_DISPLAY_BUTON_DOWN_PRESSED:
+	case AC_DISPLAY_BUTTON_DOWN_PRESSED:
 	{
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_MENU_RIGHT);
 	}

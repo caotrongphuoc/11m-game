@@ -39,9 +39,12 @@ static uint8_t host_firmware_if_type;
 
 static uint8_t flash_read_buffer[FLASH_PAGE_SIZE];
 
-void task_fw(ak_msg_t* msg) {
-	switch (msg->sig) {
-	case FW_CHECKING_REQ: {
+void task_fw(ak_msg_t* msg)
+{
+	switch (msg->sig)
+	{
+	case FW_CHECKING_REQ:
+	{
 		APP_DBG_SIG("FW_CHECKING_REQ\n");
 		firmware_header_t cr_fw_header;
 
@@ -51,19 +54,21 @@ void task_fw(ak_msg_t* msg) {
 		sys_ctrl_get_firmware_info(&cr_fw_header);
 
 		/* check and update current app header field of boot share data */
-		if (memcmp(&cr_fw_header, &(sb.current_fw_app_header), sizeof(firmware_header_t)) != 0) {
+		if (memcmp(&cr_fw_header, &(sb.current_fw_app_header), sizeof(firmware_header_t)) != 0)
+		{
 			memcpy(&(sb.current_fw_app_header), &cr_fw_header, sizeof(firmware_header_t));
 		}
 
 		/* notify update app firmware completed */
-		if (sb.fw_app_cmd.cmd == SYS_BOOT_CMD_UPDATE_RES) {
-			/* TODO: update firmware completed */
+		if (sb.fw_app_cmd.cmd == SYS_BOOT_CMD_UPDATE_RES)
+		{
+			/* Forward the saved application update completion response. */
 			ak_msg_t* s_msg = get_pure_msg();
-			set_if_src_task_id(s_msg,	sb.fw_app_cmd.ak_msg_res.src_task_id);
-			set_if_des_task_id(s_msg,	sb.fw_app_cmd.ak_msg_res.des_task_id);
-			set_if_src_type(s_msg,		sb.fw_app_cmd.ak_msg_res.if_src_type);
-			set_if_des_type(s_msg,		sb.fw_app_cmd.ak_msg_res.if_des_type);
-			set_if_sig(s_msg,			sb.fw_app_cmd.ak_msg_res.sig);
+			set_if_src_task_id(s_msg, sb.fw_app_cmd.ak_msg_res.src_task_id);
+			set_if_des_task_id(s_msg, sb.fw_app_cmd.ak_msg_res.des_task_id);
+			set_if_src_type(s_msg, sb.fw_app_cmd.ak_msg_res.if_src_type);
+			set_if_des_type(s_msg, sb.fw_app_cmd.ak_msg_res.if_des_type);
+			set_if_sig(s_msg, sb.fw_app_cmd.ak_msg_res.sig);
 			set_msg_sig(s_msg, AC_IF_PURE_MSG_OUT);
 			task_post(AC_TASK_IF_ID, s_msg);
 		}
@@ -72,14 +77,15 @@ void task_fw(ak_msg_t* msg) {
 		sb.fw_app_cmd.cmd = SYS_BOOT_CMD_NONE;
 
 		/* notify update boot firmware completed */
-		if (sb.fw_boot_cmd.cmd == SYS_BOOT_CMD_UPDATE_RES) {
-			/* TODO: update firmware completed */
+		if (sb.fw_boot_cmd.cmd == SYS_BOOT_CMD_UPDATE_RES)
+		{
+			/* Forward the saved bootloader update completion response. */
 			ak_msg_t* s_msg = get_pure_msg();
-			set_if_src_task_id(s_msg,	sb.fw_boot_cmd.ak_msg_res.src_task_id);
-			set_if_des_task_id(s_msg,	sb.fw_boot_cmd.ak_msg_res.des_task_id);
-			set_if_src_type(s_msg,		sb.fw_boot_cmd.ak_msg_res.if_src_type);
-			set_if_des_type(s_msg,		sb.fw_boot_cmd.ak_msg_res.if_des_type);
-			set_if_sig(s_msg,			sb.fw_boot_cmd.ak_msg_res.sig);
+			set_if_src_task_id(s_msg, sb.fw_boot_cmd.ak_msg_res.src_task_id);
+			set_if_des_task_id(s_msg, sb.fw_boot_cmd.ak_msg_res.des_task_id);
+			set_if_src_type(s_msg, sb.fw_boot_cmd.ak_msg_res.if_src_type);
+			set_if_des_type(s_msg, sb.fw_boot_cmd.ak_msg_res.if_des_type);
+			set_if_sig(s_msg, sb.fw_boot_cmd.ak_msg_res.sig);
 			set_msg_sig(s_msg, AC_IF_PURE_MSG_OUT);
 			task_post(AC_TASK_IF_ID, s_msg);
 		}
@@ -94,18 +100,20 @@ void task_fw(ak_msg_t* msg) {
 		sys_boot_t cr_sb;
 		sys_boot_get(&cr_sb);
 
-		if (memcmp(&cr_sb, &sb, sizeof(sys_boot_t)) != 0) {
+		if (memcmp(&cr_sb, &sb, sizeof(sys_boot_t)) != 0)
+		{
 			sys_boot_set(&sb);
 		}
 	}
-		break;
+	break;
 
-	case FW_CRENT_APP_FW_INFO_REQ: {
-		APP_DBG_SIG("FW_CRENT_APP_FW_INFO_REQ\n");
+	case FW_CURRENT_APP_FW_INFO_REQ:
+	{
+		APP_DBG_SIG("FW_CURRENT_APP_FW_INFO_REQ\n");
 		sys_boot_t sb;
 		sys_boot_get(&sb);
 
-		/* update respondse message */
+		/* Update the response message. */
 		sb.fw_app_cmd.ak_msg_res.des_task_id = msg->if_src_task_id;
 		sb.fw_app_cmd.ak_msg_res.src_task_id = msg->if_des_task_id;
 		sb.fw_app_cmd.ak_msg_res.if_des_type = msg->if_src_type;
@@ -127,14 +135,15 @@ void task_fw(ak_msg_t* msg) {
 		set_msg_sig(s_msg, AC_IF_COMMON_MSG_OUT);
 		task_post(AC_TASK_IF_ID, s_msg);
 	}
-		break;
+	break;
 
-	case FW_CRENT_BOOT_FW_INFO_REQ: {
-		APP_DBG_SIG("FW_CRENT_BOOT_FW_INFO_REQ\n");
+	case FW_CURRENT_BOOT_FW_INFO_REQ:
+	{
+		APP_DBG_SIG("FW_CURRENT_BOOT_FW_INFO_REQ\n");
 		sys_boot_t sb;
 		sys_boot_get(&sb);
 
-		/* update respondse message */
+		/* Update the response message. */
 		sb.fw_boot_cmd.ak_msg_res.des_task_id = msg->if_src_task_id;
 		sb.fw_boot_cmd.ak_msg_res.src_task_id = msg->if_des_task_id;
 		sb.fw_boot_cmd.ak_msg_res.if_des_type = msg->if_src_type;
@@ -153,9 +162,10 @@ void task_fw(ak_msg_t* msg) {
 		set_msg_sig(s_msg, AC_IF_COMMON_MSG_OUT);
 		task_post(AC_TASK_IF_ID, s_msg);
 	}
-		break;
+	break;
 
-	case FW_UPDATE_REQ: {
+	case FW_UPDATE_REQ:
+	{
 		APP_DBG_SIG("FW_UPDATE_REQ\n");
 
 		memcpy(&firmware_header_file, get_data_common_msg(msg), sizeof(firmware_header_t));
@@ -168,16 +178,18 @@ void task_fw(ak_msg_t* msg) {
 		host_firmware_task_id = msg->if_src_task_id;
 		host_firmware_if_type = msg->if_src_type;
 
-		/* TODO: when recieve firmware update request.
-		 * depend on each system, we need to check system state then decide update or respondse busy signal */
+		/* This application accepts the update immediately. Systems with competing flash users
+		 * should check their state here and post FW_UPDATE_SM_BUSY when necessary. */
 		task_post_pure_msg(AC_TASK_FW_ID, FW_UPDATE_SM_OK);
 		task_post_pure_msg(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_FW_UPDATE);
 	}
-		break;
+	break;
 
-	case FW_UPDATE_SM_OK: {
+	case FW_UPDATE_SM_OK:
+	{
 		/* clear flash loader */
-		for (int i = 0; i < APP_FLASH_FIRMWARE_BLOCK_64K_SIZE; i++) {
+		for (int i = 0; i < APP_FLASH_FIRMWARE_BLOCK_64K_SIZE; i++)
+		{
 			flash_erase_block_64k(APP_FLASH_FIRMWARE_START_ADDR + (FLASH_BLOCK_64K_SIZE * i));
 		}
 		APP_DBG("erase temp OK\n");
@@ -194,9 +206,10 @@ void task_fw(ak_msg_t* msg) {
 
 		timer_set(AC_TASK_FW_ID, FW_PACKED_TIMEOUT, FW_PACKED_TIMEOUT_INTERVAL, TIMER_ONE_SHOT);
 	}
-		break;
+	break;
 
-	case FW_UPDATE_SM_BUSY: {
+	case FW_UPDATE_SM_BUSY:
+	{
 		APP_DBG_SIG("FW_UPDATE_SM_BUSY\n");
 		ak_msg_t* s_msg = get_pure_msg();
 
@@ -208,9 +221,10 @@ void task_fw(ak_msg_t* msg) {
 		set_msg_sig(s_msg, AC_IF_PURE_MSG_OUT);
 		task_post(AC_TASK_IF_ID, s_msg);
 	}
-		break;
+	break;
 
-	case FW_TRANSFER_REQ: {
+	case FW_TRANSFER_REQ:
+	{
 		sys_ctrl_independent_watchdog_reset();
 		sys_ctrl_soft_watchdog_reset();
 
@@ -228,7 +242,8 @@ void task_fw(ak_msg_t* msg) {
 		ak_msg_t* s_msg = get_pure_msg();
 
 		/* transfer completed */
-		if (bin_file_cursor >= firmware_header_file.bin_len) {
+		if (bin_file_cursor >= firmware_header_file.bin_len)
+		{
 			timer_remove_attr(AC_TASK_FW_ID, FW_PACKED_TIMEOUT);
 
 			/* start calculate chechsum */
@@ -236,7 +251,8 @@ void task_fw(ak_msg_t* msg) {
 			uint32_t word = 0;
 
 			APP_DBG("start calculate checksum\n");
-			for (uint32_t index = 0; index < firmware_header_file.bin_len; index += sizeof(uint32_t)) {
+			for (uint32_t index = 0; index < firmware_header_file.bin_len; index += sizeof(uint32_t))
+			{
 				sys_ctrl_independent_watchdog_reset();
 				sys_ctrl_soft_watchdog_reset();
 
@@ -250,20 +266,23 @@ void task_fw(ak_msg_t* msg) {
 			APP_DBG("checksum_transfer:%04X\n", firmware_header_file.checksum);
 
 			/* checksum correctly */
-			if (checksum_calculated == firmware_header_file.checksum) {
+			if (checksum_calculated == firmware_header_file.checksum)
+			{
 				APP_DBG("checksum correctly\n");
 				set_if_sig(s_msg, GW_FW_INTERNAL_UPDATE_REQ);
 			}
 
 			/* checksum incorrect*/
-			else {
+			else
+			{
 				APP_DBG("checksum incorrect\n");
 				set_if_sig(s_msg, GW_FW_TRANSFER_CHECKSUM_ERR);
 			}
 		}
 
 		/* transferring countimue */
-		else {
+		else
+		{
 			set_if_sig(s_msg, GW_FW_TRANSFER_RES_OK);
 		}
 
@@ -274,15 +293,17 @@ void task_fw(ak_msg_t* msg) {
 		set_msg_sig(s_msg, AC_IF_PURE_MSG_OUT);
 		task_post(AC_TASK_IF_ID, s_msg);
 	}
-		break;
+	break;
 
-	case FW_PACKED_TIMEOUT: {
+	case FW_PACKED_TIMEOUT:
+	{
 		APP_DBG_SIG("FW_PACKED_TIMEOUT\n");
 		task_post_pure_msg(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_FW_UPDATE_ERR);
 	}
-		break;
+	break;
 
-	case FW_INTERNAL_UPDATE_APP_RES_OK: {
+	case FW_INTERNAL_UPDATE_APP_RES_OK:
+	{
 		APP_DBG_SIG("FW_INTERNAL_UPDATE_APP_RES_OK\n");
 		/* update share flash info */
 		fw_update_app_req_c_external_flash_io_none(&firmware_header_file);
@@ -291,9 +312,10 @@ void task_fw(ak_msg_t* msg) {
 		sys_ctrl_delay_ms(100);
 		sys_ctrl_reset();
 	}
-		break;
+	break;
 
-	case FW_INTERNAL_UPDATE_BOOT_RES_OK: {
+	case FW_INTERNAL_UPDATE_BOOT_RES_OK:
+	{
 		APP_DBG_SIG("FW_INTERNAL_UPDATE_BOOT_RES_OK\n");
 
 		fw_update_boot_req_c_external_flash_io_none(&firmware_header_file);
@@ -302,19 +324,21 @@ void task_fw(ak_msg_t* msg) {
 		sys_ctrl_delay_ms(100);
 		sys_ctrl_reset();
 	}
-		break;
+	break;
 
-	case FW_SAFE_MODE_RES_OK: {
+	case FW_SAFE_MODE_RES_OK:
+	{
 		APP_DBG_SIG("FW_SAFE_MODE_RES_OK\n");
 	}
-		break;
+	break;
 
 	default:
 		break;
 	}
 }
 
-void fw_update_app_req_c_external_flash_io_none(firmware_header_t* firmware_info) {
+void fw_update_app_req_c_external_flash_io_none(firmware_header_t* firmware_info)
+{
 	firmware_info->psk = FIRMWARE_PSK;
 	sys_boot_t sb;
 	sys_boot_get(&sb);
@@ -323,16 +347,17 @@ void fw_update_app_req_c_external_flash_io_none(firmware_header_t* firmware_info
 	memcpy(&(sb.update_fw_app_header), firmware_info, sizeof(firmware_header_t));
 
 	/* cmd update request */
-	sb.fw_app_cmd.cmd			= SYS_BOOT_CMD_UPDATE_REQ;
-	sb.fw_app_cmd.container		= SYS_BOOT_CONTAINER_EXTERNAL_FLASH;
-	sb.fw_app_cmd.io_driver		= SYS_BOOT_IO_DRIVER_NONE;
-	sb.fw_app_cmd.des_addr		= APP_START_ADDR;
-	sb.fw_app_cmd.src_addr		= APP_FLASH_FIRMWARE_START_ADDR;
+	sb.fw_app_cmd.cmd = SYS_BOOT_CMD_UPDATE_REQ;
+	sb.fw_app_cmd.container = SYS_BOOT_CONTAINER_EXTERNAL_FLASH;
+	sb.fw_app_cmd.io_driver = SYS_BOOT_IO_DRIVER_NONE;
+	sb.fw_app_cmd.des_addr = APP_START_ADDR;
+	sb.fw_app_cmd.src_addr = APP_FLASH_FIRMWARE_START_ADDR;
 
 	sys_boot_set(&sb);
 }
 
-void fw_update_boot_req_c_external_flash_io_none(firmware_header_t* firmware_info) {
+void fw_update_boot_req_c_external_flash_io_none(firmware_header_t* firmware_info)
+{
 	firmware_info->psk = FIRMWARE_PSK;
 	sys_boot_t sb;
 	sys_boot_get(&sb);
@@ -341,11 +366,11 @@ void fw_update_boot_req_c_external_flash_io_none(firmware_header_t* firmware_inf
 	memcpy(&(sb.update_fw_boot_header), firmware_info, sizeof(firmware_header_t));
 
 	/* cmd update request */
-	sb.fw_boot_cmd.cmd			= SYS_BOOT_CMD_UPDATE_RES; /* using notify internal boot firmware is update success */
-	sb.fw_boot_cmd.container	= SYS_BOOT_CONTAINER_EXTERNAL_FLASH;
-	sb.fw_boot_cmd.io_driver	= SYS_BOOT_IO_DRIVER_NONE;
-	sb.fw_boot_cmd.des_addr		= 0x08000000;
-	sb.fw_boot_cmd.src_addr		= APP_FLASH_FIRMWARE_START_ADDR;
+	sb.fw_boot_cmd.cmd = SYS_BOOT_CMD_UPDATE_RES; /* using notify internal boot firmware is update success */
+	sb.fw_boot_cmd.container = SYS_BOOT_CONTAINER_EXTERNAL_FLASH;
+	sb.fw_boot_cmd.io_driver = SYS_BOOT_IO_DRIVER_NONE;
+	sb.fw_boot_cmd.des_addr = 0x08000000;
+	sb.fw_boot_cmd.src_addr = APP_FLASH_FIRMWARE_START_ADDR;
 
 	sys_boot_set(&sb);
 
@@ -356,15 +381,18 @@ void fw_update_boot_req_c_external_flash_io_none(firmware_header_t* firmware_inf
 	uint32_t fw_packet_write_len = 0;
 	uint32_t remain_fw_len = sb.update_fw_boot_header.bin_len;
 
-	while (external_fw_index < sb.update_fw_boot_header.bin_len) {
+	while (external_fw_index < sb.update_fw_boot_header.bin_len)
+	{
 		sys_ctrl_independent_watchdog_reset();
 		sys_ctrl_soft_watchdog_reset();
 
 		remain_fw_len = sb.update_fw_boot_header.bin_len - external_fw_index;
-		if (remain_fw_len < FLASH_PAGE_SIZE) {
+		if (remain_fw_len < FLASH_PAGE_SIZE)
+		{
 			fw_packet_write_len = remain_fw_len;
 		}
-		else {
+		else
+		{
 			fw_packet_write_len = FLASH_PAGE_SIZE;
 		}
 
