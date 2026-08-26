@@ -20,8 +20,11 @@
 | File | Description |
 |---|---|
 | [README.md](README.md) | Main project overview, hardware information, gameplay rules, and game-object descriptions. |
-| [docs/00-design-sequence-object.md](docs/00-design-sequence-object.md) | State ownership and runtime message sequences for the gameplay objects. |
-| [docs/01-ak-mcp-deployment.md](docs/01-ak-mcp-deployment.md) | Deploy and connect the AK documentation MCP server. |
+| [docs/01-guide-getting-started.md](docs/01-guide-getting-started.md) | Build, flash, play, and inspect the firmware. |
+| [docs/02-guide-coding-rules.md](docs/02-guide-coding-rules.md) | Zomwar-style source conventions with current AK ownership rules. |
+| [docs/03-design-sequence-object.md](docs/03-design-sequence-object.md) | State ownership and message sequences for gameplay objects. |
+| [docs/04-design-sequence-runtime.md](docs/04-design-sequence-runtime.md) | End-to-end button, tick, task, result, and render signal flow. |
+| [docs/05-ak-mcp-deployment.md](docs/05-ak-mcp-deployment.md) | Deploy and connect the AK documentation MCP server. |
 
 ## Introduction
 
@@ -116,7 +119,7 @@ Shooter ── shot zone ──> Keeper ──┤
 Match / Shooter / Ball / Keeper ── snapshots ──> Display
 ```
 
-> **Note:** See [Eleven Meter object sequences](docs/00-design-sequence-object.md) for detailed runtime message flows.
+> **Note:** See [Eleven Meter object sequences](docs/03-design-sequence-object.md) for detailed runtime message flows.
 
 ### III. How to Play:
 
@@ -181,7 +184,7 @@ Start Match -> Round Setup -> Three-Second Selection
                                          Retry or Home
 ```
 
-> **Note:** See [Eleven Meter object sequences](docs/00-design-sequence-object.md) for the detailed task and message flow.
+> **Note:** See [Eleven Meter runtime flow](docs/04-design-sequence-runtime.md) for the detailed task and message flow.
 
 ## Project Structure
 
@@ -225,7 +228,7 @@ Run `make -C application clean` before a full rebuild. The UART console uses 115
 
 ## Development Rules
 
-- Treat the [AK documentation MCP server](docs/01-ak-mcp-deployment.md) as the source of truth for kernel APIs and recipes.
+- Treat the [AK documentation MCP server](docs/05-ak-mcp-deployment.md) as the source of truth for kernel APIs and recipes.
 - Keep handlers non-blocking; use timers and posted signals instead of delays or busy-waits.
 - Keep mutable gameplay state inside its owning task implementation.
 - Exchange gameplay commands, results, and render snapshots only through AK messages.

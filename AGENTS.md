@@ -56,7 +56,9 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
   - Study `application/sources/app/screens/` for screen file layout
   - Study `application/sources/app/app.h` and `task_list.h/cpp` for signal & task registration
   - Coding rules reference: https://github.com/caotrongphuoc/zomwar-game/blob/main/docs/02-guide-coding-rules.md
-- Object ownership and message sequences: `docs/00-design-sequence-object.md`
+- Coding rules: `docs/02-guide-coding-rules.md`
+- Object ownership and message sequences: `docs/03-design-sequence-object.md`
+- End-to-end runtime flow: `docs/04-design-sequence-runtime.md`
 
 **Important**: study the patterns and re-implement with `em_game_*` prefix. Do not blindly copy zomwar sources into this repo.
 
@@ -81,7 +83,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 - Tasks exchange commands, results, and view snapshots only through `task_post_*` messages.
 - Validate incoming common-message lengths and values before using their payloads.
 - Protect every common-message payload with a `static_assert` against `AK_COMMON_MSG_DATA_SIZE`.
-- Follow `docs/00-design-sequence-object.md` when changing gameplay message flow.
+- Follow `docs/03-design-sequence-object.md` and `docs/04-design-sequence-runtime.md` when changing gameplay message flow.
 
 ## Current runtime architecture
 
@@ -90,6 +92,13 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 - Match owns round coordination and every game screen transition. Screens only translate button input into Match signals.
 - Shooter owns kick selection, Ball owns movement, Keeper owns dive selection, Goal resolves the two reports, and Display owns validated render snapshots.
 - Extend this message-driven loop. Do not introduce direct object calls, shared mutable gameplay data, blocking delays, or a second gameplay timer.
+
+## Zomwar alignment boundary
+
+- Match Zomwar's feature-oriented file layout, `em_game_*` object naming, `scr_game_*` screen naming, visual source sections, screen rendering helpers, and display-owned shared tick pattern.
+- Keep Eleven Meter directly under `application/sources/app/game_eleven_meter/`; do not add an intermediate `app/game/` directory.
+- Zomwar is read-only reference code. Do not copy its mutable `extern` object globals, direct cross-object calls, or screen-owned gameplay state because those patterns conflict with current AK ownership rules.
+- When Zomwar and AK documentation disagree, follow AK documentation and record the safe divergence in `docs/02-guide-coding-rules.md`.
 
 ## Build and validation
 
