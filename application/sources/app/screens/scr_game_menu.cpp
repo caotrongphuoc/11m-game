@@ -5,6 +5,11 @@
 /*****************************************************************************/
 
 static void view_scr_game_menu();
+static void scr_game_menu_title_display();
+static void scr_game_menu_difficulty_display(em_game_match_difficulty_t difficulty);
+static void scr_game_menu_difficulty_option_display(uint8_t x, uint8_t width, const char* text, bool selected);
+static void scr_game_menu_best_display(uint8_t best_goals, const char* best_difficulty_text);
+static void scr_game_menu_start_display();
 
 view_dynamic_t dyn_view_game_menu = {{
                                          .item_type = ITEM_TYPE_DYNAMIC,
@@ -22,28 +27,7 @@ view_screen_t scr_game_menu = {
 void view_scr_game_menu()
 {
 	const em_game_view_t* view = task_display_get_game_view();
-	const char* difficulty_text;
 	const char* best_difficulty_text;
-	uint8_t difficulty_x;
-
-	switch ((em_game_match_difficulty_t)view->difficulty)
-	{
-	case EM_GAME_MATCH_DIFFICULTY_EASY:
-		difficulty_text = "< EASY >";
-		difficulty_x = 40;
-		break;
-
-	case EM_GAME_MATCH_DIFFICULTY_HARD:
-		difficulty_text = "< HARD >";
-		difficulty_x = 40;
-		break;
-
-	case EM_GAME_MATCH_DIFFICULTY_NORMAL:
-	default:
-		difficulty_text = "< NORMAL >";
-		difficulty_x = 34;
-		break;
-	}
 
 	switch ((em_game_match_difficulty_t)view->best_difficulty)
 	{
@@ -65,26 +49,82 @@ void view_scr_game_menu()
 	view_render.setTextSize(1);
 	view_render.setTextColor(WHITE);
 
-	view_render.setCursor(16, 0);
-	view_render.print("PENALTY SHOOTOUT");
+	scr_game_menu_title_display();
+	scr_game_menu_difficulty_display((em_game_match_difficulty_t)view->difficulty);
+	scr_game_menu_best_display(view->best_goals, best_difficulty_text);
+	scr_game_menu_start_display();
+}
 
-	view_render.setCursor(34, 13);
-	view_render.print("Difficulty:");
+static void scr_game_menu_title_display()
+{
+	view_render.drawCircle(7, 7, 5, WHITE);
+	view_render.drawLine(4, 4, 10, 10, WHITE);
+	view_render.drawLine(10, 4, 4, 10, WHITE);
 
-	view_render.setCursor(difficulty_x, 24);
-	view_render.print(difficulty_text);
+	view_render.setCursor(25, 3);
+	view_render.print("ELEVEN METER");
 
-	view_render.setCursor(22, 36);
-	view_render.print("BEST: ");
-	view_render.print((unsigned int)view->best_goals);
-	view_render.print(" ");
+	view_render.drawRect(113, 2, 13, 10, WHITE);
+	view_render.drawLine(113, 2, 119, 7, WHITE);
+	view_render.drawLine(126, 2, 120, 7, WHITE);
+	view_render.drawLine(119, 7, 113, 11, WHITE);
+	view_render.drawLine(120, 7, 126, 11, WHITE);
+}
+
+static void scr_game_menu_difficulty_display(em_game_match_difficulty_t difficulty)
+{
+	view_render.setCursor(37, 15);
+	view_render.print("DIFFICULTY");
+
+	scr_game_menu_difficulty_option_display(1, 36, "EASY", difficulty == EM_GAME_MATCH_DIFFICULTY_EASY);
+	scr_game_menu_difficulty_option_display(39, 50, "NORMAL", difficulty == EM_GAME_MATCH_DIFFICULTY_NORMAL);
+	scr_game_menu_difficulty_option_display(91, 36, "HARD", difficulty == EM_GAME_MATCH_DIFFICULTY_HARD);
+}
+
+static void scr_game_menu_difficulty_option_display(uint8_t x, uint8_t width, const char* text, bool selected)
+{
+	uint8_t text_x = x + ((width - (strlen(text) * 6)) / 2);
+
+	if (selected)
+	{
+		view_render.fillRect(x, 24, width, 12, WHITE);
+		view_render.setTextColor(BLACK);
+	}
+	else
+	{
+		view_render.drawRect(x, 24, width, 12, WHITE);
+		view_render.setTextColor(WHITE);
+	}
+
+	view_render.setCursor(text_x, 26);
+	view_render.print(text);
+	view_render.setTextColor(WHITE);
+}
+
+static void scr_game_menu_best_display(uint8_t best_goals, const char* best_difficulty_text)
+{
+	view_render.drawTriangle(8, 40, 11, 46, 5, 46, WHITE);
+	view_render.drawLine(8, 46, 8, 49, WHITE);
+	view_render.drawLine(5, 49, 11, 49, WHITE);
+
+	view_render.setCursor(18, 41);
+	view_render.print("BEST ");
+	view_render.print((unsigned int)best_goals);
+	view_render.print(" / ");
 	view_render.print(best_difficulty_text);
 
-	view_render.setCursor(22, 46);
-	view_render.print("UP/DOWN: CYCLE");
+	view_render.fillTriangle(118, 40, 114, 44, 122, 44, WHITE);
+	view_render.fillTriangle(118, 49, 114, 45, 122, 45, WHITE);
+}
 
-	view_render.setCursor(31, 56);
-	view_render.print("MODE: START");
+static void scr_game_menu_start_display()
+{
+	view_render.fillRect(18, 52, 92, 12, WHITE);
+	view_render.fillTriangle(27, 55, 27, 61, 33, 58, BLACK);
+	view_render.setTextColor(BLACK);
+	view_render.setCursor(42, 54);
+	view_render.print("MODE  START");
+	view_render.setTextColor(WHITE);
 }
 
 /*****************************************************************************/
