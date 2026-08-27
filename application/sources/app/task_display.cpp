@@ -73,8 +73,7 @@ static void task_display_update_visibility()
 	{
 		s_em_game_view.flags |= EM_GAME_VIEW_FLAG_KEEPER_VISIBLE;
 	}
-	if (s_em_game_shooter_view.visible &&
-	    (!s_em_game_ball_view.moving || s_em_game_shooter_view.moving))
+	if (s_em_game_shooter_view.visible)
 	{
 		s_em_game_view.flags |= EM_GAME_VIEW_FLAG_SHOOTER_VISIBLE;
 	}
