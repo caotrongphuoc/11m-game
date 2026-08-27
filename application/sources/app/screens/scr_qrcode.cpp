@@ -56,16 +56,6 @@ view_screen_t scr_qrcode = {
     .focus_item = 0,
 };
 
-class line_segment
-{
-  public:
-	int x0, x1;
-	int distance()
-	{
-		return (x1 - x0);
-	}
-};
-
 void view_scr_qrcode()
 {
 	view_render.drawBitmap(QRCODE_AXIS_X,

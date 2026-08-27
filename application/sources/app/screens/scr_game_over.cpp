@@ -93,7 +93,7 @@ static void scr_game_over_score_display(uint8_t player_score, uint8_t ai_score)
 	view_render.print("CPU");
 
 	view_render.setTextSize(2);
-	view_render.setCursor(48, 28);
+	view_render.setCursor(46, 28);
 	view_render.print((unsigned int)player_score);
 	view_render.print("-");
 	view_render.print((unsigned int)ai_score);
