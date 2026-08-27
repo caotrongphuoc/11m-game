@@ -100,7 +100,7 @@ Eleven Meter recreates a five-round penalty shootout. The player selects a shoot
 | Object | Description |
 |---|---|
 | **Match** | Coordinates the menu, round setup, kick selection, result reveal, round completion, and game-over flow. |
-| **Shooter** | Represents the player and plays the shooting animation after a direction is selected. |
+| **Shooter** | Represents the player, advances toward the ball, and plays a direction-specific follow-through after a kick is selected. |
 | **Ball** | Moves from the penalty spot toward the selected left, center, or right target. A shot may also travel wide. |
 | **Keeper** | Selects and animates a dive direction according to the current difficulty. |
 | **Goal** | Resolves the ball and goalkeeper directions into a goal, save, or miss result. |

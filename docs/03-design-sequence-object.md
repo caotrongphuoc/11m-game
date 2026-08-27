@@ -7,7 +7,7 @@ This document describes state ownership and message flow between the Eleven Mete
 | Object | Owned state | Main responsibility |
 |---|---|---|
 | Match | Match phase, difficulty, countdown, best score, scoreboard | Coordinate menu, rounds, timing, and final result. |
-| Shooter | Kick direction, animation frame, reaction timer, random seed | Process the selected kick and dispatch Ball/Keeper commands. |
+| Shooter | Position, kick direction, animation frame, reaction timer, random seed | Animate a direction-specific follow-through and dispatch Ball/Keeper commands. |
 | Ball | Position, animation frame, movement target | Animate the shot and report its arrival to Goal. |
 | Keeper | Dive direction, difficulty, position, animation frame, random seed | Select and animate the goalkeeper response. |
 | Goal | Latest Ball and Keeper reports, readiness flags | Resolve goal, save, or miss after both reports arrive. |
