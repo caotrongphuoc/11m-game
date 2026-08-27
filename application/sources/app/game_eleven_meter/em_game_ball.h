@@ -19,7 +19,7 @@
 #define EM_GAME_BALL_TARGET_RIGHT_X (87)
 #define EM_GAME_BALL_TARGET_WIDE_LEFT_X (20)
 #define EM_GAME_BALL_TARGET_WIDE_RIGHT_X (108)
-#define EM_GAME_BALL_STEP_COUNT (10)
+#define EM_GAME_BALL_STEP_COUNT (8)
 
 /*****************************************************************************/
 /* Ball message contracts and display snapshot */
