@@ -26,15 +26,17 @@
 #define SCR_GAME_PENALTY_BOX_BOTTOM_LEFT_AXIS_X (0)
 #define SCR_GAME_PENALTY_BOX_BOTTOM_RIGHT_AXIS_X (127)
 #define SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y (63)
-#define SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE (1)
-#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_X (61)
-#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y (0)
+#define SCR_GAME_PENALTY_HUD_SCORE_WIDTH (35)
+#define SCR_GAME_PENALTY_HUD_HEIGHT (11)
 
 /*****************************************************************************/
 /* View - Penalty screen */
 /*****************************************************************************/
 
 static void view_scr_game_penalty();
+static void scr_game_penalty_hud_display(const em_game_view_t* view);
+static void scr_game_penalty_stadium_display();
+static void scr_game_penalty_pitch_display();
 static const unsigned char*
 scr_game_penalty_get_shooter_bitmap(const em_game_view_t* view);
 
@@ -69,34 +71,69 @@ view_screen_t scr_game_penalty = {
 
 static void scr_game_penalty_frame_display(const em_game_view_t* view)
 {
-	uint8_t ai_score = view->saves + view->misses;
-
 	view_render.setTextSize(1);
 	view_render.setTextColor(WHITE);
-
-	view_render.setCursor(0, 0);
-	view_render.print("P:");
-	view_render.print((unsigned int)view->goals);
-	view_render.print(" A:");
-	view_render.print((unsigned int)ai_score);
-
-	view_render.setCursor(70, 0);
-	view_render.print("ROUND ");
-	view_render.print((unsigned int)view->round);
-	view_render.print("/5");
-
-	if (view->state == EM_GAME_MATCH_STATE_SHOOTER_WAIT && view->countdown > 0)
-	{
-		view_render.setTextSize(SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE);
-		view_render.setCursor(SCR_GAME_PENALTY_COUNTDOWN_AXIS_X,
-		                      SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y);
-		view_render.print((unsigned int)view->countdown);
-	}
+	scr_game_penalty_hud_display(view);
+	scr_game_penalty_stadium_display();
 
 	view_render.drawBitmap(
 	    SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_X, SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_Y,
 	    bitmap_penalty_goal, SCR_GAME_PENALTY_GOAL_BITMAP_WIDTH,
 	    SCR_GAME_PENALTY_GOAL_BITMAP_HEIGHT, WHITE);
+	scr_game_penalty_pitch_display();
+}
+
+static void scr_game_penalty_hud_display(const em_game_view_t* view)
+{
+	uint8_t ai_score = view->saves + view->misses;
+
+	view_render.fillRect(0, 0, SCR_GAME_PENALTY_HUD_SCORE_WIDTH,
+	                     SCR_GAME_PENALTY_HUD_HEIGHT, WHITE);
+	view_render.setTextColor(BLACK);
+	view_render.setCursor(3, 2);
+	view_render.print("YOU ");
+	view_render.print((unsigned int)view->goals);
+
+	view_render.fillRect(128 - SCR_GAME_PENALTY_HUD_SCORE_WIDTH, 0,
+	                     SCR_GAME_PENALTY_HUD_SCORE_WIDTH,
+	                     SCR_GAME_PENALTY_HUD_HEIGHT, WHITE);
+	view_render.setCursor(96, 2);
+	view_render.print("CPU ");
+	view_render.print((unsigned int)ai_score);
+	view_render.setTextColor(WHITE);
+
+	view_render.setCursor(41, 2);
+	view_render.print("R");
+	view_render.print((unsigned int)view->round);
+	view_render.print("/5");
+
+	if (view->state == EM_GAME_MATCH_STATE_SHOOTER_WAIT && view->countdown > 0)
+	{
+		view_render.fillRect(74, 0, 11, SCR_GAME_PENALTY_HUD_HEIGHT, WHITE);
+		view_render.setTextColor(BLACK);
+		view_render.setCursor(77, 2);
+		view_render.print((unsigned int)view->countdown);
+		view_render.setTextColor(WHITE);
+	}
+}
+
+static void scr_game_penalty_stadium_display()
+{
+	view_render.drawLine(0, 13, 127, 13, WHITE);
+
+	for (uint8_t x = 3; x < 126; x += 8)
+	{
+		view_render.drawPixel(x, 11, WHITE);
+	}
+
+	view_render.drawLine(4, 16, 4, 25, WHITE);
+	view_render.fillTriangle(5, 16, 5, 21, 11, 18, WHITE);
+	view_render.drawLine(123, 16, 123, 25, WHITE);
+	view_render.fillTriangle(122, 16, 122, 21, 116, 18, WHITE);
+}
+
+static void scr_game_penalty_pitch_display()
+{
 
 	view_render.drawLine(0, SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, 127,
 	                     SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, WHITE);
@@ -112,6 +149,14 @@ static void scr_game_penalty_frame_display(const em_game_view_t* view)
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_RIGHT_AXIS_X,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
+
+	view_render.drawLine(39, SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, 31,
+	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
+	view_render.drawLine(88, SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, 96,
+	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
+	view_render.drawPixel(63, 59, WHITE);
+	view_render.drawPixel(64, 59, WHITE);
+	view_render.drawPixel(65, 59, WHITE);
 }
 
 static void scr_game_penalty_keeper_display(const em_game_view_t* view)
