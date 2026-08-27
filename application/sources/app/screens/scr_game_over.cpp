@@ -5,6 +5,10 @@
 /*****************************************************************************/
 
 static void view_scr_game_over();
+static void scr_game_over_winner_display(em_game_scoreboard_winner_t winner);
+static void scr_game_over_score_display(uint8_t player_score, uint8_t ai_score);
+static void scr_game_over_best_display(uint8_t best_goals, const char* best_difficulty_text);
+static void scr_game_over_action_display();
 
 view_dynamic_t dyn_view_game_over = {{
                                          .item_type = ITEM_TYPE_DYNAMIC,
@@ -44,42 +48,80 @@ void view_scr_game_over()
 	view_render.clear();
 	view_render.setTextColor(WHITE);
 
-	view_render.setTextSize(2);
-	view_render.setCursor(16, 0);
-	view_render.print("GAME OVER");
-
 	view_render.setTextSize(1);
-	view_render.setCursor(22, 18);
-	view_render.print("WINNER: ");
+	view_render.setCursor(37, 2);
+	view_render.print("GAME OVER");
+	view_render.drawLine(18, 11, 110, 11, WHITE);
 
-	if (view->winner == EM_GAME_SCOREBOARD_WINNER_PLAYER)
+	scr_game_over_winner_display((em_game_scoreboard_winner_t)view->winner);
+	scr_game_over_score_display(view->goals, ai_score);
+	scr_game_over_best_display(view->best_goals, best_difficulty_text);
+	scr_game_over_action_display();
+}
+
+static void scr_game_over_winner_display(em_game_scoreboard_winner_t winner)
+{
+	view_render.fillRect(16, 15, 96, 12, WHITE);
+	view_render.setTextColor(BLACK);
+
+	if (winner == EM_GAME_SCOREBOARD_WINNER_PLAYER)
 	{
-		view_render.print("PLAYER");
+		view_render.setCursor(31, 17);
+		view_render.print("PLAYER WINS!");
 	}
-	else if (view->winner == EM_GAME_SCOREBOARD_WINNER_AI)
+	else if (winner == EM_GAME_SCOREBOARD_WINNER_AI)
 	{
-		view_render.print("AI");
+		view_render.setCursor(43, 17);
+		view_render.print("AI WINS!");
 	}
 	else
 	{
-		view_render.print("--");
+		view_render.setCursor(46, 17);
+		view_render.print("NO WINNER");
 	}
 
-	view_render.setCursor(40, 30);
-	view_render.print("SCORE ");
-	view_render.print((unsigned int)view->goals);
+	view_render.setTextColor(WHITE);
+}
+
+static void scr_game_over_score_display(uint8_t player_score, uint8_t ai_score)
+{
+	view_render.setCursor(13, 32);
+	view_render.print("YOU");
+	view_render.setCursor(97, 32);
+	view_render.print("CPU");
+
+	view_render.setTextSize(2);
+	view_render.setCursor(48, 28);
+	view_render.print((unsigned int)player_score);
 	view_render.print("-");
 	view_render.print((unsigned int)ai_score);
+	view_render.setTextSize(1);
+}
 
-	view_render.setCursor(25, 41);
+static void scr_game_over_best_display(uint8_t best_goals, const char* best_difficulty_text)
+{
+	view_render.drawTriangle(8, 42, 11, 48, 5, 48, WHITE);
+	view_render.drawLine(8, 48, 8, 50, WHITE);
+	view_render.drawLine(5, 50, 11, 50, WHITE);
+
+	view_render.setCursor(18, 43);
 	view_render.print("BEST ");
-	view_render.print((unsigned int)view->best_goals);
-	view_render.print(" (");
+	view_render.print((unsigned int)best_goals);
+	view_render.print(" / ");
 	view_render.print(best_difficulty_text);
-	view_render.print(")");
+}
 
+static void scr_game_over_action_display()
+{
+	view_render.drawRect(1, 53, 75, 11, WHITE);
 	view_render.setCursor(7, 55);
-	view_render.print("MODE:RETRY  UP:HOME");
+	view_render.print("MODE RETRY");
+
+	view_render.fillRect(78, 53, 49, 11, WHITE);
+	view_render.setTextColor(BLACK);
+	view_render.setCursor(84, 55);
+	view_render.print("UP HOME");
+	view_render.setTextColor(WHITE);
 }
 
 /*****************************************************************************/
