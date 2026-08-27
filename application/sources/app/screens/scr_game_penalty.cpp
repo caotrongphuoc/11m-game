@@ -26,9 +26,9 @@
 #define SCR_GAME_PENALTY_BOX_BOTTOM_LEFT_AXIS_X (0)
 #define SCR_GAME_PENALTY_BOX_BOTTOM_RIGHT_AXIS_X (127)
 #define SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y (63)
-#define SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE (2)
-#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_X (58)
-#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y (7)
+#define SCR_GAME_PENALTY_COUNTDOWN_TEXT_SIZE (1)
+#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_X (61)
+#define SCR_GAME_PENALTY_COUNTDOWN_AXIS_Y (0)
 
 /*****************************************************************************/
 /* View - Penalty screen */
