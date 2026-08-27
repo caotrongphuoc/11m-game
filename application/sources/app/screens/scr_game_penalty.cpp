@@ -150,10 +150,6 @@ static void scr_game_penalty_pitch_display()
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_RIGHT_AXIS_X,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
 
-	view_render.drawLine(39, SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, 31,
-	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
-	view_render.drawLine(88, SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, 96,
-	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
 	view_render.drawPixel(63, 59, WHITE);
 	view_render.drawPixel(64, 59, WHITE);
 	view_render.drawPixel(65, 59, WHITE);

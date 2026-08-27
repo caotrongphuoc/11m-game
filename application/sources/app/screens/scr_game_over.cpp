@@ -113,13 +113,13 @@ static void scr_game_over_best_display(uint8_t best_goals, const char* best_diff
 
 static void scr_game_over_action_display()
 {
-	view_render.drawRect(1, 53, 75, 11, WHITE);
-	view_render.setCursor(7, 55);
+	view_render.drawRect(1, 52, 75, 12, WHITE);
+	view_render.setCursor(7, 54);
 	view_render.print("MODE RETRY");
 
-	view_render.fillRect(78, 53, 49, 11, WHITE);
+	view_render.fillRect(78, 52, 49, 12, WHITE);
 	view_render.setTextColor(BLACK);
-	view_render.setCursor(84, 55);
+	view_render.setCursor(84, 54);
 	view_render.print("UP HOME");
 	view_render.setTextColor(WHITE);
 }

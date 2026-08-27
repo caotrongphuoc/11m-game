@@ -54,7 +54,7 @@ static void scr_game_rip_goal_display()
 
 static void scr_game_rip_continue_display()
 {
-	view_render.fillRect(22, 51, 84, 13, WHITE);
+	view_render.fillRect(22, 52, 84, 12, WHITE);
 	view_render.fillTriangle(29, 54, 29, 61, 36, 57, BLACK);
 	view_render.setTextColor(BLACK);
 	view_render.setCursor(42, 54);
