@@ -7,6 +7,7 @@
 static void view_scr_game_over();
 static void scr_game_over_winner_display(em_game_scoreboard_winner_t winner);
 static void scr_game_over_score_display(uint8_t player_score, uint8_t ai_score);
+static void scr_game_over_score_marker_display(em_game_scoreboard_winner_t winner);
 static void scr_game_over_best_display(uint8_t best_goals, const char* best_difficulty_text);
 static void scr_game_over_action_display();
 
@@ -55,6 +56,7 @@ void view_scr_game_over()
 
 	scr_game_over_winner_display((em_game_scoreboard_winner_t)view->winner);
 	scr_game_over_score_display(view->goals, ai_score);
+	scr_game_over_score_marker_display((em_game_scoreboard_winner_t)view->winner);
 	scr_game_over_best_display(view->best_goals, best_difficulty_text);
 	scr_game_over_action_display();
 }
@@ -98,9 +100,27 @@ static void scr_game_over_score_display(uint8_t player_score, uint8_t ai_score)
 	view_render.setTextSize(1);
 }
 
+static void scr_game_over_score_marker_display(em_game_scoreboard_winner_t winner)
+{
+	if (winner == EM_GAME_SCOREBOARD_WINNER_PLAYER)
+	{
+		view_render.drawLine(13, 40, 30, 40, WHITE);
+	}
+	else if (winner == EM_GAME_SCOREBOARD_WINNER_AI)
+	{
+		view_render.drawLine(97, 40, 114, 40, WHITE);
+	}
+}
+
 static void scr_game_over_best_display(uint8_t best_goals, const char* best_difficulty_text)
 {
 	view_render.drawTriangle(8, 42, 11, 48, 5, 48, WHITE);
+	view_render.drawLine(3, 44, 3, 46, WHITE);
+	view_render.drawPixel(4, 44, WHITE);
+	view_render.drawPixel(4, 46, WHITE);
+	view_render.drawLine(13, 44, 13, 46, WHITE);
+	view_render.drawPixel(12, 44, WHITE);
+	view_render.drawPixel(12, 46, WHITE);
 	view_render.drawLine(8, 48, 8, 50, WHITE);
 	view_render.drawLine(5, 50, 11, 50, WHITE);
 

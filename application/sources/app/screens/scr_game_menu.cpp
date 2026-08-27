@@ -104,6 +104,12 @@ static void scr_game_menu_difficulty_option_display(uint8_t x, uint8_t width, co
 static void scr_game_menu_best_display(uint8_t best_goals, const char* best_difficulty_text)
 {
 	view_render.drawTriangle(8, 40, 11, 46, 5, 46, WHITE);
+	view_render.drawLine(3, 42, 3, 44, WHITE);
+	view_render.drawPixel(4, 42, WHITE);
+	view_render.drawPixel(4, 44, WHITE);
+	view_render.drawLine(13, 42, 13, 44, WHITE);
+	view_render.drawPixel(12, 42, WHITE);
+	view_render.drawPixel(12, 44, WHITE);
 	view_render.drawLine(8, 46, 8, 49, WHITE);
 	view_render.drawLine(5, 49, 11, 49, WHITE);
 
