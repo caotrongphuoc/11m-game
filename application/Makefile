@@ -176,12 +176,12 @@ HARDWARE_OPTION += \
 
 # Console log compile option
 CONSOLE_OPTION +=			\
-		-DLOGIN_PRINT_EN	\
-		-DSYS_PRINT_EN		\
-		-DAPP_PRINT_EN		\
-		-DSYS_DBG_EN		\
-		-DAPP_DBG_EN		\
-		-DAPP_DBG_SIG_EN	\
+		-ULOGIN_PRINT_EN	\
+		-USYS_PRINT_EN		\
+		-UAPP_PRINT_EN		\
+		-USYS_DBG_EN		\
+		-UAPP_DBG_EN		\
+		-UAPP_DBG_SIG_EN	\
 
 GENERAL_FLAGS +=			\
 		$(RTOS_DEV_OPTION)	\

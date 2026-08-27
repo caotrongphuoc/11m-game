@@ -152,7 +152,7 @@ extern "C"
 	(40) /* 40ms => Max 25 FPS */
 #define AC_DISPLAY_IDLE_INTERVAL (15000)
 #define AC_DISPLAY_WELCOME_TEXT_ANIM_TICK_INTERVAL (120)
-#define EM_GAME_TIME_TICK_INTERVAL (20)
+#define EM_GAME_TIME_TICK_INTERVAL (40)
 
 	/* define signal */
 	enum
