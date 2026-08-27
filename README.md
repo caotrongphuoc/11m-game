@@ -41,7 +41,7 @@ While developing and playing Eleven Meter, the project demonstrates several embe
 
 <table align="center">
   <tr>
-    <td align="center"><img src="hardware/images/ak-embedded-base-kit-version-3.jpg" alt="AK Embedded Base Kit - STM32L151 - v3.0" width="480"/></td>
+    <td align="center"><img src="resources/images/board/ak-embedded-base-kit-version-3.jpg" alt="AK Embedded Base Kit - STM32L151 - v3.0" width="480"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 1:</em></strong> AK Embedded Base Kit - STM32L151</p>
@@ -86,7 +86,7 @@ Flash Partitions Layout
 
 <table align="center">
   <tr>
-    <td align="center"><img src="hardware/images/board-view-top-bottom.png" alt="AK Embedded Base Kit top and bottom views" width="900"/></td>
+    <td align="center"><img src="resources/images/board/board-view-top-bottom.png" alt="AK Embedded Base Kit top and bottom views" width="900"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 2:</em></strong> Board top and bottom views</p>
@@ -196,7 +196,12 @@ Start Match -> Round Setup -> Three-Second Selection
 │       └── screens/                      # OLED screens and game rendering
 ├── boot/                                # AK bootloader source
 ├── docs/                                # Project guides and design documents
-├── hardware/                            # Board images, schematic, and binaries
+├── resources/
+│   ├── bin/                             # Bootloader and Eleven Meter binaries
+│   ├── board-assembly/                  # Board assembly drawing
+│   ├── images/board/                    # Board and hardware images
+│   ├── manufacturing/                   # Manufacturing assets
+│   └── schematic/                       # Board schematics
 └── AGENTS.md                            # Instructions for coding agents
 ```
 
