@@ -247,6 +247,7 @@ void scr_game_penalty_handle(ak_msg_t* msg)
 		task_post_pure_msg(EM_GAME_BALL_ID, EM_GAME_BALL_SETUP);
 		task_post_pure_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_SETUP);
 		task_post_pure_msg(EM_GAME_GOAL_ID, EM_GAME_GOAL_SETUP);
+		timer_remove_attr(AC_TASK_DISPLAY_ID, EM_GAME_TIME_TICK);
 		timer_set(AC_TASK_DISPLAY_ID, EM_GAME_TIME_TICK,
 		          EM_GAME_TIME_TICK_INTERVAL, TIMER_PERIODIC);
 	}

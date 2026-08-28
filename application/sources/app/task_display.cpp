@@ -20,6 +20,14 @@ static em_game_ball_view_t s_em_game_ball_view;
 static em_game_keeper_view_t s_em_game_keeper_view;
 static em_game_shooter_view_t s_em_game_shooter_view;
 
+static void task_display_reset_game_view()
+{
+	memset(&s_em_game_view, 0, sizeof(s_em_game_view));
+	memset(&s_em_game_ball_view, 0, sizeof(s_em_game_ball_view));
+	memset(&s_em_game_keeper_view, 0, sizeof(s_em_game_keeper_view));
+	memset(&s_em_game_shooter_view, 0, sizeof(s_em_game_shooter_view));
+}
+
 static bool task_display_match_view_is_valid(const em_game_match_view_t* view)
 {
 	uint16_t result_count =
@@ -105,6 +113,7 @@ void task_display(ak_msg_t* msg)
 	case EM_GAME_DISPLAY_SHOW_PENALTY:
 	{
 		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_PENALTY\n");
+		task_display_reset_game_view();
 		SCREEN_TRAN(scr_game_penalty_handle, &scr_game_penalty);
 	}
 	break;
