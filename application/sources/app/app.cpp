@@ -81,9 +81,9 @@ using namespace std;
 #define MBM_SERIAL_BAUDRATE       ( 9600 )
 
 #if defined(RELEASE)
-const char* app_run_mode = "RELEASE";
+#define APP_RUN_MODE "RELEASE"
 #else
-static const char* app_run_mode = "DEBUG";
+#define APP_RUN_MODE "DEBUG"
 #endif
 
 const app_info_t app_info { \
@@ -103,7 +103,7 @@ static void app_task_init();
  */
 /*****************************************************************************/
 int main_app() {
-	APP_PRINT("App run mode: %s, App version: %d.%d.%d.%d\n", app_run_mode, app_info.version[0] \
+	APP_PRINT("App run mode: %s, App version: %d.%d.%d.%d\n", APP_RUN_MODE, app_info.version[0] \
 			, app_info.version[1]	\
 			, app_info.version[2]	\
 			, app_info.version[3]);
