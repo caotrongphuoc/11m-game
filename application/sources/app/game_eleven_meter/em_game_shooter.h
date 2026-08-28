@@ -41,8 +41,8 @@ typedef struct
 	int16_t x;
 	int16_t y;
 	uint8_t frame;
-	bool visible;
-	bool moving;
+	uint8_t visible;
+	uint8_t moving;
 	uint8_t kick;
 } em_game_shooter_view_t;
 

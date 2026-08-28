@@ -22,9 +22,13 @@ static em_game_shooter_view_t s_em_game_shooter_view;
 
 static bool task_display_match_view_is_valid(const em_game_match_view_t* view)
 {
-	uint8_t result_count = view->goals + view->saves + view->misses;
+	uint16_t result_count =
+	    (uint16_t)view->goals + view->saves + view->misses;
 
 	return (view->round <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
+	       (view->goals <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
+	       (view->saves <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
+	       (view->misses <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
 	       (result_count <= view->round) &&
 	       (view->countdown <= 3) &&
 	       (view->state <= EM_GAME_MATCH_STATE_RIP) &&
@@ -41,6 +45,7 @@ static bool task_display_shooter_view_is_valid(
 	return (view->x >= 0) && (view->x < LCD_WIDTH) && (view->y >= 0) &&
 	       (view->y < LCD_HEIGHT) &&
 	       (view->frame <= EM_GAME_SHOOTER_STEP_COUNT) &&
+	       (view->visible <= 1) && (view->moving <= 1) &&
 	       (view->kick <= EM_GAME_SHOOTER_KICK_RIGHT);
 }
 
@@ -50,6 +55,7 @@ static bool task_display_keeper_view_is_valid(
 	return (view->x >= 0) && (view->x < LCD_WIDTH) && (view->y >= 0) &&
 	       (view->y < LCD_HEIGHT) &&
 	       (view->frame <= EM_GAME_KEEPER_STEP_COUNT) &&
+	       (view->visible <= 1) && (view->moving <= 1) &&
 	       (view->dive <= EM_GAME_KEEPER_DIVE_RIGHT);
 }
 
@@ -58,6 +64,7 @@ static bool task_display_ball_view_is_valid(const em_game_ball_view_t* view)
 	return (view->x >= 0) && (view->x < LCD_WIDTH) && (view->y >= 0) &&
 	       (view->y < LCD_HEIGHT) &&
 	       (view->frame <= EM_GAME_BALL_STEP_COUNT) &&
+	       (view->visible <= 1) && (view->moving <= 1) &&
 	       (view->target <= EM_GAME_BALL_TARGET_WIDE_RIGHT);
 }
 
