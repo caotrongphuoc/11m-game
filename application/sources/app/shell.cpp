@@ -67,6 +67,7 @@ static void shell_lcd_dump_framebuffer();
 /*****************************************************************************/
 int32_t shell_reset(uint8_t* argv);
 int32_t shell_ver(uint8_t* argv);
+int32_t shell_pool(uint8_t* argv);
 int32_t shell_help(uint8_t* argv);
 int32_t shell_reboot(uint8_t* argv);
 int32_t shell_ram(uint8_t* argv);
@@ -93,6 +94,7 @@ const cmd_line_t lgn_cmd_table[] = {
 	/*************************************************************************/
 	{(const int8_t*)"reset",	shell_reset,		(const int8_t*)"reset terminal"},
 	{(const int8_t*)"ver",		shell_ver,			(const int8_t*)"version info"},
+	{(const int8_t*)"pool",		shell_pool,		(const int8_t*)"AK pool usage"},
 	{(const int8_t*)"help",		shell_help,			(const int8_t*)"help info"},
 	{(const int8_t*)"reboot",	shell_reboot,		(const int8_t*)"reboot"},
 	{(const int8_t*)"ram",		shell_ram,			(const int8_t*)"ram"},
@@ -189,6 +191,30 @@ int32_t shell_ver(uint8_t* argv) {
 	LOGIN_PRINT("\tVCC:\t%d mV\n", sys_ctr_get_vbat_voltage());
 	LOGIN_PRINT("\tTEMP:\t%d *C\n", sys_ctr_get_mcu_temperature());
 	LOGIN_PRINT("\n\n");
+	return 0;
+}
+
+int32_t shell_pool(uint8_t* argv) {
+	(void)argv;
+
+	LOGIN_PRINT("AK pool usage (used / peak / capacity):\n");
+	LOGIN_PRINT("\tpure:\t\t%d / %d / %d\n",
+				get_pure_msg_pool_used(),
+				get_pure_msg_pool_used_max(),
+				AK_PURE_MSG_POOL_SIZE);
+	LOGIN_PRINT("\tcommon:\t%d / %d / %d\n",
+				get_common_msg_pool_used(),
+				get_common_msg_pool_used_max(),
+				AK_COMMON_MSG_POOL_SIZE);
+	LOGIN_PRINT("\tdynamic:\t%d / %d / %d\n",
+				get_dynamic_msg_pool_used(),
+				get_dynamic_msg_pool_used_max(),
+				AK_DYNAMIC_MSG_POOL_SIZE);
+	LOGIN_PRINT("\ttimer:\t\t%d / %d / %d\n",
+				get_timer_msg_pool_used(),
+				get_timer_msg_pool_used_max(),
+				AK_TIMER_POOL_SIZE);
+
 	return 0;
 }
 
