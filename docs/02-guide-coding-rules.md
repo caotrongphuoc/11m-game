@@ -56,7 +56,7 @@ Headers contain constants, object-owned enums, payload contracts, display snapsh
 - Validate common-message length and field ranges before use.
 - Add a `static_assert` for every common-message payload.
 - Keep handlers non-blocking; use the shared tick or a timer for deferred work.
-- Do not log the 20 ms update path because UART output would distort timing.
+- Do not log the 40 ms update path because UART output would distort timing.
 
 These rules take precedence over older Zomwar patterns that expose object globals for direct rendering or collision checks.
 

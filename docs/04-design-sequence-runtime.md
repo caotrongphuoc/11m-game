@@ -9,10 +9,10 @@ flowchart LR
     Buttons[Board buttons] --> BSP[app_bsp]
     BSP -->|AC_DISPLAY_BUTTON_*| Display[Display task and active screen]
     Display -->|menu or kick input| Match[Match task]
-    Display -->|20 ms shared tick| Match
-    Display -->|20 ms shared tick| Shooter[Shooter task]
-    Display -->|20 ms shared tick| Ball[Ball task]
-    Display -->|20 ms shared tick| Keeper[Keeper task]
+    Display -->|40 ms shared tick| Match
+    Display -->|40 ms shared tick| Shooter[Shooter task]
+    Display -->|40 ms shared tick| Ball[Ball task]
+    Display -->|40 ms shared tick| Keeper[Keeper task]
     Match -->|accepted kick| Shooter
     Shooter -->|ball target| Ball
     Shooter -->|shot zone| Keeper
@@ -43,7 +43,7 @@ sequenceDiagram
     Shooter->>Ball: EM_GAME_BALL_KICK
     Shooter->>Keeper: EM_GAME_KEEPER_REACT
 
-    loop Every 20 ms while penalty screen is active
+    loop Every 40 ms while penalty screen is active
         Display->>Match: EM_GAME_MATCH_UPDATE
         Display->>Shooter: EM_GAME_SHOOTER_UPDATE
         Display->>Ball: EM_GAME_BALL_UPDATE

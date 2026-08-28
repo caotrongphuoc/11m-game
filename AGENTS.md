@@ -87,7 +87,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 
 ## Current runtime architecture
 
-- `scr_game_penalty` owns the single periodic `EM_GAME_TIME_TICK` timer at 20 ms.
+- `scr_game_penalty` owns the single periodic `EM_GAME_TIME_TICK` timer at 40 ms.
 - Each tick posts `UPDATE` signals to Match, Shooter, Ball, and Keeper. Objects use local elapsed-time accumulators for their own animation intervals.
 - Match owns round coordination and every game screen transition. Screens only translate button input into Match signals.
 - Shooter owns kick selection, Ball owns movement, Keeper owns dive selection, Goal resolves the two reports, and Display owns validated render snapshots.

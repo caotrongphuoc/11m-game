@@ -35,7 +35,7 @@ The game is also a small example of event-driven firmware design:
 - **System design:** Gameplay is split into objects with clear responsibilities.
 - **Process management:** AK tasks run cooperatively without blocking delays.
 - **Communication:** Signals and messages carry input, commands, results, and display snapshots.
-- **Timing:** One 20 ms gameplay tick drives the match and object animations.
+- **Timing:** One 40 ms gameplay tick drives the match and object animations.
 
 ### I. Hardware
 
