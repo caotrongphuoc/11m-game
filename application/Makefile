@@ -176,8 +176,8 @@ HARDWARE_OPTION += \
 
 # Console log compile option
 CONSOLE_OPTION +=			\
-		-ULOGIN_PRINT_EN	\
-		-USYS_PRINT_EN		\
+		-DLOGIN_PRINT_EN	\
+		-DSYS_PRINT_EN		\
 		-UAPP_PRINT_EN		\
 		-USYS_DBG_EN		\
 		-UAPP_DBG_EN		\
