@@ -28,6 +28,7 @@
 #define SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y (63)
 #define SCR_GAME_PENALTY_HUD_SCORE_WIDTH (35)
 #define SCR_GAME_PENALTY_HUD_HEIGHT (11)
+#define SCR_GAME_PENALTY_HUD_RESULT_AXIS_X (68)
 
 /*****************************************************************************/
 /* View - Penalty screen */
@@ -35,6 +36,7 @@
 
 static void view_scr_game_penalty();
 static void scr_game_penalty_hud_display(const em_game_view_t* view);
+static void scr_game_penalty_result_display(em_game_goal_result_t result);
 static void scr_game_penalty_stadium_display();
 static void scr_game_penalty_pitch_display();
 static const unsigned char*
@@ -114,6 +116,34 @@ static void scr_game_penalty_hud_display(const em_game_view_t* view)
 		view_render.setCursor(77, 2);
 		view_render.print((unsigned int)view->countdown);
 		view_render.setTextColor(WHITE);
+	}
+	else if (view->state == EM_GAME_MATCH_STATE_ROUND_END)
+	{
+		scr_game_penalty_result_display(
+		    (em_game_goal_result_t)view->last_result);
+	}
+}
+
+static void scr_game_penalty_result_display(em_game_goal_result_t result)
+{
+	view_render.setCursor(SCR_GAME_PENALTY_HUD_RESULT_AXIS_X, 2);
+
+	switch (result)
+	{
+	case EM_GAME_GOAL_RESULT_GOAL:
+		view_render.print("GOAL");
+		break;
+
+	case EM_GAME_GOAL_RESULT_SAVE:
+		view_render.print("SAVE");
+		break;
+
+	case EM_GAME_GOAL_RESULT_MISS:
+		view_render.print("MISS");
+		break;
+
+	default:
+		break;
 	}
 }
 
