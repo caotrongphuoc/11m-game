@@ -18,9 +18,9 @@
 
 static em_game_shooter_view_t s_shooter;
 static uint32_t s_random_seed;
-static uint32_t s_selection_start_tick;
 static int16_t s_target_x;
 static int16_t s_target_y;
+static uint16_t s_selection_elapsed_ms;
 static uint8_t s_update_elapsed_ms;
 static bool s_kick_started;
 
@@ -56,13 +56,13 @@ static void em_game_shooter_reset()
 	s_shooter.kick = EM_GAME_SHOOTER_KICK_NONE;
 	s_target_x = EM_GAME_SHOOTER_START_X;
 	s_target_y = EM_GAME_SHOOTER_START_Y;
-	s_selection_start_tick = sys_ctrl_millis();
+	s_selection_elapsed_ms = 0;
 	s_update_elapsed_ms = 0;
 	s_kick_started = false;
 
 	if (s_random_seed == 0)
 	{
-		s_random_seed = s_selection_start_tick;
+		s_random_seed = sys_ctrl_millis();
 		if (s_random_seed == 0)
 		{
 			s_random_seed = EM_GAME_SHOOTER_RANDOM_FALLBACK;
@@ -91,10 +91,9 @@ static int16_t em_game_shooter_get_target_x(em_game_shooter_kick_t kick)
 static em_game_ball_target_t
 em_game_shooter_pick_ball_target(em_game_shooter_kick_t kick)
 {
-	uint32_t reaction_time = sys_ctrl_millis() - s_selection_start_tick;
 	uint8_t miss_chance = EM_GAME_SHOOTER_MISS_BASE_CHANCE;
 
-	if (reaction_time < EM_GAME_SHOOTER_FAST_REACTION_INTERVAL)
+	if (s_selection_elapsed_ms < EM_GAME_SHOOTER_FAST_REACTION_INTERVAL)
 	{
 		miss_chance += EM_GAME_SHOOTER_MISS_FAST_BONUS;
 	}
@@ -239,6 +238,13 @@ void em_game_shooter_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_SHOOTER_UPDATE:
+		if (!s_kick_started &&
+		    (s_selection_elapsed_ms <
+		     EM_GAME_SHOOTER_FAST_REACTION_INTERVAL))
+		{
+			s_selection_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+		}
+
 		if (s_shooter.moving)
 		{
 			s_update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;

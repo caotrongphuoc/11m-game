@@ -63,7 +63,22 @@ static void em_game_match_set_keeper_difficulty()
 {
 	em_game_keeper_difficulty_msg_t difficulty_msg;
 
-	difficulty_msg.difficulty = (uint8_t)s_difficulty;
+	switch (s_difficulty)
+	{
+	case EM_GAME_MATCH_DIFFICULTY_EASY:
+		difficulty_msg.difficulty = EM_GAME_KEEPER_DIFFICULTY_EASY;
+		break;
+
+	case EM_GAME_MATCH_DIFFICULTY_HARD:
+		difficulty_msg.difficulty = EM_GAME_KEEPER_DIFFICULTY_HARD;
+		break;
+
+	case EM_GAME_MATCH_DIFFICULTY_NORMAL:
+	default:
+		difficulty_msg.difficulty = EM_GAME_KEEPER_DIFFICULTY_NORMAL;
+		break;
+	}
+
 	task_post_common_msg(EM_GAME_KEEPER_ID, EM_GAME_KEEPER_SET_DIFFICULTY,
 	                     (uint8_t*)&difficulty_msg, sizeof(difficulty_msg));
 }
