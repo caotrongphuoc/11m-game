@@ -18,7 +18,7 @@ bool em_game_scoreboard_record_result(em_game_scoreboard_t* sb,
 {
 	uint8_t result_count = sb->goals + sb->saves + sb->misses;
 
-	if ((sb->round == 0) || (result_count >= sb->round))
+	if ((sb->round == 0) || (result_count != (sb->round - 1)))
 	{
 		return false;
 	}
@@ -42,17 +42,26 @@ bool em_game_scoreboard_record_result(em_game_scoreboard_t* sb,
 	}
 }
 
-void em_game_scoreboard_advance_round(em_game_scoreboard_t* sb)
+bool em_game_scoreboard_advance_round(em_game_scoreboard_t* sb)
 {
-	if (sb->round < EM_GAME_SCOREBOARD_TOTAL_KICKS)
+	uint8_t result_count = sb->goals + sb->saves + sb->misses;
+
+	if ((sb->round >= EM_GAME_SCOREBOARD_TOTAL_KICKS) ||
+	    (result_count != sb->round))
 	{
-		sb->round++;
+		return false;
 	}
+
+	sb->round++;
+	return true;
 }
 
 bool em_game_scoreboard_is_complete(em_game_scoreboard_t* sb)
 {
-	return sb->round >= EM_GAME_SCOREBOARD_TOTAL_KICKS;
+	uint8_t result_count = sb->goals + sb->saves + sb->misses;
+
+	return (sb->round == EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
+	       (result_count == EM_GAME_SCOREBOARD_TOTAL_KICKS);
 }
 
 em_game_scoreboard_winner_t

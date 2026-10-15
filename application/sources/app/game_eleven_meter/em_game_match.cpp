@@ -246,7 +246,11 @@ void em_game_match_handle(ak_msg_t* msg)
 		APP_DBG_SIG("EM_GAME_MATCH_SETUP\n");
 		if (s_state == EM_GAME_MATCH_STATE_ROUND_START)
 		{
-			em_game_scoreboard_advance_round(&s_scoreboard);
+			if (!em_game_scoreboard_advance_round(&s_scoreboard))
+			{
+				break;
+			}
+
 			s_last_result = EM_GAME_GOAL_RESULT_NONE;
 
 			if (s_scoreboard.round > 1)
