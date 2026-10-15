@@ -13,6 +13,34 @@ This document describes state ownership and message flow between the Eleven Mete
 | Goal | Latest Ball and Keeper reports, readiness flags | Resolve goal, save, or miss after both reports arrive. |
 | Display | Read-only snapshots received from gameplay tasks | Compose and render the current OLED view. |
 
+## Initialize the menu and select difficulty
+
+```mermaid
+sequenceDiagram
+    participant Menu as Menu screen
+    participant Match
+    participant Keeper
+    participant Display
+    participant EEPROM
+
+    Menu->>Match: EM_GAME_MATCH_INIT
+    Match->>EEPROM: load_score_record
+    EEPROM-->>Match: Best result or invalid record
+    Match->>Keeper: EM_GAME_KEEPER_SET_DIFFICULTY
+    Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
+    alt Up button
+        Menu->>Match: EM_GAME_MATCH_MENU_LEFT
+    else Down button
+        Menu->>Match: EM_GAME_MATCH_MENU_RIGHT
+    end
+    Match->>Match: Cycle difficulty
+    Match->>Keeper: EM_GAME_KEEPER_SET_DIFFICULTY
+    Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
+```
+
+Match validates the persisted best result and falls back to zero goals on Easy when it is missing or
+invalid. Menu input never changes Keeper or Display state directly.
+
 ## Start a round
 
 ```mermaid
@@ -24,18 +52,18 @@ sequenceDiagram
     participant Keeper
     participant Goal
 
-    Display->>Match: EM_GAME_MATCH_INIT
-    Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
     Display->>Match: EM_GAME_MATCH_START
-    Match->>Match: EM_GAME_MATCH_SETUP
+    Match->>Match: Reset scoreboard and enter ROUND_START
+    Match->>Match: EM_GAME_MATCH_SETUP and advance round
     Match->>Match: EM_GAME_MATCH_START_ROUND
-    Match->>Display: EM_GAME_DISPLAY_SHOW_PENALTY
+    Match->>Display: EM_GAME_DISPLAY_SHOW_PENALTY (round 1 only)
+    Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
     Note over Display: Penalty screen entry
     Display->>Shooter: EM_GAME_SHOOTER_SETUP
     Display->>Ball: EM_GAME_BALL_SETUP
     Display->>Keeper: EM_GAME_KEEPER_SETUP
     Display->>Goal: EM_GAME_GOAL_SETUP
-    Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
+    Display->>Display: Start periodic EM_GAME_TIME_TICK
     Ball->>Display: EM_GAME_DISPLAY_UPDATE_BALL
     Keeper->>Display: EM_GAME_DISPLAY_UPDATE_KEEPER
     Shooter->>Display: EM_GAME_DISPLAY_UPDATE_SHOOTER
@@ -66,8 +94,8 @@ sequenceDiagram
 ```
 
 Match advances countdown and result timing from this tick. Animated objects use local elapsed
-accumulators, so Ball keeps its 50 ms update interval while Shooter and Keeper keep their 80 ms
-intervals. The shared periodic timer is owned by Display and stopped by Match when gameplay ends.
+accumulators: Ball and Keeper advance every 40 ms, while Shooter advances every 80 ms. The penalty
+screen installs the periodic timer on Display, and Match removes it when gameplay ends.
 
 ## Select and execute a kick
 
@@ -115,6 +143,7 @@ sequenceDiagram
     participant Goal
     participant Match
     participant Display
+    participant Buzzer
 
     Ball->>Ball: Complete movement
     Ball->>Goal: EM_GAME_GOAL_BALL_ARRIVED<br/>em_game_goal_ball_t
@@ -124,7 +153,8 @@ sequenceDiagram
     Goal->>Goal: Validate both payloads
     Goal->>Goal: Resolve GOAL / SAVE / MISS
     Goal->>Match: EM_GAME_MATCH_HIT_RESULT<br/>em_game_goal_result_msg_t
-    Match->>Match: Update scoreboard
+    Match->>Match: Accept one result for the current round
+    Match->>Buzzer: EM_GAME_BUZZER_GOAL / SAVE / MISS
     Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
     Display->>Match: EM_GAME_MATCH_UPDATE
 ```
@@ -134,6 +164,43 @@ The order of the Ball and Keeper arrival messages is not significant. Goal store
 While the penalty screen is active, its periodic `EM_GAME_TIME_TICK` drives Match and the animated
 gameplay objects without blocking a task handler. Match accepts exactly one valid result while in
 `EM_GAME_MATCH_STATE_REVEAL`; duplicate or late result messages are ignored.
+
+## Finish a round and the match
+
+```mermaid
+sequenceDiagram
+    participant Display
+    participant Match
+    participant Objects as Goal/Ball/Keeper/Shooter
+    participant EEPROM
+    participant Buzzer
+
+    Display->>Match: EM_GAME_MATCH_UPDATE
+    alt Fewer than five accepted results
+        Match->>Match: Enter ROUND_START and run SETUP
+        Match->>Objects: RESET signals
+        Match->>Match: EM_GAME_MATCH_START_ROUND
+        Match->>Display: EM_GAME_DISPLAY_UPDATE_MATCH
+    else Five accepted results
+        Match->>Match: Evaluate winner and best score
+        opt Best result improved
+            Match->>EEPROM: save_score_record
+        end
+        Match->>Match: Remove EM_GAME_TIME_TICK from Display
+        Match->>Display: EM_GAME_DISPLAY_SHOW_RIP
+        Match->>Match: Start EM_GAME_MATCH_RIP_TIMEOUT
+        alt RIP timeout
+            Match->>Match: EM_GAME_MATCH_RIP_TIMEOUT
+        else Mode button on RIP screen
+            Display->>Match: EM_GAME_MATCH_SKIP_RIP
+        end
+        Match->>Display: EM_GAME_DISPLAY_SHOW_GAME_OVER
+        Match->>Buzzer: EM_GAME_BUZZER_WIN / LOSE
+    end
+```
+
+The scoreboard advances only after the previous round has exactly one accepted result. Completion
+requires both round five and exactly five results, preventing duplicates from ending a match early.
 
 ## Display snapshots
 
