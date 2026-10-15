@@ -93,6 +93,22 @@ Flash Partitions Layout
 
 The match starts at the difficulty menu. Easy gives the player the best chance against the goalkeeper, Normal keeps the contest balanced, and Hard makes correct saves more likely. After five kicks, the game compares the player's goals with the goalkeeper's saves and misses, stores the best result, and opens the Game Over screen.
 
+<table align="center">
+  <tr>
+    <td align="center"><img src="resources/images/screens/scr_game_menu.png" alt="Eleven Meter difficulty menu" width="512"/></td>
+  </tr>
+</table>
+<p align="center"><strong><em>Figure 3:</em></strong> Difficulty selection and saved best result</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="resources/images/screens/scr_game_penalty.png" alt="Eleven Meter penalty gameplay" width="512"/></td>
+  </tr>
+</table>
+<p align="center"><strong><em>Figure 4:</em></strong> Penalty animation, score HUD, and kick result</p>
+
+> **Display preview:** Figures 3–6 are rendered from the firmware's OLED primitives, font, and bitmap data. Regenerate them with `python3 tools/render_game_screens.py` (Pillow required). On-device validation still requires a UART `lcd d` framebuffer capture.
+
 #### Objects in the Game:
 
 <div align="center">
@@ -156,6 +172,17 @@ Each gameplay task keeps its mutable state private. Objects work together throug
 - **Score:** The HUD shows the player score, CPU score, round number, and selection countdown.
 - **Best result:** The highest goal count is stored together with the difficulty on which it was achieved.
 - **Game Over:** After the fifth result, a short RIP screen leads to the final score. Press **[Mode]** to retry or **[Up]** to return home.
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="resources/images/screens/scr_game_rip.png" alt="Eleven Meter match-over transition" width="384"/></td>
+    <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Eleven Meter final score" width="384"/></td>
+  </tr>
+  <tr>
+    <td align="center"><strong><em>Figure 5:</em></strong> Match-over transition</td>
+    <td align="center"><strong><em>Figure 6:</em></strong> Final score and next actions</td>
+  </tr>
+</table>
 
 ### IV. Basic Game Sequence Logic
 
