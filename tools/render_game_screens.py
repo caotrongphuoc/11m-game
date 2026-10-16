@@ -2,6 +2,7 @@
 """Render the saved UART gameplay capture and reproducible OLED previews."""
 
 from pathlib import Path
+import json
 import re
 
 from PIL import Image, ImageDraw
@@ -12,6 +13,7 @@ BITMAP_SOURCE = ROOT / "application/sources/app/screens/screens_bitmap.cpp"
 FONT_SOURCE = ROOT / "application/sources/driver/Adafruit_oled_drv/glcdfont.cpp"
 OUTPUT_DIR = ROOT / "resources/images/screens"
 GAMEPLAY_CAPTURE = ROOT / "resources/captures/scr_game_penalty_uart.txt"
+MATCH_CAPTURE = ROOT / "resources/captures/em_game_match_uart.json"
 WIDTH = 128
 HEIGHT = 64
 SCALE = 4
@@ -95,7 +97,9 @@ def draw_trophy(oled: Oled, y_offset: int = 0) -> None:
 	oled.line(5, 49 + y_offset, 11, 49 + y_offset)
 
 
-def render_menu(font: list[int]) -> Oled:
+def render_menu(font: list[int], difficulty: str = "NORMAL") -> Oled:
+	if difficulty not in ("EASY", "NORMAL", "HARD"):
+		raise ValueError("invalid menu difficulty")
 	oled = Oled(font)
 	oled.circle(7, 7, 5)
 	oled.line(4, 4, 10, 10)
@@ -107,7 +111,8 @@ def render_menu(font: list[int]) -> Oled:
 	oled.line(119, 7, 113, 11)
 	oled.line(120, 7, 126, 11)
 	oled.text(37, 15, "DIFFICULTY")
-	for x, width, label, selected in ((1, 36, "EASY", False), (39, 50, "NORMAL", True), (91, 36, "HARD", False)):
+	for x, width, label in ((1, 36, "EASY"), (39, 50, "NORMAL"), (91, 36, "HARD")):
+		selected = label == difficulty
 		if selected:
 			oled.fill_rect(x, 24, width, 12)
 		else:
@@ -168,6 +173,47 @@ def render_gameplay_capture(font: list[int], capture: Path) -> Oled:
 			if data[(y // 8) * WIDTH + x] & (1 << (y % 8)):
 				oled.pixel(x, y)
 	return oled
+
+
+def save_screen_animation(name: str, samples: list[tuple[Image.Image, int]]) -> None:
+	if not samples:
+		raise ValueError("screen animation requires frames")
+	frames = []
+	for image, duration in samples:
+		if image.size != (WIDTH, HEIGHT) or duration <= 0:
+			raise ValueError("invalid screen animation sample")
+		frame = Image.new("P", (WIDTH, HEIGHT), 0)
+		frame.putpalette([0, 0, 0, 255, 255, 255] + [0] * 762)
+		frame.paste(1, (0, 0), image)
+		frames.append(frame.resize((WIDTH * SCALE, HEIGHT * SCALE), Image.NEAREST))
+	OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+	frames[0].save(OUTPUT_DIR / name, save_all=True, append_images=frames[1:],
+				   duration=[duration for _, duration in samples], loop=0, disposal=2, optimize=False)
+
+
+def render_screen_animations(font: list[int]) -> None:
+	# Selection changes only: no new animation or bitmap is added to firmware.
+	save_screen_animation("scr_game_menu.gif", [
+		(render_menu(font, difficulty).image, 900)
+		for difficulty in ("EASY", "NORMAL", "HARD", "NORMAL")
+	])
+	capture = json.loads(MATCH_CAPTURE.read_text(encoding="utf-8"))
+	if not capture["complete"]:
+		raise ValueError("gameplay animation requires the completed match capture")
+	samples = []
+	for frame in capture["frames"]:
+		if frame["phase"] != "gameplay" or frame["round"] != 4:
+			continue
+		data = bytes.fromhex(frame["data_hex"])
+		if len(data) != WIDTH * HEIGHT // 8:
+			raise ValueError("invalid captured gameplay frame size")
+		image = Image.new("1", (WIDTH, HEIGHT))
+		for y in range(HEIGHT):
+			for x in range(WIDTH):
+				if data[(y // 8) * WIDTH + x] & (1 << (y % 8)):
+					image.putpixel((x, y), 1)
+		samples.append((image, frame["duration_ms"]))
+	save_screen_animation("scr_game_penalty.gif", samples)
 
 
 def render_shooter_frames(font: list[int], bitmaps: dict[str, list[int]]) -> None:
@@ -231,6 +277,7 @@ def main() -> None:
 	render_shooter_frames(font, bitmaps)
 	render_rip(font).save("scr_game_rip.png")
 	render_game_over(font).save("scr_game_over.png")
+	render_screen_animations(font)
 
 
 if __name__ == "__main__":

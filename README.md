@@ -96,19 +96,19 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_menu.png" alt="Eleven Meter difficulty menu" width="512"/></td>
+    <td align="center"><img src="resources/images/screens/scr_game_menu.gif" alt="Animated difficulty menu preview cycling through Easy, Normal, and Hard" width="512"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 3:</em></strong> Difficulty selection and saved best result</p>
+<p align="center"><strong><em>Figure 3:</em></strong> Animated difficulty selection preview and saved best result</p>
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_penalty.png" alt="Captured OLED gameplay with the shooter at left, ball at center, and goalkeeper diving right without overlapping" width="512"/></td>
+    <td align="center"><img src="resources/images/screens/scr_game_penalty.gif" alt="Captured OLED animation of round four, from countdown through the shot and result" width="512"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 4:</em></strong> On-device gameplay capture: shooter, ball, and diving goalkeeper</p>
+<p align="center"><strong><em>Figure 4:</em></strong> On-device round playback: countdown, shot, goalkeeper response, and result</p>
 
-> **Image sources:** Figure 4 is a real 128×64 OLED framebuffer captured through UART `lcd d`, enlarged 4× without changing its pixels. The [raw dump and capture notes](resources/captures/README.md) preserve its source. Figures 3, 5, and 6 are generated previews using the firmware's drawing primitives, font, and bitmap data. Run `python3 tools/render_game_screens.py` (Pillow required) to regenerate the images; Figure 4 is decoded from its saved dump. The [shooter animation strip](resources/images/screens/scr_game_shooter_frames.png) is also a generated preview. For new board captures, see [Getting Started](docs/01-guide-getting-started.md#inspect-the-board).
+> **Image sources:** Figure 3 is a generated menu preview cycling Easy → Normal → Hard → Normal, with 900 ms holds for readability; it is not a board recording. Figure 4 replays round 4 from the saved UART `lcd d` match samples, enlarged 4× without changing pixels. It uses 160 ms sample holds, excluding the UART transfer pauses, rather than native-frame-rate video. The [raw frames and capture notes](resources/captures/README.md#animated-readme-screens) preserve its source. Figures 5 and 6 are generated previews using the firmware's drawing primitives, font, and bitmap data. Run `python3 tools/render_game_screens.py` (Pillow required) to regenerate the PNGs and animated screens. The original [static gameplay capture](resources/images/screens/scr_game_penalty.png) and [shooter animation strip](resources/images/screens/scr_game_shooter_frames.png) remain available. For new board captures, see [Getting Started](docs/01-guide-getting-started.md#inspect-the-board).
 
 #### Objects in the Game:
 

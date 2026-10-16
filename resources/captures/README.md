@@ -1,6 +1,6 @@
 # OLED framebuffer captures
 
-## Figure 4
+## Original static gameplay capture
 
 [`scr_game_penalty_uart.txt`](scr_game_penalty_uart.txt) contains the complete raw `lcd d`
 reply captured from the STM32L151 kit on **2026-10-16**, through the Type-C CH340 bridge
@@ -54,6 +54,25 @@ decodes the OLED page layout: byte `(y // 8) * 128 + x`, bit `y % 8`, with the l
 significant bit at the top of each page. The original frame is 128×64 monochrome pixels;
 the README image is a 512×256 nearest-neighbor enlargement. The script regenerates the
 capture image from the saved bytes rather than replacing it with the synthetic scene.
+
+## Animated README screens
+
+The current README uses two 512×256 animated screen images, regenerated with
+`python3 tools/render_game_screens.py` (Pillow required):
+
+- **Figure 3 — [`scr_game_menu.gif`](../images/screens/scr_game_menu.gif):** generated
+  menu preview selecting Easy → Normal → Hard → Normal, with 900 ms per selection.
+  It uses the existing firmware layout, font, and drawing primitives; BEST 4 / HARD
+  is illustrative data. It is not a UART recording and adds no firmware animation.
+- **Figure 4 — [`scr_game_penalty.gif`](../images/screens/scr_game_penalty.gif):** all
+  round-4 gameplay samples from [`em_game_match_uart.json`](em_game_match_uart.json),
+  in capture order, covering countdown, shot, keeper response, and result. Pixels
+  and 160 ms sample durations are preserved, excluding the UART transmission pauses.
+  It is sampled playback, not a native-frame-rate video.
+
+Both GIFs use a fixed black/white palette and clear each previous frame to prevent
+trails. Original static PNGs remain available; the static gameplay capture described
+above is no longer the image displayed as Figure 4 in the README.
 
 ## Full match GIF
 
