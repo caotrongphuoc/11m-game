@@ -206,12 +206,6 @@ The diagram follows the current message ownership: Display forwards input and dr
 
 This is a high-level sequence; exact signals, payloads, and timing are documented in the object and runtime guides. Regenerate the image with `python3 tools/render_game_sequence.py` (Pillow and DejaVu Sans fonts required; use `--font-dir` if the fonts are installed elsewhere).
 
-## Build and validation status
-
-The current play configuration disables all six console print/debug flags. See [Getting Started](docs/01-guide-getting-started.md) for build, Type-C UART flashing, and a temporary diagnostic build.
-
-Firmware `33ac918` was built and flashed successfully: application Flash **51,216 / 118,784 bytes**, RAM **13,636 / 16,384 bytes**. The engineer confirmed five-round play across all difficulties, timeout handling, Retry/Home, BEST persistence after power-off, and no recurrence of the earlier MF31 failure during their checks. These are manual confirmations; no test duration or match count was recorded. See the [review and validation record](docs/06-review-and-validation.md) for evidence and limits.
-
 ## Contact & Support
 
 <p style="font-size: 20px;"><strong>Cao Trong Phuoc</strong> - Software Engineer - Embedded Systems</p>
