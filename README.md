@@ -24,12 +24,12 @@
 | File | Description |
 | --- | --- |
 | [README.md](README.md) | Project overview, hardware, gameplay rules, and game objects. |
-| [docs/01-guide-getting-started.md](docs/01-guide-getting-started.md) | Build, flash, play, and inspect the game firmware. |
-| [docs/02-guide-coding-rules.md](docs/02-guide-coding-rules.md) | Source layout, naming, formatting, and AK coding rules. |
-| [docs/03-design-sequence-object.md](docs/03-design-sequence-object.md) | Ownership and message sequences for Match, Shooter, Ball, Keeper, Goal, and Display. |
-| [docs/04-design-sequence-runtime.md](docs/04-design-sequence-runtime.md) | Runtime flow from button input to animation, result handling, and screen updates. |
-| [docs/05-ak-mcp-deployment.md](docs/05-ak-mcp-deployment.md) | Deployment guide for the AK documentation MCP server. |
-| [docs/06-review-and-validation.md](docs/06-review-and-validation.md) | Final review scope, build measurements, and engineer-confirmed board checks. |
+| [docs/00-guide-getting-started.md](docs/00-guide-getting-started.md) | Build, flash, play, and inspect the game firmware. |
+| [docs/01-guide-coding-rules.md](docs/01-guide-coding-rules.md) | Source layout, naming, formatting, and AK coding rules. |
+| [docs/02-design-sequence-object.md](docs/02-design-sequence-object.md) | Ownership and message sequences for Match, Shooter, Ball, Keeper, Goal, and Display. |
+| [docs/03-design-sequence-runtime.md](docs/03-design-sequence-runtime.md) | Runtime flow from button input to animation, result handling, and screen updates. |
+| [docs/04-ak-mcp-deployment.md](docs/04-ak-mcp-deployment.md) | Deployment guide for the AK documentation MCP server. |
+| [docs/05-review-and-validation.md](docs/05-review-and-validation.md) | Final review scope, build measurements, and engineer-confirmed board checks. |
 
 ## Introduction
 
@@ -125,8 +125,6 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
 </table>
 <p align="center"><strong><em>Figure 4:</em></strong> On-device round playback: countdown, shot, goalkeeper response, and result</p>
 
-> **Image sources:** Figure 3 is a generated menu preview cycling Easy → Normal → Hard → Normal, with 900 ms holds for readability; it is not a board recording. Figure 4 replays round 4 from the saved UART `lcd d` match samples, enlarged 4× without changing pixels. It uses 160 ms sample holds, excluding the UART transfer pauses, rather than native-frame-rate video. The [raw frames and capture notes](resources/captures/README.md#animated-readme-screens) preserve its source. Figures 5 and 6 are generated previews using the firmware's drawing primitives, font, and bitmap data. Run `python3 tools/render_game_screens.py` (Pillow required) to regenerate the PNGs and animated screens. The original [static gameplay capture](resources/images/screens/scr_game_penalty.png) and [shooter animation strip](resources/images/screens/scr_game_shooter_frames.png) remain available. For new board captures, see [Getting Started](docs/01-guide-getting-started.md#inspect-the-board).
-
 #### Objects in the Game:
 
 <div align="center">
@@ -177,7 +175,7 @@ Each gameplay task keeps its mutable state private. Objects work together throug
 
 The Match GIF is a sampled UART recording of a complete five-round match, including the match-over transition and final score. The Shooter, Ball, and Keeper GIFs are isolated documentation previews made from the original bitmap bytes; they use current movement constants with idle/endpoint holds extended for readability. The goal artwork is static and rendered by Display; the Goal task only resolves reports. Scoreboard is illustrated by the generated Game Over screen preview; its data remains owned by Match. Match and Scoreboard have no standalone sprite, and Display is the rendering task rather than a gameplay object. See the [complete bitmap GIF gallery](resources/images/objects/README.md) for all eight gameplay assets, including retained shooter poses that are not used in the current animation. Regenerate the GIFs with `python3 tools/render_game_objects.py` (Pillow required).
 
-> **Note:** For detailed object flows, see [Game Object Sequences](docs/03-design-sequence-object.md).
+> **Note:** For detailed object flows, see [Game Object Sequences](docs/02-design-sequence-object.md).
 
 ### III. How to Play:
 
@@ -210,7 +208,7 @@ The Match GIF is a sampled UART recording of a complete five-round match, includ
 
 ### IV. Basic Game Sequence Logic
 
-> **Note:** For the complete signal flow, see [Runtime Signal Processing](docs/04-design-sequence-runtime.md).
+> **Note:** For the complete signal flow, see [Runtime Signal Processing](docs/03-design-sequence-runtime.md).
 
 <table align="center">
   <tr>

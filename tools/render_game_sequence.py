@@ -26,7 +26,7 @@ PARTICIPANTS = (
 )
 
 # Each message is a high-level summary, not an alternative AK signal definition.
-# Exact message names and payloads remain in docs/03 and docs/04.
+# Exact message names and payloads remain in docs/02 and docs/03.
 PHASES = (
     ("01  MENU AND ROUND SETUP", (
         ("Display", "Match", "Menu entry: initialize"),
@@ -141,7 +141,7 @@ def render(font_dir: Path) -> None:
                 draw.text((text_x, y + 19), message, anchor=anchor, font=font, fill=TEXT)
             y += ROW_HEIGHT
 
-    draw.text((40, height - 35), "Details: docs/03-design-sequence-object.md and docs/04-design-sequence-runtime.md", font=small, fill=MUTED)
+    draw.text((40, height - 35), "Details: docs/02-design-sequence-object.md and docs/03-design-sequence-runtime.md", font=small, fill=MUTED)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     image.save(OUTPUT, optimize=True)
     print(f"Rendered {OUTPUT.relative_to(ROOT)} ({WIDTH}x{height})")

@@ -1,6 +1,6 @@
 # Eleven Meter runtime signal flow
 
-This document shows the end-to-end AK signal path from button input to rendering. Object-level payload details are documented in [Eleven Meter object sequences](03-design-sequence-object.md).
+This document shows the end-to-end AK signal path from button input to rendering. Object-level payload details are documented in [Eleven Meter object sequences](02-design-sequence-object.md).
 
 ## Runtime overview
 

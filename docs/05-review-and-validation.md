@@ -64,7 +64,7 @@ test. The final quiet image does not print `fatal l` or `lcd d` replies, so no n
 sweep or final-image framebuffer dump was claimed in that review. A subsequent documentation
 update captured Figure 4 on a temporary diagnostic build; see its [raw dump and capture notes](../resources/captures/README.md).
 The other screen images remain generated previews. To collect diagnostic evidence later, follow
-[Getting Started](01-guide-getting-started.md#inspect-the-board).
+[Getting Started](00-guide-getting-started.md#inspect-the-board).
 
 ## Remaining limits
 

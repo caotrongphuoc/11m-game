@@ -124,4 +124,4 @@ make -C application flash dev=/dev/ttyUSB0
 ```
 
 For the completed board checks and the distinction between manual confirmation and
-captured evidence, see [Review and validation](06-review-and-validation.md).
+captured evidence, see [Review and validation](05-review-and-validation.md).
