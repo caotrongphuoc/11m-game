@@ -124,7 +124,7 @@ def render_menu(font: list[int]) -> Oled:
 
 
 def render_penalty(font: list[int], bitmaps: dict[str, list[int]],
-				   shooter_pose: str = "prepare", ball_position: tuple[int, int] = (87, 47)) -> Oled:
+				   shooter_frame: int = 4, ball_position: tuple[int, int] = (87, 47)) -> Oled:
 	oled = Oled(font)
 	oled.fill_rect(0, 0, 35, 11)
 	oled.text(3, 2, "YOU 2", 0)
@@ -147,19 +147,18 @@ def render_penalty(font: list[int], bitmaps: dict[str, list[int]],
 	for x in (63, 64, 65):
 		oled.pixel(x, 59)
 	oled.bitmap(21, 23, 40, 40, bitmaps["bitmap_penalty_keeper_dive_left"])
-	shooter_y = 27 if shooter_pose == "kick" else 29
-	oled.bitmap(24, shooter_y, 40, 40, bitmaps[f"bitmap_penalty_shooter_{shooter_pose}"])
+	shooter_step = ((4 - shooter_frame) * 2) // 4
+	oled.bitmap(24 + shooter_step, 29, 40, 40, bitmaps["bitmap_penalty_shooter_prepare"])
 	oled.bitmap(ball_position[0] - 3, ball_position[1] - 3, 7, 7, bitmaps["bitmap_penalty_ball"])
 	return oled
 
 
 def render_shooter_frames(font: list[int], bitmaps: dict[str, list[int]]) -> None:
-	# Original sprites, unchanged: anchor (44, 63), sprite origin (24, 29).
-	# Recover with the standing bitmap instead of the reversed-leg follow bitmap.
-	poses = (("prepare", "prepare", (64, 59)), ("kick", "kick", (64, 59)), ("recover", "prepare", (75, 53)))
+	# Standing bitmap only: a two-pixel forward step settles over four frames.
+	poses = (("prepare", 4, (64, 59)), ("kick", 0, (64, 59)), ("recover", 4, (87, 47)))
 	strip = Image.new("RGB", (WIDTH * SCALE * len(poses), (HEIGHT + 12) * SCALE), "black")
-	for index, (label_text, pose, ball) in enumerate(poses):
-		oled = render_penalty(font, bitmaps, pose, ball)
+	for index, (label_text, frame, ball) in enumerate(poses):
+		oled = render_penalty(font, bitmaps, frame, ball)
 		preview = oled.image.resize((WIDTH * SCALE, HEIGHT * SCALE), Image.NEAREST).convert("RGB")
 		strip.paste(preview, (index * WIDTH * SCALE, 12 * SCALE))
 		label = Oled(font)
@@ -208,7 +207,7 @@ def render_game_over(font: list[int]) -> Oled:
 
 def main() -> None:
 	font = parse_array(FONT_SOURCE, "font")
-	bitmap_names = ("bitmap_penalty_goal", "bitmap_penalty_keeper_dive_left", "bitmap_penalty_shooter_prepare", "bitmap_penalty_shooter_kick", "bitmap_penalty_shooter_follow", "bitmap_penalty_ball")
+	bitmap_names = ("bitmap_penalty_goal", "bitmap_penalty_keeper_dive_left", "bitmap_penalty_shooter_prepare", "bitmap_penalty_ball")
 	bitmaps = {name: parse_array(BITMAP_SOURCE, name) for name in bitmap_names}
 	render_menu(font).save("scr_game_menu.png")
 	render_penalty(font, bitmaps).save("scr_game_penalty.png")

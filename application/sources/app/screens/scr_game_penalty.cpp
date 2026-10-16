@@ -16,7 +16,6 @@
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH (40)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT (40)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING (6)
-#define SCR_GAME_PENALTY_SHOOTER_KICK_Y_OFFSET (-2)
 #define SCR_GAME_PENALTY_GOAL_BITMAP_WIDTH (93)
 #define SCR_GAME_PENALTY_GOAL_BITMAP_HEIGHT (38)
 #define SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_X (17)
@@ -40,26 +39,6 @@ static void scr_game_penalty_hud_display(const em_game_view_t* view);
 static void scr_game_penalty_result_display(em_game_goal_result_t result);
 static void scr_game_penalty_stadium_display();
 static void scr_game_penalty_pitch_display();
-static const unsigned char*
-scr_game_penalty_get_shooter_bitmap(const em_game_view_t* view);
-
-static const unsigned char*
-scr_game_penalty_get_shooter_bitmap(const em_game_view_t* view)
-{
-	if (view->shooter_kick == EM_GAME_SHOOTER_KICK_NONE)
-	{
-		return bitmap_penalty_shooter_prepare;
-	}
-
-	// Ball starts moving on the kick request: show contact immediately.
-	if (view->shooter_frame <= 1)
-	{
-		return bitmap_penalty_shooter_kick;
-	}
-
-	// Recover with the original standing pose; the old follow pose reverses the leg.
-	return bitmap_penalty_shooter_prepare;
-}
 
 view_dynamic_t dyn_view_game_penalty = {{
                                             .item_type = ITEM_TYPE_DYNAMIC,
@@ -230,18 +209,11 @@ static void scr_game_penalty_shooter_display(const em_game_view_t* view)
 		return;
 	}
 
-	const unsigned char* bitmap = scr_game_penalty_get_shooter_bitmap(view);
-	int16_t bitmap_y = view->shooter_y - SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT +
-	                   SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING;
-	if (bitmap == bitmap_penalty_shooter_kick)
-	{
-		// The original kick boot extends two rows below the standing boot.
-		bitmap_y += SCR_GAME_PENALTY_SHOOTER_KICK_Y_OFFSET;
-	}
-
 	view_render.drawBitmap(
 	    view->shooter_x - (SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH / 2),
-	    bitmap_y, bitmap,
+	    view->shooter_y - SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT +
+	        SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING,
+	    bitmap_penalty_shooter_prepare,
 	    SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH,
 	    SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT, WHITE);
 }

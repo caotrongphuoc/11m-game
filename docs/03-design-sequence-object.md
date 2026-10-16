@@ -132,17 +132,12 @@ sequenceDiagram
 
 Shooter owns the player's kick direction. Ball receives only its movement target, while Keeper receives only the shot zone it needs to choose a dive.
 
-All original shooter bitmap bytes are preserved. Animation uses the fixed anchor `(44, 63)`
-to place the extended boot at the rear edge of the ball centered at `(64, 59)`. The kick
-snapshot selects the original kick bitmap immediately, including animation frame zero,
-so the ball does not depart while the player is still shown preparing. Frames zero and
-one show contact; frames two through four recover with the original standing bitmap.
-The original follow bitmap remains unchanged in the assets but is omitted from this
-sequence because its leg points back across the player. Shot direction changes the ball
-target rather than sliding the player across the pitch.
-The original kick bitmap is drawn two pixels higher than the standing bitmap to align
-their boot baselines and keep the kick boot inside the OLED. This is a render offset only;
-the bitmap data is not transformed or edited.
+All original shooter bitmap bytes are preserved. Display uses only the original standing
+bitmap; the raised-leg kick and follow bitmaps are no longer part of the animation.
+On the accepted kick, Shooter moves from `(44, 63)` to `(46, 63)` and commands Ball and
+Keeper immediately. Each 80 ms animation step eases the player back toward `(44, 63)`;
+frame four completes the recovery after 320 ms. The small step supplies visual feedback
+without changing the player's leg pose. Shot direction changes only the ball target.
 
 The three poses can be reviewed in [the shooter frame preview](../resources/images/screens/scr_game_shooter_frames.png),
 regenerated with `python3 tools/render_game_screens.py`.

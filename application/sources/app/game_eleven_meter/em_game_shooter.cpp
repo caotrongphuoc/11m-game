@@ -125,6 +125,7 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 
 	s_shooter.frame = 0;
 	s_shooter.moving = true;
+	s_shooter.x = EM_GAME_SHOOTER_START_X + EM_GAME_SHOOTER_KICK_STEP_X;
 	s_shooter.visible = true;
 	s_shooter.kick = (uint8_t)kick;
 	s_update_elapsed_ms = 0;
@@ -164,7 +165,11 @@ static void em_game_shooter_advance()
 	}
 
 	s_shooter.frame++;
-	// Animate around the planted left foot; shot direction belongs to Ball.
+	// A small forward step replaces the raised-leg sprite, then settles back.
+	s_shooter.x = EM_GAME_SHOOTER_START_X +
+	              ((EM_GAME_SHOOTER_STEP_COUNT - s_shooter.frame) *
+	               EM_GAME_SHOOTER_KICK_STEP_X) /
+	                  EM_GAME_SHOOTER_STEP_COUNT;
 
 	if (s_shooter.frame >= EM_GAME_SHOOTER_STEP_COUNT)
 	{
