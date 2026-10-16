@@ -18,13 +18,13 @@ empty cards are in [`backgrounds/`](backgrounds/).
 | Gameplay | [Captured round 4](../scr_game_penalty.gif) | [Gameplay card](scr_game_penalty.gif) |
 | Match Over | [Transition preview](../scr_game_rip.png) | [Transition card](scr_game_rip.png) |
 | Final Score | [Score preview](../scr_game_over.png) | [Score card](scr_game_over.png) |
-| Game Demo | [Menu-to-Home recording](../../../videos/eleven_meter_demo.gif) | [Demo card](em_game_demo.gif) |
 | Full Match | [Five-round recording](../../objects/em_game_match.gif) | [Match card](em_game_match.gif) |
 
 The OLED viewport is exactly **512×256**, at **(104, 128)**, with the original logical
 128×64 pixels enlarged 4× using nearest-neighbor sampling. No artwork, text, or tint is
 placed over the screen. All original source files remain unchanged. This includes the
-raw MP4 demo, which remains available when clicking the framed GIF in the README.
+raw Gameplay Demo GIF, which the README displays without a card. Clicking that GIF
+opens the original MP4 demo.
 
 GIF frame order, per-frame durations, total playback duration, and looping are preserved.
 A fixed palette reserves pure black and white for the OLED, and each previous frame is

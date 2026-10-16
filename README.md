@@ -23,7 +23,7 @@
 
 <p align="center">
   <a href="resources/videos/eleven_meter_demo.mp4">
-    <img src="resources/images/screens/framed/em_game_demo.gif" alt="Banner-themed frame around the animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="720"/>
+    <img src="resources/videos/eleven_meter_demo.gif" alt="OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="720"/>
   </a>
 </p>
 

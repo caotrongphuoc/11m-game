@@ -1,7 +1,6 @@
 # Eleven Meter demo
 
-The README displays a [banner-framed version](../images/screens/framed/em_game_demo.gif)
-of [`eleven_meter_demo.gif`](eleven_meter_demo.gif) automatically,
+The README displays the unframed [`eleven_meter_demo.gif`](eleven_meter_demo.gif) automatically,
 with [`eleven_meter_demo.mp4`](eleven_meter_demo.mp4) as an optional silent video.
 Both show the same complete flow: **menu → select Hard → five rounds → Match Over →
 AI WINS and final score → Home → menu**.
@@ -32,11 +31,9 @@ Regenerate from the repository root with Python 3, Pillow, and FFmpeg with `libx
 
 ```bash
 python3 tools/render_game_demo.py
-python3 tools/render_screen_cards.py
 ```
 
-The first command overwrites only the raw generated GIF and MP4; the second refreshes
-the README's banner-themed wrappers. The demo renderer requires the complete
+This command overwrites only the generated GIF and MP4. The demo renderer requires the complete
 ordered menu-to-Home sequence, all five rounds, and the recorded AI win. No firmware,
 sprite, or capture data is changed. See the
 [capture notes](../captures/README.md#menu-to-home-demo) for the diagnostic capture build,

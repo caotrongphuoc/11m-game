@@ -19,7 +19,6 @@ CARDS = (
     ("resources/images/screens/scr_game_penalty.gif", "scr_game_penalty.gif", "GAMEPLAY", "COUNTDOWN / SHOT / RESULT", "02", 160),
     ("resources/images/screens/scr_game_rip.png", "scr_game_rip.png", "MATCH OVER", "FIVE KICKS COMPLETE", "03", 320),
     ("resources/images/screens/scr_game_over.png", "scr_game_over.png", "FINAL SCORE", "RESULT / RETRY / HOME", "04", 560),
-    ("resources/videos/eleven_meter_demo.gif", "em_game_demo.gif", "GAME DEMO", "MENU / MATCH / SCORE / HOME", "05", 240),
     ("resources/images/objects/em_game_match.gif", "em_game_match.gif", "FULL MATCH", "FIVE ROUNDS / FINAL SCORE", "06", 480),
 )
 
