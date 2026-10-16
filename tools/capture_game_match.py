@@ -26,6 +26,8 @@ def text_matches(data: bytes, font: list[int], x: int, y: int, text: str, color:
 
 
 def classify(data: bytes, font: list[int]) -> tuple[str, int | None]:
+    if text_matches(data, font, 25, 3, "ELEVEN METER"):
+        return "menu", None
     if text_matches(data, font, 37, 2, "GAME OVER"):
         return "game_over", None
     if text_matches(data, font, 34, 5, "MATCH OVER", False):
@@ -40,17 +42,24 @@ def classify(data: bytes, font: list[int]) -> tuple[str, int | None]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", default="/dev/ttyUSB0")
-    parser.add_argument("--output", type=Path, default=ROOT / "resources/captures/em_game_match_uart.json")
+    parser.add_argument("--output", type=Path, help="defaults to separate match/demo capture files")
     parser.add_argument("--firmware-checksum", required=True, help="updater checksum of the temporary capture image")
     parser.add_argument("--interval-ms", type=int, default=160)
     parser.add_argument("--timeout", type=int, default=240)
+    parser.add_argument("--demo-flow", action="store_true", help="capture menu, a normal Hard loss, final score, and Home using temporary lcd k button injection")
     args = parser.parse_args()
     if args.interval_ms < 80 or args.timeout <= 0:
         parser.error("use an interval of at least 80 ms and a positive timeout")
+    if args.demo_flow and args.interval_ms % 40:
+        parser.error("demo intervals must be multiples of 40 ms for MP4 timing")
+    if args.output is None:
+        args.output = ROOT / "resources/captures" / ("em_game_demo_uart.json" if args.demo_flow else "em_game_match_uart.json")
     font = parse_array(FONT_SOURCE, "font")
     record = {"format": "ak-oled-page-major-lsb", "width": 128, "height": 64,
               "firmware_checksum": args.firmware_checksum, "captured_date": "2026-10-16",
               "interval_ms": args.interval_ms, "complete": False, "frames": []}
+    if args.demo_flow:
+        record["flow"] = "menu-play-loss-score-home"
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     def checkpoint() -> None:
@@ -68,6 +77,9 @@ def main() -> None:
         rounds = set()
         saw_rip = False
         previous = None
+        menu_step = 0
+        started = False
+        returning_home = False
         while time.monotonic() < deadline:
             os.write(fd, b"lcd d\r")
             reply = bytearray()
@@ -84,17 +96,50 @@ def main() -> None:
             if len(data) != 1024:
                 raise ValueError(f"incomplete LCD reply: {len(data)} bytes")
             phase, round_number = classify(data, font)
+            duration = args.interval_ms
+            button = None
+            if args.demo_flow:
+                if phase == "startup_or_menu":
+                    continue
+                if phase == "menu":
+                    if returning_home:
+                        phase, duration = "menu_home", 2000
+                    elif not started:
+                        if menu_step == 0:
+                            phase, duration, button = "menu_start", 1200, b"lcd k d\r"
+                            menu_step = 1
+                        elif menu_step == 1 and text_matches(data, font, 97, 26, "HARD", False):
+                            phase, duration, button = "menu_hard", 1200, b"lcd k m\r"
+                            started = True
+                        else:
+                            os.write(fd, b"lcd k d\r")
+                            time.sleep(args.interval_ms / 1000)
+                            continue
+                if phase == "rip":
+                    if saw_rip:
+                        time.sleep(args.interval_ms / 1000)
+                        continue
+                    duration = 2000
+                if phase == "game_over":
+                    if not text_matches(data, font, 43, 17, "AI WINS!", False):
+                        raise ValueError("normal match was not a loss; capture again without changing game outcomes")
+                    record["winner"] = "ai"
+                    duration, button, returning_home = 3000, b"lcd k u\r", True
+            elif phase == "game_over":
+                duration = 2000
             if round_number is not None:
                 rounds.add(round_number)
             saw_rip = saw_rip or phase == "rip"
             record["frames"].append({"phase": phase, "round": round_number,
-                                     "duration_ms": 2000 if phase == "game_over" else args.interval_ms,
+                                     "duration_ms": duration,
                                      "data_hex": data.hex()})
             if (phase, round_number) != previous:
                 print(f"Captured {phase}, round={round_number}, frame={len(record['frames'])}", flush=True)
                 previous = phase, round_number
             checkpoint()
-            if phase == "game_over":
+            if button:
+                os.write(fd, button)
+            if phase == ("menu_home" if args.demo_flow else "game_over"):
                 if rounds != {1, 2, 3, 4, 5} or not saw_rip:
                     raise ValueError(f"incomplete match: rounds={sorted(rounds)}, RIP={saw_rip}")
                 record["complete"] = True

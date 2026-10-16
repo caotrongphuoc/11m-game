@@ -46,14 +46,14 @@ The game is also a small example of event-driven firmware design:
 
 <p align="center">
   <a href="resources/videos/eleven_meter_demo.mp4">
-    <img src="resources/images/screens/scr_game_penalty.png" alt="Open the full five-round Eleven Meter OLED demo video" width="512"/>
+    <img src="resources/videos/eleven_meter_demo.gif" alt="Animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="768"/>
   </a>
 </p>
 
-[Watch or download the demo (MP4)](resources/videos/eleven_meter_demo.mp4) — a 19.76-second
-playback of OLED samples captured from the kit, covering all five rounds and the final
-3–2 score. This is sampled screen playback, not a camera recording; UART transfer pauses
-are excluded and there is no audio. See [video details and regeneration](resources/videos/README.md).
+Menu → Hard → five rounds → defeat → final score → Home. The GIF plays automatically;
+[open or download the MP4](resources/videos/eleven_meter_demo.mp4) for video playback.
+Captured from the kit's OLED through UART, not a camera; no audio.
+See [capture details and regeneration](resources/videos/README.md).
 
 ### I. Hardware
 

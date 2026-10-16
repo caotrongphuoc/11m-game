@@ -1,5 +1,59 @@
 # OLED framebuffer captures
 
+## Menu-to-Home demo
+
+[`em_game_demo_uart.json`](em_game_demo_uart.json) is the source for the README's
+autoplay [`demo GIF`](../videos/eleven_meter_demo.gif) and optional
+[`MP4`](../videos/eleven_meter_demo.mp4). It records the real kit's OLED through the
+Type-C CH340 UART at 115200 8N1 on **2026-10-16**, covering menu, Hard selection,
+rounds 1–5, Match Over, an AI win and final score, then Home back to the menu.
+
+The temporary capture image was based on firmware `307e766` (physical kick-button
+mapping), with updater checksum **`0xA3C9`**, **56,724-byte file**. Only app-layer shell
+instrumentation was added temporarily:
+
+- Console/system printing was enabled; other four print/debug flags stayed off.
+- `lcd d` paused and resumed the existing gameplay timer during synchronous UART output
+  to avoid queuing ticks. No second gameplay timer, sprite, or game-rule changes were added.
+- A temporary `lcd k d/u/m` command posted the existing Down/Up/Mode button signals to
+  Display. The active screen translated them normally; no shared gameplay state was read
+  or changed by the shell. This command is not present in the restored production image.
+
+The capture driver chooses Hard and starts, lets each normal selection timeout trigger
+a center shot, then presses Up for Home after Game Over. Accuracy, keeper randomness,
+scoring, and winner evaluation are unmodified. The selected result is **YOU 2–3 CPU**.
+The capture requires a naturally losing match; it does
+not fabricate a loss from a winning recording. This is automated screen-input capture,
+not physical button testing or camera footage.
+
+Gameplay samples have **80 ms** presentation holds; UART transmission time is excluded.
+The initial menu and Hard selection each have 1.2-second holds, Match Over two seconds,
+the final score three seconds, and Home menu two seconds. These static holds are editing
+choices for readability, not a real-time timing measurement. All saved framebuffer bytes
+are preserved; rendering only enlarges their pixels. The GIF loops automatically.
+
+The selected record contains **191 samples**, a **24.28-second** playback, and final
+score **2–3**. The score framebuffer was inspected with AK's `decode_ak_lcd` tool.
+Before and after the capture session, `fatal l` remained at **18 FATALs / 114 restarts**;
+the MF31 record is historical. Message pool peaks were **7/32 pure** and **5/16 common**.
+The logs were passed to AK's analyzer with this unchanged baseline for context.
+
+All temporary firmware instrumentation was removed. The normal quiet image was clean-built
+and restored successfully, updater checksum **`0xC0B5`** verified, **51,220-byte file**,
+**51,216 bytes Flash**, **13,636 bytes RAM**. The physical left/middle/right kick mapping
+is retained; bitmap arrays, `task_display`, kernel, and production log flags are unchanged.
+
+To regenerate the assets without a kit:
+
+```bash
+python3 tools/render_game_demo.py
+```
+
+For a new recording, `tools/capture_game_match.py --demo-flow --interval-ms 80
+--firmware-checksum <checksum> --output resources/captures/em_game_demo_uart.json`
+requires the temporary capture build described above, not the quiet play image. Recording
+can affect the visible game through normal inputs; do not interact with the kit concurrently.
+
 ## Original static gameplay capture
 
 [`scr_game_penalty_uart.txt`](scr_game_penalty_uart.txt) contains the complete raw `lcd d`

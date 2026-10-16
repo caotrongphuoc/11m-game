@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Encode saved OLED match samples as a silent, nearest-neighbor MP4 demo."""
+"""Encode the saved menu-to-Home OLED capture as an autoplay GIF and silent MP4."""
 
 import json
 import subprocess
@@ -9,20 +9,33 @@ from PIL import Image
 from render_game_screens import ROOT
 
 
-CAPTURE = ROOT / "resources/captures/em_game_match_uart.json"
+CAPTURE = ROOT / "resources/captures/em_game_demo_uart.json"
 OUTPUT = ROOT / "resources/videos/eleven_meter_demo.mp4"
+GIF_OUTPUT = OUTPUT.with_suffix(".gif")
 FPS = 25
 SCALE = 6
 
 
-def main() -> None:
-    record = json.loads(CAPTURE.read_text(encoding="utf-8"))
+def validate_capture(record) -> None:
     samples = record["frames"]
     rounds = {sample["round"] for sample in samples if sample["phase"] == "gameplay"}
     if not record["complete"] or rounds != {1, 2, 3, 4, 5}:
         raise ValueError("demo requires a complete five-round capture")
-    if samples[-1]["phase"] != "game_over" or not any(s["phase"] == "rip" for s in samples):
-        raise ValueError("demo requires Match Over and the final score")
+    phases = []
+    for sample in samples:
+        if not phases or phases[-1] != sample["phase"]:
+            phases.append(sample["phase"])
+    if phases != ["menu_start", "menu_hard", "gameplay", "rip", "game_over", "menu_home"] or record.get("winner") != "ai":
+        raise ValueError("demo requires menu, Hard selection, play, loss, final score, and Home in order")
+    round_order = [sample["round"] for sample in samples if sample["phase"] == "gameplay"]
+    if round_order != sorted(round_order):
+        raise ValueError("gameplay rounds are out of order")
+
+
+def main() -> None:
+    record = json.loads(CAPTURE.read_text(encoding="utf-8"))
+    validate_capture(record)
+    samples = record["frames"]
     # Validate everything before starting an encoder that overwrites the output.
     frames = []
     for sample in samples:
@@ -35,6 +48,16 @@ def main() -> None:
         image = Image.frombytes("L", (128, 64), pixels)
         frames.append((image.resize((128 * SCALE, 64 * SCALE), Image.NEAREST).tobytes(), duration * FPS // 1000))
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    gif_frames = []
+    for pixels, _ in frames:
+        image = Image.frombytes("L", (128 * SCALE, 64 * SCALE), pixels)
+        indexed = Image.new("P", image.size)
+        indexed.putpalette([0, 0, 0, 255, 255, 255] + [0] * 762)
+        indexed.paste(1, (0, 0), image)
+        gif_frames.append(indexed)
+    gif_frames[0].save(GIF_OUTPUT, save_all=True, append_images=gif_frames[1:],
+                       duration=[sample["duration_ms"] for sample in samples],
+                       loop=0, disposal=2, optimize=False)
     command = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
                "-f", "rawvideo", "-pixel_format", "gray", "-video_size", f"{128 * SCALE}x{64 * SCALE}",
                "-framerate", str(FPS), "-i", "pipe:0", "-an", "-c:v", "libx264",
@@ -50,6 +73,7 @@ def main() -> None:
         if encoder.wait() != 0:
             raise RuntimeError("ffmpeg failed to encode the demo")
     print(f"Rendered {OUTPUT.relative_to(ROOT)}: {sum(n for _, n in frames)} frames at {FPS} fps")
+    print(f"Rendered {GIF_OUTPUT.relative_to(ROOT)}: {len(samples)} samples, {sum(s['duration_ms'] for s in samples)} ms")
 
 
 if __name__ == "__main__":
