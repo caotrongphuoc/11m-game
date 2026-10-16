@@ -181,7 +181,7 @@ The Match GIF is a sampled UART recording of a complete five-round match, includ
 
 - On the menu, press **[Up]** or **[Down]** to choose Easy, Normal, or Hard.
 - Press **[Mode]** to start the shootout.
-- During a round, press **[Up]** to shoot left, **[Mode]** to shoot center, or **[Down]** to shoot right.
+- During a round, use the buttons from left to right as you face the OLED: **[Down] → left**, **[Up] → center**, **[Mode] → right**. Menu and Game Over controls remain unchanged.
 - Choose before the three-second countdown ends. If time runs out, the shot goes to the center.
 
 #### Game Mechanics:

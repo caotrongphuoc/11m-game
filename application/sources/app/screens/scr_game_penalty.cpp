@@ -274,23 +274,24 @@ void scr_game_penalty_handle(ak_msg_t* msg)
 	}
 	break;
 
+	// Front view of the kit: Down (left), Up (middle), Mode (right).
+	case AC_DISPLAY_BUTTON_DOWN_PRESSED:
+	{
+		APP_DBG_SIG("AC_DISPLAY_BUTTON_DOWN_PRESSED\n");
+		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_LEFT);
+	}
+	break;
+
 	case AC_DISPLAY_BUTTON_UP_PRESSED:
 	{
 		APP_DBG_SIG("AC_DISPLAY_BUTTON_UP_PRESSED\n");
-		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_LEFT);
+		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_CENTER);
 	}
 	break;
 
 	case AC_DISPLAY_BUTTON_MODE_PRESSED:
 	{
 		APP_DBG_SIG("AC_DISPLAY_BUTTON_MODE_PRESSED\n");
-		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_CENTER);
-	}
-	break;
-
-	case AC_DISPLAY_BUTTON_DOWN_PRESSED:
-	{
-		APP_DBG_SIG("AC_DISPLAY_BUTTON_DOWN_PRESSED\n");
 		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_KICK_RIGHT);
 	}
 	break;

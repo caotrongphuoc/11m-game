@@ -46,7 +46,7 @@ PHASES = (
     )),
     ("02  SELECT AND EXECUTE A KICK", (
         ("Display", "Match", "Tick: update 3-second countdown"),
-        ("Player", "Display", "Up / Mode / Down: choose shot"),
+        ("Player", "Display", "Down / Up / Mode: left / center / right"),
         ("Display", "Match", "Request left / center / right"),
         (None, None, "Timeout requests CENTER automatically; Match accepts only one kick per round."),
         ("Match", "Shooter", "Forward accepted kick"),

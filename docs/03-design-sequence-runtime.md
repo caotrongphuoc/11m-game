@@ -67,6 +67,10 @@ Input received outside the phase shown for its transition is ignored.
 
 ## Button to render sequence
 
+On the penalty screen, physical left/middle/right buttons (Down/Up/Mode) post
+`EM_GAME_MATCH_KICK_LEFT` / `CENTER` / `RIGHT` respectively. This translation is local
+to `scr_game_penalty`; BSP pin mappings and other screens' controls are unchanged.
+
 ```mermaid
 sequenceDiagram
     participant Button as Button ISR/BSP

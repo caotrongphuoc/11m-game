@@ -77,3 +77,24 @@ The other screen images remain generated previews. To collect diagnostic evidenc
 
 The confirmed play checks are complete for this revision. Repeat them after changes to
 message flow, timers, rendering, pools, or score persistence.
+
+## Physical kick-button mapping update — 2026-10-16
+
+The penalty screen now translates front-view physical left/middle/right buttons
+(Down/Up/Mode) into left/center/right kick requests. Menu, RIP, Game Over, BSP pin
+assignments, Match acceptance policy, gameplay timing, log flags, and bitmap data are
+unchanged. The earlier manual play confirmations above predate this mapping update.
+
+- `make -C application clean` followed by `make -C application -j4` succeeded:
+  **51,216 bytes Flash**, **13,636 bytes RAM**.
+- `python3 tools/test_penalty_buttons.py` compiled the current penalty handler with
+  host-side message/timer stubs and checked 60 button events, one request per event,
+  correct Match destination/direction, no button-created timer, unchanged four-task
+  tick fan-out, and ignored unknown signals. This checks symbolic screen routing,
+  not GPIO input, AK scheduling, or Match state handling.
+- The sequence image was regenerated with the updated control labels; `git diff --check`
+  passed.
+- No kit serial device was available during this update. The new image was **not flashed**,
+  and physical button presses, UART logs, and framebuffer captures were **not validated**.
+  After flashing, verify Down → left, Up → center, Mode → right during selection, then
+  check that menu navigation, Mode start/retry, Up home, and timeout-center still work.

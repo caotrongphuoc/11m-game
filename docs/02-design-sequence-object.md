@@ -110,13 +110,13 @@ sequenceDiagram
     participant Ball
     participant Keeper
 
-    alt Up button
+    alt Left physical button (Down)
         Display->>Match: EM_GAME_MATCH_KICK_LEFT
         Match->>Shooter: EM_GAME_SHOOTER_REQUEST_KICK_LEFT
-    else Mode button
+    else Middle physical button (Up)
         Display->>Match: EM_GAME_MATCH_KICK_CENTER
         Match->>Shooter: EM_GAME_SHOOTER_REQUEST_KICK_CENTER
-    else Down button
+    else Right physical button (Mode)
         Display->>Match: EM_GAME_MATCH_KICK_RIGHT
         Match->>Shooter: EM_GAME_SHOOTER_REQUEST_KICK_RIGHT
     else Selection timeout

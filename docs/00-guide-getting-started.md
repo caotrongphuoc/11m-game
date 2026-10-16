@@ -56,11 +56,20 @@ make -C application flash PROGRAMMER_PATH=/path/to/STM32CubeProgrammer/bin
 
 - On the menu, use **Up** or **Down** to choose Easy, Normal, or Hard.
 - Press **Mode** to start.
-- During a kick, press **Up** for left, **Mode** for center, or **Down** for right.
+- During a kick, use the buttons from left to right as you face the OLED: **Down** for left, **Up** for center, and **Mode** for right.
 - If the three-second countdown expires, the game shoots toward the center automatically.
 - Score at least three goals in five attempts to win; saves and misses count for the CPU.
 - The original standing player moves forward two pixels and settles back; there is no raised-leg animation.
 - At game over, press **Mode** to retry or **Up** to return home.
+
+The physical kick mapping applies only on the penalty screen; it does not rename BSP
+buttons or change menu, RIP, Game Over, or bootloader controls.
+
+| Physical position (front view) | BSP button | MCU input | Kick |
+|---|---|---|---|
+| Left | Down | PB3 | Left |
+| Middle | Up | PC13 | Center |
+| Right | Mode | PB4 | Right |
 - BEST survives power-off. Ties in goal count favor the harder difficulty.
 
 ## Inspect the board
