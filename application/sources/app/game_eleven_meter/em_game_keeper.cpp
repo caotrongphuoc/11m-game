@@ -1,27 +1,11 @@
-#include "ak.h"
-#include "message.h"
-#include "port.h"
-
-#include "sys_ctrl.h"
-
-#include "app.h"
-#include "app_dbg.h"
-#include "task_list.h"
-
-#include "em_game_goal.h"
 #include "em_game_keeper.h"
 
 /*****************************************************************************/
-/* Private state - Keeper */
+/* Variable declaration - Keeper */
 /*****************************************************************************/
 
-static em_game_keeper_view_t s_keeper;
-static em_game_keeper_difficulty_t s_difficulty =
-    EM_GAME_KEEPER_DIFFICULTY_NORMAL;
-static int16_t s_target_x;
-static uint32_t s_random_seed;
-static uint8_t s_update_elapsed_ms;
-static bool s_reaction_started;
+em_game_keeper_t em_game_keeper = {
+    {}, EM_GAME_KEEPER_DIFFICULTY_NORMAL, 0, 0, 0, false};
 
 /*****************************************************************************/
 /* Private helpers - Keeper */
@@ -29,12 +13,12 @@ static bool s_reaction_started;
 
 static uint32_t em_game_keeper_xorshift32()
 {
-	uint32_t value = s_random_seed;
+	uint32_t value = em_game_keeper.random_seed;
 
 	value ^= value << 13;
 	value ^= value >> 17;
 	value ^= value << 5;
-	s_random_seed = value;
+	em_game_keeper.random_seed = value;
 
 	return value;
 }
@@ -42,7 +26,7 @@ static uint32_t em_game_keeper_xorshift32()
 static void em_game_keeper_publish_view()
 {
 	task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_UPDATE_KEEPER,
-	                     (uint8_t*)&s_keeper, sizeof(s_keeper));
+	                     (uint8_t*)&em_game_keeper.view, sizeof(em_game_keeper.view));
 }
 
 static int16_t em_game_keeper_get_target_x(em_game_keeper_dive_t dive)
@@ -63,15 +47,15 @@ static int16_t em_game_keeper_get_target_x(em_game_keeper_dive_t dive)
 
 static void em_game_keeper_reset()
 {
-	s_keeper.x = EM_GAME_KEEPER_START_X;
-	s_keeper.y = EM_GAME_KEEPER_START_Y;
-	s_keeper.frame = 0;
-	s_keeper.visible = true;
-	s_keeper.moving = false;
-	s_keeper.dive = EM_GAME_KEEPER_DIVE_NONE;
-	s_target_x = EM_GAME_KEEPER_START_X;
-	s_update_elapsed_ms = 0;
-	s_reaction_started = false;
+	em_game_keeper.view.x = EM_GAME_KEEPER_START_X;
+	em_game_keeper.view.y = EM_GAME_KEEPER_START_Y;
+	em_game_keeper.view.frame = 0;
+	em_game_keeper.view.visible = true;
+	em_game_keeper.view.moving = false;
+	em_game_keeper.view.dive = EM_GAME_KEEPER_DIVE_NONE;
+	em_game_keeper.target_x = EM_GAME_KEEPER_START_X;
+	em_game_keeper.update_elapsed_ms = 0;
+	em_game_keeper.reaction_started = false;
 
 	em_game_keeper_publish_view();
 }
@@ -100,17 +84,17 @@ em_game_keeper_pick_dive(em_game_keeper_shot_t shot)
 	em_game_keeper_dive_t dive;
 	uint8_t roll;
 
-	s_random_seed ^= sys_ctrl_millis();
-	if (s_random_seed == 0)
+	em_game_keeper.random_seed ^= sys_ctrl_millis();
+	if (em_game_keeper.random_seed == 0)
 	{
-		s_random_seed = EM_GAME_KEEPER_RANDOM_FALLBACK;
+		em_game_keeper.random_seed = EM_GAME_KEEPER_RANDOM_FALLBACK;
 	}
 
 	dive = (em_game_keeper_dive_t)((em_game_keeper_xorshift32() %
 	                                EM_GAME_KEEPER_DIRECTION_COUNT) +
 	                               EM_GAME_KEEPER_DIVE_LEFT);
 
-	switch (s_difficulty)
+	switch (em_game_keeper.difficulty)
 	{
 	case EM_GAME_KEEPER_DIFFICULTY_EASY:
 		if (dive == shot_dive)
@@ -151,20 +135,20 @@ em_game_keeper_pick_dive(em_game_keeper_shot_t shot)
 
 static void em_game_keeper_start(em_game_keeper_shot_t shot)
 {
-	if (s_reaction_started)
+	if (em_game_keeper.reaction_started)
 	{
 		return;
 	}
 
 	em_game_keeper_dive_t dive = em_game_keeper_pick_dive(shot);
 
-	s_keeper.dive = (uint8_t)dive;
-	s_keeper.frame = 0;
-	s_keeper.visible = true;
-	s_keeper.moving = true;
-	s_target_x = em_game_keeper_get_target_x(dive);
-	s_update_elapsed_ms = 0;
-	s_reaction_started = true;
+	em_game_keeper.view.dive = (uint8_t)dive;
+	em_game_keeper.view.frame = 0;
+	em_game_keeper.view.visible = true;
+	em_game_keeper.view.moving = true;
+	em_game_keeper.target_x = em_game_keeper_get_target_x(dive);
+	em_game_keeper.update_elapsed_ms = 0;
+	em_game_keeper.reaction_started = true;
 
 	em_game_keeper_publish_view();
 }
@@ -173,7 +157,7 @@ static void em_game_keeper_report_ready()
 {
 	em_game_goal_keeper_t keeper;
 
-	switch ((em_game_keeper_dive_t)s_keeper.dive)
+	switch ((em_game_keeper_dive_t)em_game_keeper.view.dive)
 	{
 	case EM_GAME_KEEPER_DIVE_LEFT:
 		keeper.zone = EM_GAME_GOAL_ZONE_LEFT;
@@ -195,20 +179,20 @@ static void em_game_keeper_report_ready()
 
 static void em_game_keeper_advance()
 {
-	if (!s_keeper.moving)
+	if (!em_game_keeper.view.moving)
 	{
 		return;
 	}
 
-	s_keeper.frame++;
-	s_keeper.x = EM_GAME_KEEPER_START_X +
-	             ((s_target_x - EM_GAME_KEEPER_START_X) * s_keeper.frame) /
-	                 EM_GAME_KEEPER_STEP_COUNT;
+	em_game_keeper.view.frame++;
+	em_game_keeper.view.x = EM_GAME_KEEPER_START_X +
+	                        ((em_game_keeper.target_x - EM_GAME_KEEPER_START_X) * em_game_keeper.view.frame) /
+	                            EM_GAME_KEEPER_STEP_COUNT;
 
-	if (s_keeper.frame >= EM_GAME_KEEPER_STEP_COUNT)
+	if (em_game_keeper.view.frame >= EM_GAME_KEEPER_STEP_COUNT)
 	{
-		s_keeper.x = s_target_x;
-		s_keeper.moving = false;
+		em_game_keeper.view.x = em_game_keeper.target_x;
+		em_game_keeper.view.moving = false;
 		em_game_keeper_report_ready();
 	}
 
@@ -243,8 +227,8 @@ void em_game_keeper_handle(ak_msg_t* msg)
 
 			if (difficulty_msg->difficulty <= EM_GAME_KEEPER_DIFFICULTY_HARD)
 			{
-				s_difficulty = (em_game_keeper_difficulty_t)
-				                   difficulty_msg->difficulty;
+				em_game_keeper.difficulty = (em_game_keeper_difficulty_t)
+				                                difficulty_msg->difficulty;
 			}
 		}
 		break;
@@ -265,12 +249,12 @@ void em_game_keeper_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_KEEPER_UPDATE:
-		if (s_keeper.moving)
+		if (em_game_keeper.view.moving)
 		{
-			s_update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
-			if (s_update_elapsed_ms >= EM_GAME_KEEPER_ANIM_TICK_INTERVAL)
+			em_game_keeper.update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+			if (em_game_keeper.update_elapsed_ms >= EM_GAME_KEEPER_ANIM_TICK_INTERVAL)
 			{
-				s_update_elapsed_ms -= EM_GAME_KEEPER_ANIM_TICK_INTERVAL;
+				em_game_keeper.update_elapsed_ms -= EM_GAME_KEEPER_ANIM_TICK_INTERVAL;
 				em_game_keeper_advance();
 			}
 		}

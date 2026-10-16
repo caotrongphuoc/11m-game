@@ -31,9 +31,9 @@ static void scr_game_penalty_frame_display(const em_game_view_t* view)
 	scr_game_penalty_stadium_display();
 
 	view_render.drawBitmap(
-	    SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_X, SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_Y,
-	    bitmap_penalty_goal, SCR_GAME_PENALTY_GOAL_BITMAP_WIDTH,
-	    SCR_GAME_PENALTY_GOAL_BITMAP_HEIGHT, WHITE);
+	    EM_GAME_GOAL_BITMAP_AXIS_X, EM_GAME_GOAL_BITMAP_AXIS_Y,
+	    bitmap_penalty_goal, EM_GAME_GOAL_BITMAP_WIDTH,
+	    EM_GAME_GOAL_BITMAP_HEIGHT, WHITE);
 	scr_game_penalty_pitch_display();
 }
 
@@ -117,14 +117,14 @@ static void scr_game_penalty_stadium_display()
 static void scr_game_penalty_pitch_display()
 {
 
-	view_render.drawLine(0, SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, 127,
-	                     SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y, WHITE);
+	view_render.drawLine(0, EM_GAME_GOAL_LINE_AXIS_Y, 127,
+	                     EM_GAME_GOAL_LINE_AXIS_Y, WHITE);
 	view_render.drawLine(SCR_GAME_PENALTY_BOX_TOP_LEFT_AXIS_X,
-	                     SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y,
+	                     EM_GAME_GOAL_LINE_AXIS_Y,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_LEFT_AXIS_X,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
 	view_render.drawLine(SCR_GAME_PENALTY_BOX_TOP_RIGHT_AXIS_X,
-	                     SCR_GAME_PENALTY_GOAL_LINE_AXIS_Y,
+	                     EM_GAME_GOAL_LINE_AXIS_Y,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_RIGHT_AXIS_X,
 	                     SCR_GAME_PENALTY_BOX_BOTTOM_AXIS_Y, WHITE);
 	view_render.drawLine(SCR_GAME_PENALTY_BOX_BOTTOM_LEFT_AXIS_X,
@@ -147,28 +147,28 @@ static void scr_game_penalty_keeper_display(const em_game_view_t* view)
 	if (view->keeper_dive == EM_GAME_KEEPER_DIVE_LEFT)
 	{
 		view_render.drawBitmap(
-		    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
-		    view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_LEFT_Y_OFFSET,
+		    view->keeper_x - (EM_GAME_KEEPER_DIVE_BITMAP_WIDTH / 2),
+		    view->keeper_y + EM_GAME_KEEPER_DIVE_LEFT_Y_OFFSET,
 		    bitmap_penalty_keeper_dive_left,
-		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
-		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
+		    EM_GAME_KEEPER_DIVE_BITMAP_WIDTH,
+		    EM_GAME_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
 	}
 	else if (view->keeper_dive == EM_GAME_KEEPER_DIVE_RIGHT)
 	{
 		view_render.drawBitmap(
-		    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH / 2),
-		    view->keeper_y + SCR_GAME_PENALTY_KEEPER_DIVE_RIGHT_Y_OFFSET,
+		    view->keeper_x - (EM_GAME_KEEPER_DIVE_BITMAP_WIDTH / 2),
+		    view->keeper_y + EM_GAME_KEEPER_DIVE_RIGHT_Y_OFFSET,
 		    bitmap_penalty_keeper_dive_right,
-		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_WIDTH,
-		    SCR_GAME_PENALTY_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
+		    EM_GAME_KEEPER_DIVE_BITMAP_WIDTH,
+		    EM_GAME_KEEPER_DIVE_BITMAP_HEIGHT, WHITE);
 	}
 	else
 	{
 		view_render.drawBitmap(
-		    view->keeper_x - (SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH / 2),
-		    view->keeper_y + SCR_GAME_PENALTY_KEEPER_IDLE_Y_OFFSET,
-		    bitmap_penalty_keeper_idle, SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_WIDTH,
-		    SCR_GAME_PENALTY_KEEPER_IDLE_BITMAP_HEIGHT, WHITE);
+		    view->keeper_x - (EM_GAME_KEEPER_IDLE_BITMAP_WIDTH / 2),
+		    view->keeper_y + EM_GAME_KEEPER_IDLE_Y_OFFSET,
+		    bitmap_penalty_keeper_idle, EM_GAME_KEEPER_IDLE_BITMAP_WIDTH,
+		    EM_GAME_KEEPER_IDLE_BITMAP_HEIGHT, WHITE);
 	}
 }
 
@@ -180,12 +180,12 @@ static void scr_game_penalty_shooter_display(const em_game_view_t* view)
 	}
 
 	view_render.drawBitmap(
-	    view->shooter_x - (SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH / 2),
-	    view->shooter_y - SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT +
-	        SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING,
+	    view->shooter_x - (EM_GAME_SHOOTER_BITMAP_WIDTH / 2),
+	    view->shooter_y - EM_GAME_SHOOTER_BITMAP_HEIGHT +
+	        EM_GAME_SHOOTER_BITMAP_BOTTOM_PADDING,
 	    bitmap_penalty_shooter_prepare,
-	    SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH,
-	    SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT, WHITE);
+	    EM_GAME_SHOOTER_BITMAP_WIDTH,
+	    EM_GAME_SHOOTER_BITMAP_HEIGHT, WHITE);
 }
 
 static void scr_game_penalty_ball_display(const em_game_view_t* view)
@@ -196,10 +196,10 @@ static void scr_game_penalty_ball_display(const em_game_view_t* view)
 	}
 
 	view_render.drawBitmap(
-	    view->ball_x - (SCR_GAME_PENALTY_BALL_BITMAP_WIDTH / 2),
-	    view->ball_y - (SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT / 2),
-	    bitmap_penalty_ball, SCR_GAME_PENALTY_BALL_BITMAP_WIDTH,
-	    SCR_GAME_PENALTY_BALL_BITMAP_HEIGHT, WHITE);
+	    view->ball_x - (EM_GAME_BALL_BITMAP_WIDTH / 2),
+	    view->ball_y - (EM_GAME_BALL_BITMAP_HEIGHT / 2),
+	    bitmap_penalty_ball, EM_GAME_BALL_BITMAP_WIDTH,
+	    EM_GAME_BALL_BITMAP_HEIGHT, WHITE);
 }
 
 void view_scr_game_penalty()

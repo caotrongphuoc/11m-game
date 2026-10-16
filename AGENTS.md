@@ -76,9 +76,9 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 
 ## Object ownership and communication
 
-- Each gameplay task owns its mutable state as `static` data in its `.cpp` file.
-- Do not expose mutable task state with `extern`, getters, or direct cross-task function calls.
-- Headers expose task handlers, object-owned enums, and message payload contracts only.
+- Each object header declares an `em_game_<object>_t` state type and one `extern` instance, with exactly one definition in its owning `.cpp`. Match defines and owns the Scoreboard instance.
+- The engineer has approved extern object instances. Only the owning task accesses its instance during gameplay; other tasks and screens still use messages and validated snapshots, not direct cross-object calls or foreign state reads/writes.
+- Headers expose object state, task handlers, object-owned enums, constants, and message payload contracts. Keep state structures separate from message payload structures.
 - Match coordinates rounds and forwards accepted input; Shooter owns kick selection; Ball owns movement; Keeper owns dive selection; Goal resolves Ball and Keeper reports; Display owns render snapshots.
 - Tasks exchange commands, results, and view snapshots only through `task_post_*` messages.
 - Validate incoming common-message lengths and values before using their payloads.
@@ -97,7 +97,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 
 - Match Zomwar's feature-oriented file layout, `em_game_*` object naming, `scr_game_*` screen naming, visual source sections, screen rendering helpers, and display-owned shared tick pattern.
 - Keep Eleven Meter directly under `application/sources/app/game_eleven_meter/`; do not add an intermediate `app/game/` directory.
-- Zomwar is read-only reference code. Do not copy its mutable `extern` object globals, direct cross-object calls, or screen-owned gameplay state because those patterns conflict with current AK ownership rules.
+- Zomwar is read-only reference code. Match its header layout and extern-instance style as approved by the engineer, but do not copy direct cross-object access/calls or screen-owned gameplay state. Message-driven runtime ownership is unchanged.
 - When Zomwar and AK documentation disagree, follow AK documentation and record the safe divergence in `docs/01-guide-coding-rules.md`.
 
 ## Build and validation

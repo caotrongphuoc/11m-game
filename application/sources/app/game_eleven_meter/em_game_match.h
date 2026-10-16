@@ -3,12 +3,21 @@
 
 #include <stdint.h>
 
-#include "ak.h"
+#include "fsm.h"
+#include "port.h"
 #include "message.h"
+#include "timer.h"
 
-/*****************************************************************************/
-/* Match state and difficulty */
-/*****************************************************************************/
+#include "app.h"
+#include "app_dbg.h"
+#include "task_list.h"
+#include "task_display.h"
+
+#include "em_game_goal.h"
+#include "em_game_keeper.h"
+#include "em_game_scoreboard.h"
+
+// Match state and difficulty
 
 typedef enum
 {
@@ -28,9 +37,7 @@ typedef enum
 	EM_GAME_MATCH_DIFFICULTY_HARD
 } em_game_match_difficulty_t;
 
-/*****************************************************************************/
-/* Match display snapshot */
-/*****************************************************************************/
+// Match display snapshot
 
 typedef struct
 {
@@ -46,6 +53,21 @@ typedef struct
 	uint8_t last_result;
 	uint8_t winner;
 } em_game_match_view_t;
+
+// Object state, written only by its owning task.
+typedef struct
+{
+	em_game_match_difficulty_t difficulty;
+	em_game_goal_result_t last_result;
+	em_game_match_state_t state;
+	uint8_t best_goals;
+	em_game_match_difficulty_t best_difficulty;
+	uint8_t countdown_seconds;
+	uint16_t state_elapsed_ms;
+	bool initialized;
+} em_game_match_t;
+
+extern em_game_match_t em_game_match;
 
 extern void em_game_match_handle(ak_msg_t* msg);
 

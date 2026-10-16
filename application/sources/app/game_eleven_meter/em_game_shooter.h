@@ -4,12 +4,27 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "ak.h"
+#include "fsm.h"
+#include "port.h"
 #include "message.h"
+#include "timer.h"
 
-/*****************************************************************************/
-/* Shooter geometry, animation, and accuracy tuning */
-/*****************************************************************************/
+#include "app.h"
+#include "app_dbg.h"
+#include "task_list.h"
+#include "task_display.h"
+
+#include "sys_ctrl.h"
+
+#include "em_game_ball.h"
+#include "em_game_keeper.h"
+
+// Bitmap dimensions and drawing offsets
+#define EM_GAME_SHOOTER_BITMAP_WIDTH (40)
+#define EM_GAME_SHOOTER_BITMAP_HEIGHT (40)
+#define EM_GAME_SHOOTER_BITMAP_BOTTOM_PADDING (6)
+
+// Shooter geometry, animation, and accuracy tuning
 
 #define EM_GAME_SHOOTER_START_X (44)
 #define EM_GAME_SHOOTER_START_Y (63)
@@ -21,9 +36,7 @@
 #define EM_GAME_SHOOTER_FAST_REACTION_INTERVAL (500)
 #define EM_GAME_SHOOTER_RANDOM_FALLBACK (0xA341316CUL)
 
-/*****************************************************************************/
-/* Shooter action and display snapshot */
-/*****************************************************************************/
+// Shooter action and display snapshot
 
 typedef enum
 {
@@ -42,6 +55,18 @@ typedef struct
 	uint8_t moving;
 	uint8_t kick;
 } em_game_shooter_view_t;
+
+// Object state, written only by its owning task.
+typedef struct
+{
+	em_game_shooter_view_t view;
+	uint32_t random_seed;
+	uint16_t selection_elapsed_ms;
+	uint8_t update_elapsed_ms;
+	bool kick_started;
+} em_game_shooter_t;
+
+extern em_game_shooter_t em_game_shooter;
 
 extern void em_game_shooter_handle(ak_msg_t* msg);
 

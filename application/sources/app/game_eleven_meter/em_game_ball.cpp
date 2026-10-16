@@ -1,22 +1,10 @@
-#include "ak.h"
-#include "message.h"
-#include "port.h"
-
-#include "app.h"
-#include "app_dbg.h"
-#include "task_list.h"
-
 #include "em_game_ball.h"
-#include "em_game_goal.h"
 
 /*****************************************************************************/
-/* Private state - Ball */
+/* Variable declaration - Ball */
 /*****************************************************************************/
 
-static em_game_ball_view_t s_ball;
-static int16_t s_target_x;
-static uint8_t s_update_elapsed_ms;
-static bool s_kick_started;
+em_game_ball_t em_game_ball = {};
 
 /*****************************************************************************/
 /* Private helpers - Ball */
@@ -25,7 +13,7 @@ static bool s_kick_started;
 static void em_game_ball_publish_view()
 {
 	task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_UPDATE_BALL,
-	                     (uint8_t*)&s_ball, sizeof(s_ball));
+	                     (uint8_t*)&em_game_ball.view, sizeof(em_game_ball.view));
 }
 
 static int16_t em_game_ball_get_target_x(em_game_ball_target_t target)
@@ -54,15 +42,15 @@ static int16_t em_game_ball_get_target_x(em_game_ball_target_t target)
 
 static void em_game_ball_reset()
 {
-	s_ball.x = EM_GAME_BALL_START_X;
-	s_ball.y = EM_GAME_BALL_START_Y;
-	s_ball.frame = 0;
-	s_ball.visible = true;
-	s_ball.moving = false;
-	s_ball.target = EM_GAME_BALL_TARGET_NONE;
-	s_target_x = EM_GAME_BALL_START_X;
-	s_update_elapsed_ms = 0;
-	s_kick_started = false;
+	em_game_ball.view.x = EM_GAME_BALL_START_X;
+	em_game_ball.view.y = EM_GAME_BALL_START_Y;
+	em_game_ball.view.frame = 0;
+	em_game_ball.view.visible = true;
+	em_game_ball.view.moving = false;
+	em_game_ball.view.target = EM_GAME_BALL_TARGET_NONE;
+	em_game_ball.target_x = EM_GAME_BALL_START_X;
+	em_game_ball.update_elapsed_ms = 0;
+	em_game_ball.kick_started = false;
 
 	em_game_ball_publish_view();
 }
@@ -71,21 +59,21 @@ static void em_game_ball_start(const em_game_ball_kick_t* kick)
 {
 	em_game_ball_target_t target = (em_game_ball_target_t)kick->target;
 
-	if (s_kick_started || (target < EM_GAME_BALL_TARGET_LEFT) ||
+	if (em_game_ball.kick_started || (target < EM_GAME_BALL_TARGET_LEFT) ||
 	    (target > EM_GAME_BALL_TARGET_WIDE_RIGHT))
 	{
 		return;
 	}
 
-	s_ball.x = EM_GAME_BALL_START_X;
-	s_ball.y = EM_GAME_BALL_START_Y;
-	s_ball.frame = 0;
-	s_ball.visible = true;
-	s_ball.moving = true;
-	s_ball.target = (uint8_t)target;
-	s_target_x = em_game_ball_get_target_x(target);
-	s_update_elapsed_ms = 0;
-	s_kick_started = true;
+	em_game_ball.view.x = EM_GAME_BALL_START_X;
+	em_game_ball.view.y = EM_GAME_BALL_START_Y;
+	em_game_ball.view.frame = 0;
+	em_game_ball.view.visible = true;
+	em_game_ball.view.moving = true;
+	em_game_ball.view.target = (uint8_t)target;
+	em_game_ball.target_x = em_game_ball_get_target_x(target);
+	em_game_ball.update_elapsed_ms = 0;
+	em_game_ball.kick_started = true;
 
 	em_game_ball_publish_view();
 }
@@ -94,7 +82,7 @@ static void em_game_ball_report_arrival()
 {
 	em_game_goal_ball_t ball;
 
-	switch ((em_game_ball_target_t)s_ball.target)
+	switch ((em_game_ball_target_t)em_game_ball.view.target)
 	{
 	case EM_GAME_BALL_TARGET_LEFT:
 		ball.zone = EM_GAME_GOAL_ZONE_LEFT;
@@ -125,24 +113,24 @@ static void em_game_ball_report_arrival()
 
 static void em_game_ball_advance()
 {
-	if (!s_ball.moving)
+	if (!em_game_ball.view.moving)
 	{
 		return;
 	}
 
-	s_ball.frame++;
-	s_ball.x = EM_GAME_BALL_START_X +
-	           ((s_target_x - EM_GAME_BALL_START_X) * s_ball.frame) /
-	               EM_GAME_BALL_STEP_COUNT;
-	s_ball.y = EM_GAME_BALL_START_Y +
-	           ((EM_GAME_BALL_TARGET_Y - EM_GAME_BALL_START_Y) * s_ball.frame) /
-	               EM_GAME_BALL_STEP_COUNT;
+	em_game_ball.view.frame++;
+	em_game_ball.view.x = EM_GAME_BALL_START_X +
+	                      ((em_game_ball.target_x - EM_GAME_BALL_START_X) * em_game_ball.view.frame) /
+	                          EM_GAME_BALL_STEP_COUNT;
+	em_game_ball.view.y = EM_GAME_BALL_START_Y +
+	                      ((EM_GAME_BALL_TARGET_Y - EM_GAME_BALL_START_Y) * em_game_ball.view.frame) /
+	                          EM_GAME_BALL_STEP_COUNT;
 
-	if (s_ball.frame >= EM_GAME_BALL_STEP_COUNT)
+	if (em_game_ball.view.frame >= EM_GAME_BALL_STEP_COUNT)
 	{
-		s_ball.x = s_target_x;
-		s_ball.y = EM_GAME_BALL_TARGET_Y;
-		s_ball.moving = false;
+		em_game_ball.view.x = em_game_ball.target_x;
+		em_game_ball.view.y = EM_GAME_BALL_TARGET_Y;
+		em_game_ball.view.moving = false;
 		em_game_ball_report_arrival();
 	}
 
@@ -176,12 +164,12 @@ void em_game_ball_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_BALL_UPDATE:
-		if (s_ball.moving)
+		if (em_game_ball.view.moving)
 		{
-			s_update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
-			if (s_update_elapsed_ms >= EM_GAME_BALL_ANIM_TICK_INTERVAL)
+			em_game_ball.update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+			if (em_game_ball.update_elapsed_ms >= EM_GAME_BALL_ANIM_TICK_INTERVAL)
 			{
-				s_update_elapsed_ms -= EM_GAME_BALL_ANIM_TICK_INTERVAL;
+				em_game_ball.update_elapsed_ms -= EM_GAME_BALL_ANIM_TICK_INTERVAL;
 				em_game_ball_advance();
 			}
 		}

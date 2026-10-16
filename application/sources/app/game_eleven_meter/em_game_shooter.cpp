@@ -1,26 +1,10 @@
-#include "ak.h"
-#include "message.h"
-#include "port.h"
-
-#include "sys_ctrl.h"
-
-#include "app.h"
-#include "app_dbg.h"
-#include "task_list.h"
-
-#include "em_game_ball.h"
-#include "em_game_keeper.h"
 #include "em_game_shooter.h"
 
 /*****************************************************************************/
-/* Private state - Shooter */
+/* Variable declaration - Shooter */
 /*****************************************************************************/
 
-static em_game_shooter_view_t s_shooter;
-static uint32_t s_random_seed;
-static uint16_t s_selection_elapsed_ms;
-static uint8_t s_update_elapsed_ms;
-static bool s_kick_started;
+em_game_shooter_t em_game_shooter = {};
 
 /*****************************************************************************/
 /* Private helpers - Shooter */
@@ -28,12 +12,12 @@ static bool s_kick_started;
 
 static uint32_t em_game_shooter_xorshift32()
 {
-	uint32_t value = s_random_seed;
+	uint32_t value = em_game_shooter.random_seed;
 
 	value ^= value << 13;
 	value ^= value >> 17;
 	value ^= value << 5;
-	s_random_seed = value;
+	em_game_shooter.random_seed = value;
 
 	return value;
 }
@@ -41,27 +25,27 @@ static uint32_t em_game_shooter_xorshift32()
 static void em_game_shooter_publish_view()
 {
 	task_post_common_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_UPDATE_SHOOTER,
-	                     (uint8_t*)&s_shooter, sizeof(s_shooter));
+	                     (uint8_t*)&em_game_shooter.view, sizeof(em_game_shooter.view));
 }
 
 static void em_game_shooter_reset()
 {
-	s_shooter.x = EM_GAME_SHOOTER_START_X;
-	s_shooter.y = EM_GAME_SHOOTER_START_Y;
-	s_shooter.frame = 0;
-	s_shooter.visible = true;
-	s_shooter.moving = false;
-	s_shooter.kick = EM_GAME_SHOOTER_KICK_NONE;
-	s_selection_elapsed_ms = 0;
-	s_update_elapsed_ms = 0;
-	s_kick_started = false;
+	em_game_shooter.view.x = EM_GAME_SHOOTER_START_X;
+	em_game_shooter.view.y = EM_GAME_SHOOTER_START_Y;
+	em_game_shooter.view.frame = 0;
+	em_game_shooter.view.visible = true;
+	em_game_shooter.view.moving = false;
+	em_game_shooter.view.kick = EM_GAME_SHOOTER_KICK_NONE;
+	em_game_shooter.selection_elapsed_ms = 0;
+	em_game_shooter.update_elapsed_ms = 0;
+	em_game_shooter.kick_started = false;
 
-	if (s_random_seed == 0)
+	if (em_game_shooter.random_seed == 0)
 	{
-		s_random_seed = sys_ctrl_millis();
-		if (s_random_seed == 0)
+		em_game_shooter.random_seed = sys_ctrl_millis();
+		if (em_game_shooter.random_seed == 0)
 		{
-			s_random_seed = EM_GAME_SHOOTER_RANDOM_FALLBACK;
+			em_game_shooter.random_seed = EM_GAME_SHOOTER_RANDOM_FALLBACK;
 		}
 	}
 
@@ -73,7 +57,7 @@ em_game_shooter_pick_ball_target(em_game_shooter_kick_t kick)
 {
 	uint8_t miss_chance = EM_GAME_SHOOTER_MISS_BASE_CHANCE;
 
-	if (s_selection_elapsed_ms < EM_GAME_SHOOTER_FAST_REACTION_INTERVAL)
+	if (em_game_shooter.selection_elapsed_ms < EM_GAME_SHOOTER_FAST_REACTION_INTERVAL)
 	{
 		miss_chance += EM_GAME_SHOOTER_MISS_FAST_BONUS;
 	}
@@ -118,18 +102,18 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 	em_game_ball_kick_t ball_kick;
 	em_game_keeper_react_t keeper_react;
 
-	if (s_kick_started)
+	if (em_game_shooter.kick_started)
 	{
 		return;
 	}
 
-	s_shooter.frame = 0;
-	s_shooter.moving = true;
-	s_shooter.x = EM_GAME_SHOOTER_START_X + EM_GAME_SHOOTER_KICK_STEP_X;
-	s_shooter.visible = true;
-	s_shooter.kick = (uint8_t)kick;
-	s_update_elapsed_ms = 0;
-	s_kick_started = true;
+	em_game_shooter.view.frame = 0;
+	em_game_shooter.view.moving = true;
+	em_game_shooter.view.x = EM_GAME_SHOOTER_START_X + EM_GAME_SHOOTER_KICK_STEP_X;
+	em_game_shooter.view.visible = true;
+	em_game_shooter.view.kick = (uint8_t)kick;
+	em_game_shooter.update_elapsed_ms = 0;
+	em_game_shooter.kick_started = true;
 
 	ball_kick.target = (uint8_t)em_game_shooter_pick_ball_target(kick);
 
@@ -159,22 +143,22 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 
 static void em_game_shooter_advance()
 {
-	if (!s_shooter.moving)
+	if (!em_game_shooter.view.moving)
 	{
 		return;
 	}
 
-	s_shooter.frame++;
+	em_game_shooter.view.frame++;
 	// A small forward step replaces the raised-leg sprite, then settles back.
-	s_shooter.x = EM_GAME_SHOOTER_START_X +
-	              ((EM_GAME_SHOOTER_STEP_COUNT - s_shooter.frame) *
-	               EM_GAME_SHOOTER_KICK_STEP_X) /
-	                  EM_GAME_SHOOTER_STEP_COUNT;
+	em_game_shooter.view.x = EM_GAME_SHOOTER_START_X +
+	                         ((EM_GAME_SHOOTER_STEP_COUNT - em_game_shooter.view.frame) *
+	                          EM_GAME_SHOOTER_KICK_STEP_X) /
+	                             EM_GAME_SHOOTER_STEP_COUNT;
 
-	if (s_shooter.frame >= EM_GAME_SHOOTER_STEP_COUNT)
+	if (em_game_shooter.view.frame >= EM_GAME_SHOOTER_STEP_COUNT)
 	{
-		s_shooter.frame = EM_GAME_SHOOTER_STEP_COUNT;
-		s_shooter.moving = false;
+		em_game_shooter.view.frame = EM_GAME_SHOOTER_STEP_COUNT;
+		em_game_shooter.view.moving = false;
 	}
 
 	em_game_shooter_publish_view();
@@ -214,19 +198,19 @@ void em_game_shooter_handle(ak_msg_t* msg)
 		break;
 
 	case EM_GAME_SHOOTER_UPDATE:
-		if (!s_kick_started &&
-		    (s_selection_elapsed_ms <
+		if (!em_game_shooter.kick_started &&
+		    (em_game_shooter.selection_elapsed_ms <
 		     EM_GAME_SHOOTER_FAST_REACTION_INTERVAL))
 		{
-			s_selection_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+			em_game_shooter.selection_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
 		}
 
-		if (s_shooter.moving)
+		if (em_game_shooter.view.moving)
 		{
-			s_update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
-			if (s_update_elapsed_ms >= EM_GAME_SHOOTER_ANIM_TICK_INTERVAL)
+			em_game_shooter.update_elapsed_ms += EM_GAME_TIME_TICK_INTERVAL;
+			if (em_game_shooter.update_elapsed_ms >= EM_GAME_SHOOTER_ANIM_TICK_INTERVAL)
 			{
-				s_update_elapsed_ms -= EM_GAME_SHOOTER_ANIM_TICK_INTERVAL;
+				em_game_shooter.update_elapsed_ms -= EM_GAME_SHOOTER_ANIM_TICK_INTERVAL;
 				em_game_shooter_advance();
 			}
 		}

@@ -31,7 +31,7 @@ Use names that identify the owning module and can be searched without guessing a
 
 | Style | Use | Examples |
 |---|---|---|
-| `lower_snake_case` | Folders, source files, functions, variables, types | `game_eleven_meter`, `em_game_ball_handle`, `s_target_x` |
+| `lower_snake_case` | Folders, source files, functions, variables, types | `game_eleven_meter`, `em_game_ball_handle`, `target_x` |
 | `UPPER_SNAKE_CASE` | Constants, signals, task IDs, header guards | `EM_GAME_BALL_START_X`, `EM_GAME_BALL_KICK`, `EM_GAME_BALL_ID` |
 | `kebab-case` | Markdown document names | `01-guide-coding-rules.md` |
 
@@ -86,9 +86,23 @@ Use `.h` for contracts and `.cpp` for implementations. Each module keeps its pre
 | Screen | `scr_game_<name>.h/.cpp` | `scr_game_penalty.cpp` |
 | Screen artwork | Existing shared bitmap files | `screens_bitmap.h/.cpp` |
 
-Keep task state and private helpers in the implementation. Headers expose the handler,
-object-owned enums, constants, payload contracts, and view snapshot types. Helper modules
-such as Scoreboard may expose operations on data owned by their caller.
+Object headers group framework/application includes, related contracts, commented
+defines, enums, payload/view types, the `em_game_<object>_t` state type, its `extern`
+instance, and public entry points. Each `.cpp` includes its own header and defines
+the instance once. Private helpers remain in the implementation. Helper modules
+such as Scoreboard expose operations on data owned by their caller.
+
+Sprite dimensions and drawing offsets belong to their owning object header with
+the `EM_GAME_<OBJECT>_` prefix. The penalty screen retains only screen-wide HUD and
+pitch geometry. Moving these constants does not change bitmap bytes or placement.
+
+Object headers include Display's declaration interface, so `task_display.h` must not
+include object headers back. Concrete snapshot contracts are included explicitly by
+`task_display.cpp` and the screens that use their enum values. Keep rendering and
+screen-transition dependencies out of the object headers.
+
+Run `python3 tools/test_object_headers.py` to check standalone compilation, include
+order, exactly one instance definition, and owner-only state access.
 
 Each screen header declares its own `view_dynamic_t`, `view_screen_t`, and
 `scr_*_handle(ak_msg_t* msg)` entry point, includes its required dependencies, and
@@ -208,9 +222,15 @@ AK task handlers, not ordinary helpers, screens, or drivers.
 
 ### 9. Variables
 
-- Keep task-owned mutable state `static` in its `.cpp`, with the existing `s_` prefix:
-  `s_ball`, `s_target_x`, `s_state_elapsed_ms`.
-- Do not export mutable gameplay data through `extern` declarations or getters.
+- Declare one `extern em_game_<object>_t em_game_<object>` instance in each object
+  header, with one definition in its owning `.cpp`. Match defines `em_game_scoreboard`.
+- The instance contains the object's pose/reports, elapsed-time counters, random
+  state, and guards as applicable. Ball, Shooter, and Keeper keep the exact outgoing
+  snapshot in a `view` member. Never send the entire state instance as a payload.
+- Extern linkage is an engineer-approved source-layout choice, not permission for
+  foreign tasks or screens to read/write that state. Continue using messages and
+  validated Display snapshots. Ownership is a convention verified by the host test,
+  no longer enforced by file-local linkage.
 - Use descriptive local names such as `target_x`, `difficulty_msg`, and `player_score`.
   Short loop counters are acceptable within small loops.
 - Keep state with its owner. A screen must not become a second owner of the round,
@@ -264,11 +284,11 @@ alternative style inside a module or reformat unrelated files during a focused c
 | `IndentCaseLabels: false` | Case labels align with the switch keyword |
 | `SortIncludes: false` | Preserve include order |
 
-Use visual section comments to separate private state, private helpers, and handlers:
+Use visual section comments to separate variable declarations, private helpers, and handlers:
 
 ```cpp
 /*****************************************************************************/
-/* Private state - Ball */
+/* Variable declaration - Ball */
 /*****************************************************************************/
 ```
 

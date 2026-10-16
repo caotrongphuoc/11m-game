@@ -6,7 +6,7 @@ For individual object behavior and payload contracts, see [Game Object Sequences
 
 ## I. Overview
 
-Eleven Meter uses AK event-driven tasks. Match, Shooter, Ball, Keeper, and Goal each own private mutable state and receive commands through messages. Scoreboard is a helper owned by Match, not a separate task.
+Eleven Meter uses AK event-driven tasks. Match, Shooter, Ball, Keeper, and Goal each own one mutable state instance, declared `extern` in its object header and defined once in its implementation. Extern linkage follows the engineer-approved object layout; foreign tasks and screens do not read or write those instances. Commands still travel through messages. Scoreboard is a helper whose instance is defined and owned by Match, not a separate task.
 
 Display (`AC_TASK_DISPLAY_ID`) owns the screen manager and validated render snapshots. Its active screen translates button events into Match commands. The penalty screen distributes the single periodic gameplay tick, `EM_GAME_TIME_TICK`, at `EM_GAME_TIME_TICK_INTERVAL = 40 ms`.
 

@@ -1,7 +1,7 @@
 <h1 align="center">Game Object Sequences</h1>
 
 This document describes each Eleven Meter object's owned state, setup, input, updates,
-outgoing messages, and reset behavior. Gameplay tasks keep mutable state private and
+outgoing messages, and reset behavior. Gameplay tasks own their extern state instances and
 communicate through AK messages. Scoreboard is a helper operating on Match-owned data,
 not a separate task. Display is the rendering task, not a gameplay object.
 
@@ -27,7 +27,7 @@ by incoming reports; Scoreboard is called locally by Match.
 
 ## II. Match Object Sequence
 
-Match owns `s_scoreboard`, the match state, current difficulty, countdown, elapsed state
+Match owns `em_game_scoreboard`, the match state, current difficulty, countdown, elapsed state
 time, last result, BEST values, and the initialization flag.
 
 **Setup.** On its first handled message, Match resets the scoreboard, reads and validates
@@ -152,8 +152,8 @@ successful durable write when that helper reports failure.
 
 ## III. Shooter Object Sequence
 
-Shooter owns `s_shooter`, its random seed, selection elapsed time, animation accumulator,
-and `s_kick_started` guard.
+Shooter owns `em_game_shooter.view`, its random seed, selection elapsed time, animation
+accumulator, and `em_game_shooter.kick_started` guard in the same state instance.
 
 **Setup.** `EM_GAME_SHOOTER_SETUP` parks the player at `(44, 63)`, visible and stationary,
 with no kick selected. It clears both time accumulators and the per-round kick guard.
@@ -228,7 +228,7 @@ shows the standing pose and small positional step, not new player artwork.
 
 ## IV. Ball Object Sequence
 
-Ball owns `s_ball`, `s_target_x`, its update accumulator, and the per-round kick guard.
+Ball owns `em_game_ball.view`, `em_game_ball.target_x`, its update accumulator, and the per-round kick guard.
 
 **Setup.** `EM_GAME_BALL_SETUP` places the visible, stationary ball at `(64, 59)`, clears
 its target, resets frame/time counters, and publishes `EM_GAME_DISPLAY_UPDATE_BALL`.
@@ -281,7 +281,7 @@ sequenceDiagram
 
 ## V. Keeper Object Sequence
 
-Keeper owns `s_keeper`, difficulty, target x, random seed, update accumulator, and the
+Keeper owns `em_game_keeper.view`, difficulty, target x, random seed, update accumulator, and the
 per-round reaction guard. Its state is independent of Ball and Shooter snapshots.
 
 **Setup.** `EM_GAME_KEEPER_SETUP` restores `(64, 29)`, visible, stationary, and with no
@@ -346,7 +346,7 @@ sequenceDiagram
 
 ## VI. Goal Object Sequence
 
-Goal owns copies of the Ball and Keeper reports, two readiness flags, and `s_resolved`.
+Goal owns copies of the Ball and Keeper reports, two readiness flags, and `em_game_goal.resolved`.
 It does not render the goal artwork or inspect another task's coordinates.
 
 **Setup.** `EM_GAME_GOAL_SETUP` clears the reports, readiness flags, and resolved guard.
@@ -411,8 +411,9 @@ sequenceDiagram
 ## VII. Scoreboard Object Sequence
 
 Scoreboard defines `em_game_scoreboard_t` and operations on a pointer supplied by Match.
-The actual state is Match's private `s_scoreboard`; there is no Scoreboard task, message
-queue, update signal, or independently shared score variable.
+The actual state is `em_game_scoreboard`, declared in the Scoreboard header and defined
+in Match's implementation. Match remains its only gameplay caller and owner; there
+is no Scoreboard task, message queue, update signal, or second score instance.
 
 **Setup/reset.** `em_game_scoreboard_reset` clears round, goals, saves, misses, and winner.
 Match calls it during initialization, Start, Retry, and Home.

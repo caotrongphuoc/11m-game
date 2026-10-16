@@ -4,11 +4,19 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "fsm.h"
+#include "port.h"
+#include "message.h"
+#include "timer.h"
+
+#include "app.h"
+#include "app_dbg.h"
+#include "task_list.h"
+#include "task_display.h"
+
 #include "em_game_goal.h"
 
-/*****************************************************************************/
-/* Scoreboard rules and state */
-/*****************************************************************************/
+// Scoreboard rules and state
 
 #define EM_GAME_SCOREBOARD_TOTAL_KICKS (5)
 #define EM_GAME_SCOREBOARD_WIN_THRESHOLD (3)
@@ -28,6 +36,9 @@ typedef struct
 	uint8_t misses;
 	em_game_scoreboard_winner_t winner;
 } em_game_scoreboard_t;
+
+// Scoreboard instance, updated by Match through the helpers below.
+extern em_game_scoreboard_t em_game_scoreboard;
 
 extern void em_game_scoreboard_reset(em_game_scoreboard_t* sb);
 extern bool em_game_scoreboard_record_result(em_game_scoreboard_t* sb,

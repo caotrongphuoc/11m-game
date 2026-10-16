@@ -13,6 +13,12 @@
 
 #include "screens.h"
 
+#include "game_eleven_meter/em_game_ball.h"
+#include "game_eleven_meter/em_game_keeper.h"
+#include "game_eleven_meter/em_game_match.h"
+#include "game_eleven_meter/em_game_scoreboard.h"
+#include "game_eleven_meter/em_game_shooter.h"
+
 scr_mng_t scr_mng_app;
 
 static em_game_view_t s_em_game_view;
