@@ -1,4 +1,6 @@
-# OLED framebuffer capture for Figure 4
+# OLED framebuffer captures
+
+## Figure 4
 
 [`scr_game_penalty_uart.txt`](scr_game_penalty_uart.txt) contains the complete raw `lcd d`
 reply captured from the STM32L151 kit on **2026-10-16**, through the Type-C CH340 bridge
@@ -52,3 +54,41 @@ decodes the OLED page layout: byte `(y // 8) * 128 + x`, bit `y % 8`, with the l
 significant bit at the top of each page. The original frame is 128×64 monochrome pixels;
 the README image is a 512×256 nearest-neighbor enlargement. The script regenerates the
 capture image from the saved bytes rather than replacing it with the synthetic scene.
+
+## Full match GIF
+
+[`em_game_match_uart.json`](em_game_match_uart.json) stores the complete 1,024-byte OLED
+framebuffers sampled from the kit on **2026-10-16**, over the same Type-C UART connection.
+It is the source of [`em_game_match.gif`](../images/objects/em_game_match.gif), shown in
+the README's Match row. All five rounds, Match Over, and Game Over are included.
+The capture contains **112 samples**; the resulting GIF has **112 frames** and a
+**19.76-second** loop, ending with **YOU 3–2 CPU**. Every decoded GIF frame and duration
+was checked against the saved samples, and the final framebuffer was inspected with
+AK's `decode_ak_lcd` tool.
+
+The temporary capture image used updater checksum **`0x040E`** and a **56,700-byte file**.
+It started one normal match automatically from the menu, with normal timeout shots and
+random keeper choices, without automatically retrying Game Over. As for Figure 4, it
+paused the existing gameplay timer during each blocking UART framebuffer transmission
+and resumed that same timer afterward; it did not add a gameplay timer or change sprites.
+
+`tools/capture_game_match.py` reads `lcd d` responses at 115200 8N1 and saves the decoded
+page-major bytes, phase, and round for each sample. Its completion check requires rounds
+1–5, Match Over, and Game Over. It requires the temporary capture build, not the quiet
+production image. The recorded JSON is sufficient to regenerate the GIF without a kit:
+
+```bash
+python3 tools/render_game_objects.py
+```
+
+The GIF is a sampled playback, not a real-time or native-frame-rate recording. Each
+sample is held for the configured **160 ms** active interval, excluding UART transfer
+time; the final score is held for two seconds. Identical adjacent samples may be merged
+by the GIF encoder with their durations combined. Pixel data is only enlarged 4× using
+nearest-neighbor scaling, without moving or redrawing sprites.
+
+After this capture, the saved FATAL count remained **18**, unchanged from the baseline;
+pure/common pool peaks were **8/32** and **5/16**. All temporary firmware helpers were
+removed, the quiet image was clean-built and restored with updater checksum **`0xC0B0`**
+verified successfully (**51,216 bytes Flash**, **13,636 bytes RAM**). Firmware sources,
+including `task_display` and the original bitmap arrays, are unchanged by this update.

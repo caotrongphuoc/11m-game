@@ -123,7 +123,7 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
   </thead>
   <tbody>
     <tr>
-      <td align="center">—<br/>Logic only</td>
+      <td align="center"><img src="resources/images/objects/em_game_match.gif" alt="Captured OLED playback of a full five-round match through the final score" width="256"/></td>
       <td align="center"><strong>Match</strong></td>
       <td align="left">Coordinates the menu, round setup, countdown, accepted input, result phase, and screen transitions.</td>
     </tr>
@@ -152,18 +152,13 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
       <td align="center"><strong>Scoreboard</strong></td>
       <td align="left">Tracks five rounds, all kick results, and the final winner.</td>
     </tr>
-    <tr>
-      <td align="center">—<br/>Composes screen graphics</td>
-      <td align="center"><strong>Display</strong></td>
-      <td align="left">Keeps the validated render snapshot and draws the menu, pitch, sprites, HUD, RIP, and Game Over screens.</td>
-    </tr>
   </tbody>
 </table>
 </div>
 
 Each gameplay task keeps its mutable state private. Objects work together through AK messages instead of reading or changing one another's data directly.
 
-The GIFs are isolated documentation previews made from the original bitmap bytes, not recordings from the board. Shooter, Ball, and Keeper use their current movement constants; idle/endpoint holds are extended for readability. The goal artwork is static and rendered by Display; the Goal task only resolves reports. Match, Scoreboard, and Display have no standalone sprite. See the [complete bitmap GIF gallery](resources/images/objects/README.md) for all eight gameplay assets, including retained shooter poses that are not used in the current animation. Regenerate the GIFs with `python3 tools/render_game_objects.py` (Pillow required).
+The Match GIF is a sampled UART recording of a complete five-round match, including the match-over transition and final score. The Shooter, Ball, and Keeper GIFs are isolated documentation previews made from the original bitmap bytes; they use current movement constants with idle/endpoint holds extended for readability. The goal artwork is static and rendered by Display; the Goal task only resolves reports. Match and Scoreboard have no standalone sprite, and Display is the rendering task rather than a gameplay object. See the [complete bitmap GIF gallery](resources/images/objects/README.md) for all eight gameplay assets, including retained shooter poses that are not used in the current animation. Regenerate the GIFs with `python3 tools/render_game_objects.py` (Pillow required).
 
 > **Note:** For detailed object flows, see [Game Object Sequences](docs/03-design-sequence-object.md).
 

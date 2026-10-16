@@ -1,8 +1,19 @@
 # Eleven Meter bitmap and animation GIFs
 
-These are documentation exports from the unchanged arrays in
+The isolated sprite previews are documentation exports from the unchanged arrays in
 [`screens_bitmap.cpp`](../../../application/sources/app/screens/screens_bitmap.cpp).
-They are not board recordings and do not change firmware or sprite data.
+They do not change firmware or sprite data. The Match GIF below is a separate recording
+of actual OLED framebuffer samples from the kit.
+
+## Full match
+
+![Full five-round match captured from the kit](em_game_match.gif)
+
+This records all five rounds, the Match Over transition, and the final score, using
+normal timeout shots and the keeper's normal random choice. It is a sampled sequence,
+not a native-frame-rate video: the temporary capture build pauses the existing gameplay
+timer during each UART dump. Playback uses the 160 ms intervals between dumps and a
+two-second final-score hold. See [capture provenance and raw frames](../../captures/README.md#full-match-gif).
 
 ## Current object movement
 
@@ -15,7 +26,8 @@ They are not board recordings and do not change firmware or sprite data.
 Movement coordinates, step counts, and intervals are read from the current game headers,
 `app.h`, and penalty screen constants. Idle/endpoint holds are extended so each pose is
 easy to inspect. Left and right dives illustrate separate rounds, not a mid-shot change
-of direction. Match, Scoreboard, and Display have no standalone object bitmap.
+of direction. Match and Scoreboard have no standalone object bitmap. Display is the
+rendering task, not a gameplay object.
 
 ## Original gameplay bitmap inventory
 
@@ -54,5 +66,6 @@ python3 tools/render_game_objects.py
 ```
 
 The script validates each bitmap's byte count, uses the firmware's row-major MSB-first
-packing, and exports eight single-frame asset GIFs plus three movement GIFs. Animation
+packing, and exports eight single-frame asset GIFs, three movement GIFs, and the Match
+GIF from its saved UART samples. Animation
 frames use a fixed black/white palette and clear the previous frame to prevent trails.

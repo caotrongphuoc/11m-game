@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Export original gameplay bitmaps and isolated object animations for the README."""
+"""Export original sprites, movement previews, and captured Match playback."""
 
 from pathlib import Path
+import json
 import re
 
 from PIL import Image
@@ -133,7 +134,24 @@ def main() -> None:
     render_shooter(images)
     render_ball(images)
     render_keeper(images)
-    print(f"Exported {len(images)} original bitmap GIFs and 3 movement GIFs to {OUTPUT.relative_to(ROOT)}")
+    capture = json.loads((ROOT / "resources/captures/em_game_match_uart.json").read_text())
+    if not capture["complete"] or {frame["round"] for frame in capture["frames"] if frame["round"]} != {1, 2, 3, 4, 5}:
+        raise ValueError("Match GIF requires a complete five-round capture")
+    if capture["frames"][-1]["phase"] != "game_over" or not any(frame["phase"] == "rip" for frame in capture["frames"]):
+        raise ValueError("Match GIF requires the match-over transition and final score")
+    samples = []
+    for frame in capture["frames"]:
+        data = bytes.fromhex(frame["data_hex"])
+        if len(data) != 1024:
+            raise ValueError("invalid Match framebuffer size")
+        image = Image.new("1", (128, 64))
+        for y in range(64):
+            for x in range(128):
+                if data[(y // 8) * 128 + x] & (1 << (y % 8)):
+                    image.putpixel((x, y), 1)
+        samples.append((image, (0, 0), frame["duration_ms"]))
+    save_gif("em_game_match.gif", samples, padding=0)
+    print(f"Exported {len(images)} original bitmap GIFs, 3 movement GIFs, and the captured Match GIF")
 
 
 if __name__ == "__main__":
