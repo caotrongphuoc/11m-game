@@ -7,10 +7,20 @@ Adafruit_oled_drv::Adafruit_oled_drv() : Adafruit_GFX(WIDTH, HEIGHT) {
 	m_scl		   = OLED_I2C_CLK;
 	m_res		   = OLED_I2C_RES;
 	m_pFramebuffer = 0;
+	m_dataWriters[0] = m_dataWriters[1] = 0;
+	m_clockWriters[0] = m_clockWriters[1] = 0;
+	m_frameStartUs = 0;
+	m_drawTimeUs = 0;
+	m_transferTimeUs = 0;
+	m_maxFrameTimeUs = 0;
+	m_framePending = false;
 }
-Adafruit_oled_drv::~Adafruit_oled_drv() {}
+Adafruit_oled_drv::~Adafruit_oled_drv()
+{
+}
 
-bool Adafruit_oled_drv::initialize() {
+bool Adafruit_oled_drv::initialize()
+{
 	// setup the pin mode
 	pinMode(m_sda, OUTPUT);
 	pinMode(m_scl, OUTPUT);
@@ -122,8 +132,11 @@ bool Adafruit_oled_drv::initialize() {
 	return true;
 }
 
-void Adafruit_oled_drv::clear(bool isUpdateHW) {
-	memset(m_pFramebuffer, 0, FBSIZE);	  // clear the back buffer.
+void Adafruit_oled_drv::clear(bool isUpdateHW)
+{
+	m_frameStartUs = micros();
+	m_framePending = true;
+	memset(m_pFramebuffer, 0, FBSIZE); // clear the back buffer.
 	if (isUpdateHW)
 		update();	 // update the hw immediately
 }
@@ -169,9 +182,29 @@ void Adafruit_oled_drv::writeCommand(unsigned char cmd) {
 }
 
 void Adafruit_oled_drv::writeByte(unsigned char b) {
+	if (m_dataWriters[0])
+	{
+		for (unsigned char mask = 0x80; mask != 0; mask >>= 1)
+		{
+			m_dataWriters[(b & mask) != 0]();
+			m_clockWriters[1]();
+			m_clockWriters[0]();
+		}
+#if defined(SH1106_DRIVER_EN)
+		m_dataWriters[0]();
+#else
+		m_dataWriters[1]();
+#endif
+		m_clockWriters[1]();
+		m_clockWriters[0]();
+		return;
+	}
+
 	unsigned char i;
-	for (i = 0; i < 8; i++) {
-		if ((b << i) & 0x80) {
+	for (i = 0; i < 8; i++)
+	{
+		if ((b << i) & 0x80)
+		{
 			digitalWrite(m_sda, HIGH);
 		}
 		else {
@@ -238,7 +271,10 @@ void Adafruit_oled_drv::startDataSequence() {
 	writeByte(0x40);	// write data
 }
 
-void Adafruit_oled_drv::update() {
+void Adafruit_oled_drv::update()
+{
+	uint32_t transferStartUs = micros();
+	m_drawTimeUs = m_framePending ? transferStartUs - m_frameStartUs : 0;
 #if defined(SH1106_DRIVER_EN)
 	const byte pageCount = HEIGHT >> 3;
 	const byte chunkCount = 8;
@@ -295,10 +331,45 @@ void Adafruit_oled_drv::update() {
 #else
 #error "Don't know oled driver type."
 #endif
+	m_transferTimeUs = micros() - transferStartUs;
+	m_framePending = false;
+	uint32_t frameTimeUs = m_drawTimeUs + m_transferTimeUs;
+	if (frameTimeUs > m_maxFrameTimeUs)
+	{
+		m_maxFrameTimeUs = frameTimeUs;
+	}
 }
 
-void Adafruit_oled_drv::updateRow(int rowID) {
-	if (rowID >= 0 && rowID < MAXROW && m_pFramebuffer) {	 // this part is faster than else.
+void Adafruit_oled_drv::setPinWriters(void (*dataLow)(), void (*dataHigh)(), void (*clockLow)(), void (*clockHigh)())
+{
+	if (dataLow && dataHigh && clockLow && clockHigh)
+	{
+		m_dataWriters[0] = dataLow;
+		m_dataWriters[1] = dataHigh;
+		m_clockWriters[0] = clockLow;
+		m_clockWriters[1] = clockHigh;
+	}
+}
+
+uint32_t Adafruit_oled_drv::getDrawTimeUs() const
+{
+	return m_drawTimeUs;
+}
+
+uint32_t Adafruit_oled_drv::getTransferTimeUs() const
+{
+	return m_transferTimeUs;
+}
+
+uint32_t Adafruit_oled_drv::getMaxFrameTimeUs() const
+{
+	return m_maxFrameTimeUs;
+}
+
+void Adafruit_oled_drv::updateRow(int rowID)
+{
+	if (rowID >= 0 && rowID < MAXROW && m_pFramebuffer)
+	{ // this part is faster than else.
 		unsigned int index = 0;
 		unsigned char x = 0;
 

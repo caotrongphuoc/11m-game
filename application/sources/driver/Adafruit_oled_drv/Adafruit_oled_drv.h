@@ -161,7 +161,14 @@ public:
 	const unsigned char* getFrameBuffer() const;
 	unsigned int getFrameBufferSize() const;
 
-protected:
+	// Optional board callbacks avoid Arduino pin dispatch for every I2C bit.
+	void setPinWriters(void (*dataLow)(), void (*dataHigh)(), void (*clockLow)(), void (*clockHigh)());
+	// Frame timing covers clear() through update(); update alone measures transfer only.
+	uint32_t getDrawTimeUs() const;
+	uint32_t getTransferTimeUs() const;
+	uint32_t getMaxFrameTimeUs() const;
+
+  protected:
 	//write one byte to the screen.
 	void writeByte(unsigned char  b);
 	void writeCommand(unsigned char  cmd);
@@ -176,6 +183,13 @@ protected:
 	int m_scl;
 	int m_res;
 	unsigned char* m_pFramebuffer;
+	void (*m_dataWriters[2])();
+	void (*m_clockWriters[2])();
+	uint32_t m_frameStartUs;
+	uint32_t m_drawTimeUs;
+	uint32_t m_transferTimeUs;
+	uint32_t m_maxFrameTimeUs;
+	bool m_framePending;
 };
 
 #endif //__ADAFRUIT_OLED_DRV_H

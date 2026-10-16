@@ -611,6 +611,13 @@ int32_t shell_lcd(uint8_t* argv) {
 		shell_lcd_dump_framebuffer();
 		break;
 
+	case 's':
+		LOGIN_PRINT("OLED draw: %lu us, transfer: %lu us, max frame: %lu us\n",
+		            (unsigned long)view_render.getDrawTimeUs(),
+		            (unsigned long)view_render.getTransferTimeUs(),
+		            (unsigned long)view_render.getMaxFrameTimeUs());
+		break;
+
 	default:
 		LOGIN_PRINT("unknow option\n");
 		break;
