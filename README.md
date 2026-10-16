@@ -5,7 +5,7 @@
 </div>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/language-C%2B%2B-red?style=flat-square" alt="Language">
+  <img src="https://img.shields.io/badge/language-C%2B%2B-red?style=flat-square&logo=c%2B%2B" alt="Language">
   <img src="https://img.shields.io/badge/mcu-STM32L151-red?style=flat-square" alt="MCU">
   <img src="https://img.shields.io/badge/framework-Active%20Kernel-red?style=flat-square" alt="Framework">
   <img src="https://img.shields.io/badge/hardware-AK%20Base%20Kit-red?style=flat-square" alt="Hardware">
@@ -14,7 +14,7 @@
 # Eleven Meter - Game built on AK Embedded Base Kit
 
 <p align="center">
-  <img src="resources/images/eleven_meter_banner.gif" alt="Eleven Meter — five kicks, one winner; animated original sprites, gameplay, and AK Embedded Base Kit" width="1280"/>
+  <img src="resources/images/eleven_meter_banner.gif" alt="Eleven Meter — five kicks, one winner; animated original sprites, gameplay, and AK Embedded Base Kit" width="1280" height="640"/>
 </p>
 
 ---
@@ -23,14 +23,11 @@
 
 <p align="center">
   <a href="resources/videos/eleven_meter_demo.mp4">
-    <img src="resources/videos/eleven_meter_demo.gif" alt="Animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="768"/>
+    <img src="resources/videos/eleven_meter_demo.gif" alt="Animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="480"/>
   </a>
 </p>
 
-Menu → Hard → five rounds → defeat → final score → Home. The GIF plays automatically;
-[open or download the MP4](resources/videos/eleven_meter_demo.mp4) for video playback.
-Captured from the kit's OLED through UART, not a camera; no audio.
-See [capture details and regeneration](resources/videos/README.md).
+<p align="center"><a href="resources/videos/eleven_meter_demo.mp4">MP4</a> · <a href="resources/videos/README.md">OLED capture details</a></p>
 
 ## Documentation
 
@@ -46,14 +43,12 @@ See [capture details and regeneration](resources/videos/README.md).
 
 ## Introduction
 
-Eleven Meter is a five-kick penalty shootout for the AK Embedded Base Kit. The player has three buttons, three shooting directions, and three seconds to make each decision. The goalkeeper reacts according to the selected difficulty, while the OLED shows the ball, goalkeeper response, and kick result. The shooter keeps the original standing bitmap and takes a small two-pixel step when shooting; raised-leg frames are not displayed.
-
-The game is also a small example of event-driven firmware design:
+Eleven Meter is a five-kick penalty shootout built on the AK Embedded Base Kit. Choose a shooting direction with three buttons, beat the goalkeeper, and score at least three goals to win. The project demonstrates event-driven embedded game design through:
 
 - **System design:** Gameplay is split into objects with clear responsibilities.
 - **Process management:** AK tasks run cooperatively without blocking delays.
 - **Communication:** Signals and messages carry input, commands, results, and display snapshots.
-- **Timing:** One 40 ms gameplay tick drives the match and object animations.
+- **Control logic:** State machines coordinate kick selection, animation, round results, and the final score.
 
 ### I. Hardware
 
@@ -64,7 +59,9 @@ The game is also a small example of event-driven firmware design:
 </table>
 <p align="center"><strong><em>Figure 1:</em></strong> AK Embedded Base Kit - STM32L151</p>
 
-The [AK Embedded Base Kit](https://epcb.vn/products/ak-embedded-base-kit-lap-trinh-nhung-vi-dieu-khien-mcu) is an evaluation board for intermediate and advanced embedded programming. Its 1.54-inch OLED, three push buttons, and buzzer make it suitable for a compact handheld game. RS485, Qwiic, and Grove connections are also available for other firmware experiments.
+The [AK Embedded Base Kit](https://epcb.vn/products/ak-embedded-base-kit-lap-trinh-nhung-vi-dieu-khien-mcu) is an evaluation board for intermediate and advanced embedded programming.
+
+Its **1.54-inch OLED**, **three push buttons**, and **buzzer** provide the display, controls, and sound for a compact handheld game. **RS485**, **Qwiic**, and **Grove** connections are also available for other firmware experiments.
 
 **MCU Overview:**
 
@@ -109,21 +106,29 @@ Flash Partitions Layout
 
 ### II. Game Description and Objects
 
-The match starts at the difficulty menu. Easy gives the player the best chance against the goalkeeper, Normal keeps the contest balanced, and Hard makes correct saves more likely. After five kicks, the game compares the player's goals with the goalkeeper's saves and misses, stores the best result, and opens the Game Over screen.
+This section describes the gameplay, screens, and objects of **Eleven Meter**.
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_menu.gif" alt="Animated difficulty menu preview cycling through Easy, Normal, and Hard" width="512"/></td>
+    <td align="center"><img src="resources/images/screens/scr_game_menu.gif" alt="Animated difficulty menu preview cycling through Easy, Normal, and Hard" width="480"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 3:</em></strong> Animated difficulty selection preview and saved best result</p>
+<p align="center"><strong><em>Figure 3:</em></strong> Menu screen</p>
+
+The game opens on the **difficulty menu**, which provides:
+
+- **Easy:** The best chance of beating the goalkeeper.
+- **Normal:** A balanced goalkeeper response.
+- **Hard:** A higher chance that the goalkeeper matches the shot direction.
+- **BEST:** The saved goal record and its difficulty.
+- **Start:** Press **[Mode]** to begin a five-kick match with the selected difficulty.
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_penalty.gif" alt="Captured OLED animation of round four, from countdown through the shot and result" width="512"/></td>
+    <td align="center"><img src="resources/images/screens/scr_game_penalty.gif" alt="Captured OLED animation of round four, from countdown through the shot and result" width="600"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 4:</em></strong> On-device round playback: countdown, shot, goalkeeper response, and result</p>
+<p align="center"><strong><em>Figure 4:</em></strong> Gameplay screen</p>
 
 #### Objects in the Game:
 
@@ -171,10 +176,6 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
 </table>
 </div>
 
-Each gameplay task keeps its mutable state private. Objects work together through AK messages instead of reading or changing one another's data directly.
-
-The Match GIF is a sampled UART recording of a complete five-round match, including the match-over transition and final score. The Shooter, Ball, and Keeper GIFs are isolated documentation previews made from the original bitmap bytes; they use current movement constants with idle/endpoint holds extended for readability. The goal artwork is static and rendered by Display; the Goal task only resolves reports. Scoreboard is illustrated by the generated Game Over screen preview; its data remains owned by Match. Match and Scoreboard have no standalone sprite, and Display is the rendering task rather than a gameplay object. See the [complete bitmap GIF gallery](resources/images/objects/README.md) for all eight gameplay assets, including retained shooter poses that are not used in the current animation. Regenerate the GIFs with `python3 tools/render_game_objects.py` (Pillow required).
-
 > **Note:** For detailed object flows, see [Game Object Sequences](docs/02-design-sequence-object.md).
 
 ### III. How to Play:
@@ -193,18 +194,27 @@ The Match GIF is a sampled UART recording of a complete five-round match, includ
 - **Difficulty:** The selected level changes how often the goalkeeper matches the shot direction.
 - **Score:** The HUD shows the player score, CPU score, round number, and selection countdown.
 - **Best result:** The highest goal count is stored together with its difficulty. An equal goal count on a harder difficulty replaces the previous record.
-- **Game Over:** After the fifth result, a short RIP screen leads to the final score. Press **[Mode]** to retry or **[Up]** to return home.
+- **Animation:** The original standing shooter takes a two-pixel step, the ball follows the shot, and the goalkeeper animates the response.
+- **Game Over:** After the fifth result, a short **RIP** transition leads to the final score, with two actions:
+
+    - **Retry:** Press **[Mode]** to play another match.
+    - **Home:** Press **[Up]** to return to the difficulty menu.
+
+> **Note:** Try to improve BEST, or match it at a harder difficulty.
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_rip.png" alt="Eleven Meter match-over transition" width="384"/></td>
-    <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Eleven Meter final score" width="384"/></td>
-  </tr>
-  <tr>
-    <td align="center"><strong><em>Figure 5:</em></strong> Match-over transition</td>
-    <td align="center"><strong><em>Figure 6:</em></strong> Final score and next actions</td>
+    <td align="center"><img src="resources/images/screens/scr_game_rip.png" alt="Eleven Meter match-over transition" width="480"/></td>
   </tr>
 </table>
+<p align="center"><strong><em>Figure 5:</em></strong> Match-over transition screen</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Eleven Meter final score" width="480"/></td>
+  </tr>
+</table>
+<p align="center"><strong><em>Figure 6:</em></strong> Game Over screen</p>
 
 ### IV. Basic Game Sequence Logic
 
@@ -215,7 +225,7 @@ The Match GIF is a sampled UART recording of a complete five-round match, includ
     <td align="center"><img src="resources/images/design-sequence/em_game_eleven_meter_sequence.png" alt="Eleven Meter basic sequence: menu and setup, accepted kick, shared update loop, round result, and final score" width="1000"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 7:</em></strong> Basic game sequence from menu entry to Retry or Home</p>
+<p align="center"><strong><em>Figure 7:</em></strong> Game sequence logic</p>
 
 ## Contact & Support
 
