@@ -24,13 +24,13 @@ def main():
     compiler = [command[0], *flags, "-Wall", "-Wextra", "-Werror",
                 "-x", "c++", "-fsyntax-only", "-"]
     headers = sorted(SCREENS.glob("scr_*.h"))
-    aggregator = (SCREENS / "screens.h").read_text()
+    registry = (SCREENS / "screens.h").read_text()
     for header in headers:
         name = header.stem
         suffix = name.removeprefix("scr_")
         text = header.read_text()
         assert '#include "screens.h"' not in text, header.name
-        assert f'#include "{header.name}"' in aggregator, header.name
+        assert f'#include "{header.name}"' not in registry, header.name
         declarations = (
             f"extern view_dynamic_t dyn_view_{suffix};",
             f"extern view_screen_t {name};",
@@ -38,14 +38,16 @@ def main():
         )
         for declaration in declarations:
             assert declaration in text, (header.name, declaration)
-            assert declaration not in aggregator, header.name
+            assert declaration in registry, (header.name, declaration)
         implementation = header.with_suffix(".cpp").read_text()
         assert re.search(rf"void {name}_handle\(ak_msg_t\* msg\)", implementation)
         standalone = f'#include "{header.name}"\n#include "{header.name}"\n'
         subprocess.run(compiler, input=standalone, text=True, cwd=APP, check=True)
         subprocess.run(compiler, input=standalone + '#include "screens.h"\n',
                        text=True, cwd=APP, check=True)
-        print(f"PASS {header.name}: own declarations, standalone and aggregator compilation", flush=True)
+        subprocess.run(compiler, input='#include "screens.h"\n' + standalone,
+                       text=True, cwd=APP, check=True)
+        print(f"PASS {header.name}: matching registry declarations, standalone and both include orders", flush=True)
     assert '#include "screens.h"' not in (APP / "sources/app/task_display.h").read_text()
     for header in ("screens.h", "task_display.h"):
         subprocess.run(compiler, input=f'#include "{header}"\n', text=True, cwd=APP, check=True)

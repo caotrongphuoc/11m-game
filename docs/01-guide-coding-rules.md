@@ -92,15 +92,17 @@ such as Scoreboard may expose operations on data owned by their caller.
 
 Each screen header declares its own `view_dynamic_t`, `view_screen_t`, and
 `scr_*_handle(ak_msg_t* msg)` entry point, includes its required dependencies, and
-defines its screen-specific geometry constants. `screens.h` only aggregates the
-screen headers; do not centralize their declarations there. Screen headers do not
-include that aggregator. Keep `task_display.h` independent of the screen headers
+defines its screen-specific geometry constants. `screens.h` contains the common
+includes and a named declaration group for each screen: its dynamic view, screen
+object, and handler. Keep these declarations consistent with the owning screen
+headers. It does not include the individual screen headers, and screen headers do
+not include the registry. Keep `task_display.h` independent of the screen headers
 to avoid circular includes. Private rendering helpers remain local to each `.cpp`.
-Unlike reference layouts with redundant or circular includes, use only dependencies
-needed by the screen and retain message-only gameplay communication.
+Retain message-only gameplay communication; screen declarations do not expose
+mutable gameplay task state.
 
 Run `python3 tools/test_screen_headers.py` to compile each screen header independently
-and with the aggregator using the application's ARM compiler flags. Keep AK headers
+and with the shared registry in both include orders using the application's ARM compiler flags. Keep AK headers
 in their supported include order (`fsm.h` before `message.h` in screen headers).
 
 ### 3. Header guard
