@@ -32,7 +32,6 @@
 | File | Description |
 | --- | --- |
 | [README.md](README.md) | Project overview, hardware, gameplay rules, and game objects. |
-| [docs/00-guide-getting-started.md](docs/00-guide-getting-started.md) | Build, flash, play, and inspect the game firmware. |
 | [docs/01-guide-coding-rules.md](docs/01-guide-coding-rules.md) | Source layout, naming, formatting, and AK coding rules. |
 | [docs/02-design-sequence-object.md](docs/02-design-sequence-object.md) | Ownership and message sequences for Match, Shooter, Ball, Keeper, Goal, and Display. |
 | [docs/03-design-sequence-runtime.md](docs/03-design-sequence-runtime.md) | Runtime flow from button input to animation, result handling, and screen updates. |
