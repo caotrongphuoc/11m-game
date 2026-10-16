@@ -1,7 +1,12 @@
 #ifndef __TASK_LIST_IF_H__
 #define __TASK_LIST_IF_H__
 
-enum {
+/* Remote gateway protocol IDs, not local task registrations.
+ * Keep legacy slots so UART peer task IDs do not shift.
+ */
+
+enum
+{
 	/* SYSTEM TASKS */
 	AK_TASK_TIMER_ID,
 

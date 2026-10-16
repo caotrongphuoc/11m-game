@@ -67,6 +67,15 @@ GPIO operations and pin assignments belong in `platform/stm32l/io_cfg.c` and `io
 with callbacks injected into drivers at startup. Kernel, bootloader, system services,
 common framework code, network stacks, and vendored libraries are not game feature code.
 
+The game application does not register Zigbee or RF24 tasks or Zigbee polling, and
+does not include the Modbus demo helpers, QR-code screen, or Welcome screen. Their
+unused application code has been removed. Original network stacks and vendored
+libraries remain read-only, with the network feature flags disabled. The application
+Makefile also excludes the unused QR-code library source from compilation.
+UART console and link support remain available. Legacy remote gateway IDs in
+`task_list_if.h` are protocol slots, not local task registrations; keep their values
+stable when pruning local tasks.
+
 ### 2. Source and header files
 
 Use `.h` for contracts and `.cpp` for implementations. Each module keeps its prefix:

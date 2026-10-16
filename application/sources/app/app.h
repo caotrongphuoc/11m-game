@@ -14,9 +14,6 @@ extern "C"
 #endif
 
 #include "ak.h"
-#if defined(IF_NETWORK_NRF24_EN)
-#include "nrf_nwk_sig.h"
-#endif
 
 #include "app_data.h"
 #include "app_eeprom.h"
@@ -86,22 +83,6 @@ extern "C"
 	};
 
 	/*****************************************************************************/
-	/*  RF24 task define
-	 */
-	/*****************************************************************************/
-	/* private define */
-	/* define timer */
-	/* define signal */
-	enum
-	{
-		AC_RF24_IF_INIT_NETWORK = AK_USER_DEFINE_SIG,
-		AC_RF24_IF_PURE_MSG_OUT,
-		AC_RF24_IF_COMMON_MSG_OUT,
-		AC_RF24_IF_PURE_MSG_IN,
-		AC_RF24_IF_COMMON_MSG_IN,
-	};
-
-	/*****************************************************************************/
 	/* IF task define
 	 */
 	/*****************************************************************************/
@@ -146,12 +127,9 @@ extern "C"
 #define AC_DISPLAY_SHOW_IDLE_BALL_MOVING_UPDATE_INTERVAL (150)
 #define AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SNOW_MOVING_UPDATE_INTERVAL (150)
 #define AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SLEEP_INTERVAL (15000)
-#define AC_DISPLAY_SHOW_MODBUS_PULL_INTERVAL (1500)
-#define AC_DISPLAY_SHOW_MODBUS_PULL_SLEEP_INTERVAL (30000)
 #define AC_DISPLAY_MINIMUM_SCREEN_RENDER_INTERVAL_MS \
 	(40) /* 40ms => Max 25 FPS */
 #define AC_DISPLAY_IDLE_INTERVAL (15000)
-#define AC_DISPLAY_WELCOME_TEXT_ANIM_TICK_INTERVAL (120)
 #define EM_GAME_TIME_TICK_INTERVAL (40)
 
 	/* define signal */
@@ -165,13 +143,10 @@ extern "C"
 		AC_DISPLAY_SHOW_LOGO,
 		AC_DISPLAY_SHOW_IDLE,
 		AC_DISPLAY_SHOW_IDLE_BALL_MOVING_UPDATE,
-		AC_DISPLAY_WELCOME_TEXT_ANIM_TICK,
 		AC_DISPLAY_SHOW_FW_UPDATE,
 		AC_DISPLAY_SHOW_FW_UPDATE_ERR,
 		AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SNOW_MOVING_UPDATE,
 		AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SLEEP,
-		AC_DISPLAY_SHOW_MODBUS_PULL_UPDATE,
-		AC_DISPLAY_SHOW_MODBUS_PULL_SLEEP,
 		EM_GAME_DISPLAY_SHOW_MENU = EM_GAME_DEFINE_SIG,
 		EM_GAME_DISPLAY_SHOW_PENALTY,
 		EM_GAME_DISPLAY_SHOW_GAME_OVER,
@@ -276,21 +251,6 @@ extern "C"
 		EM_GAME_GOAL_BALL_ARRIVED,
 		EM_GAME_GOAL_KEEPER_READY,
 		EM_GAME_GOAL_RESET
-	};
-
-	/*****************************************************************************/
-	/*  ZIGBEE task define
-	 */
-	/*****************************************************************************/
-	/* define timer */
-	/* define signal */
-	enum
-	{
-		AC_ZIGBEE_INIT = AK_USER_DEFINE_SIG,
-		AC_ZIGBEE_FORCE_START_COODINATOR,
-		AC_ZIGBEE_START_COODINATOR,
-		AC_ZIGBEE_PERMIT_JOINING_REQ,
-		AC_ZIGBEE_ZCL_CMD_HANDLER
 	};
 
 	/*****************************************************************************/

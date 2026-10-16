@@ -73,6 +73,8 @@ include sources/app/Makefile.mk
 include sources/common/Makefile.mk
 include sources/driver/Makefile.mk
 include sources/libraries/Makefile.mk
+# QR-code demo screens are not part of Eleven Meter; keep the vendored library intact.
+SOURCES := $(filter-out sources/libraries/QRCode/src/qrcode.c,$(SOURCES))
 include sources/sys/Makefile.mk
 include sources/networks/Makefile.mk
 include sources/platform/stm32l/Makefile.mk

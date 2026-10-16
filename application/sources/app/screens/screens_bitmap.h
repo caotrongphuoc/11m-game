@@ -18,7 +18,4 @@ extern const unsigned char PROGMEM bitmap_penalty_shooter_kick[];
 extern const unsigned char PROGMEM bitmap_penalty_shooter_follow[];
 extern const unsigned char PROGMEM bitmap_penalty_goal[];
 
-// scr_welcome
-extern const unsigned char PROGMEM bitmap_dolphin[];
-
 #endif //__SCREENS_BITMAP_H__
