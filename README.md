@@ -148,7 +148,7 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
       <td align="left">Waits for the Ball and Keeper reports, then resolves the kick as a goal, save, or miss.</td>
     </tr>
     <tr>
-      <td align="center">—<br/>Match-owned data</td>
+      <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Scoreboard shown on the Game Over screen with final score, winner, and best result" width="256"/></td>
       <td align="center"><strong>Scoreboard</strong></td>
       <td align="left">Tracks five rounds, all kick results, and the final winner.</td>
     </tr>
@@ -158,7 +158,7 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
 
 Each gameplay task keeps its mutable state private. Objects work together through AK messages instead of reading or changing one another's data directly.
 
-The Match GIF is a sampled UART recording of a complete five-round match, including the match-over transition and final score. The Shooter, Ball, and Keeper GIFs are isolated documentation previews made from the original bitmap bytes; they use current movement constants with idle/endpoint holds extended for readability. The goal artwork is static and rendered by Display; the Goal task only resolves reports. Match and Scoreboard have no standalone sprite, and Display is the rendering task rather than a gameplay object. See the [complete bitmap GIF gallery](resources/images/objects/README.md) for all eight gameplay assets, including retained shooter poses that are not used in the current animation. Regenerate the GIFs with `python3 tools/render_game_objects.py` (Pillow required).
+The Match GIF is a sampled UART recording of a complete five-round match, including the match-over transition and final score. The Shooter, Ball, and Keeper GIFs are isolated documentation previews made from the original bitmap bytes; they use current movement constants with idle/endpoint holds extended for readability. The goal artwork is static and rendered by Display; the Goal task only resolves reports. Scoreboard is illustrated by the generated Game Over screen preview; its data remains owned by Match. Match and Scoreboard have no standalone sprite, and Display is the rendering task rather than a gameplay object. See the [complete bitmap GIF gallery](resources/images/objects/README.md) for all eight gameplay assets, including retained shooter poses that are not used in the current animation. Regenerate the GIFs with `python3 tools/render_game_objects.py` (Pillow required).
 
 > **Note:** For detailed object flows, see [Game Object Sequences](docs/03-design-sequence-object.md).
 
