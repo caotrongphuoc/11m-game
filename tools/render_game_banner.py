@@ -4,13 +4,11 @@
 from PIL import Image, ImageDraw, ImageOps, ImageSequence
 
 from render_game_screens import FONT_SOURCE, ROOT, parse_array
+from game_art_theme import GREEN, HEIGHT, WHITE, WIDTH, label, lettering, stadium_background
 
 
 OUTPUT = ROOT / "resources/images/eleven_meter_banner.gif"
 IMAGES = ROOT / "resources/images"
-WIDTH, HEIGHT = 1280, 640
-WHITE = (235, 248, 242)
-GREEN = (90, 221, 152)
 
 
 def load_animation(path):
@@ -28,21 +26,6 @@ def at_time(frames, time_ms):
     raise ValueError("invalid animation timing")
 
 
-def lettering(font, text, scale):
-    mask = Image.new("1", (len(text) * 6 - 1, 7))
-    for index, character in enumerate(text):
-        for column in range(5):
-            for row in range(7):
-                if font[ord(character) * 5 + column] & (1 << row):
-                    mask.putpixel((index * 6 + column, row), 1)
-    return mask.resize((mask.width * scale, 7 * scale), Image.NEAREST)
-
-
-def label(canvas, font, text, y, scale=2, color=GREEN, center=WIDTH // 2):
-    mask = lettering(font, text, scale)
-    canvas.paste(color, (center - mask.width // 2, y), mask)
-
-
 def main():
     font = parse_array(FONT_SOURCE, "font")
     menu = load_animation(IMAGES / "screens/scr_game_menu.gif")
@@ -56,20 +39,7 @@ def main():
     with Image.open(IMAGES / "screens/scr_game_over.png") as source:
         over = source.convert("RGB").resize((224, 112), Image.NEAREST)
 
-    base = Image.new("RGB", (WIDTH, HEIGHT))
-    # Stadium-green glow and a subtle scanline texture, all generated locally.
-    for y in range(HEIGHT):
-        for x in range(WIDTH):
-            glow = max(0, 1 - ((x - 640) / 800) ** 2 - ((y - 270) / 440) ** 2)
-            shade = 0.85 if y % 3 == 0 else 1
-            base.putpixel((x, y), tuple(int((a + b * glow) * shade)
-                                      for a, b in ((4, 4), (10, 25), (12, 14))))
-    draw = ImageDraw.Draw(base)
-    draw.ellipse((432, 6, 848, 422), outline="#183c30", width=2)
-    draw.line((28, 416, 1252, 416), fill="#32644b", width=2)
-    draw.rectangle((28, 300, 1252, 416), outline="#204a37", width=2)
-    draw.rectangle((28, 318, 124, 416), outline="#204a37", width=2)
-    draw.rectangle((1156, 318, 1252, 416), outline="#204a37", width=2)
+    base = stadium_background()
     title = lettering(font, "ELEVEN METER", 15)
     x = (WIDTH - title.width) // 2
     base.paste((24, 94, 58), (x + 9, 73), title)

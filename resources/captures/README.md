@@ -111,7 +111,7 @@ capture image from the saved bytes rather than replacing it with the synthetic s
 
 ## Animated README screens
 
-The current README uses two 512×256 animated screen images, regenerated with
+Figures 3 and 4 use these raw 512×256 animated OLED previews, regenerated with
 `python3 tools/render_game_screens.py` (Pillow required):
 
 - **Figure 3 — [`scr_game_menu.gif`](../images/screens/scr_game_menu.gif):** generated
@@ -127,6 +127,11 @@ The current README uses two 512×256 animated screen images, regenerated with
 Both GIFs use a fixed black/white palette and clear each previous frame to prevent
 trails. Original static PNGs remain available; the static gameplay capture described
 above is no longer the image displayed as Figure 4 in the README.
+
+The README now places these raw previews inside 720×480 banner-themed cards. Run
+`python3 tools/render_screen_cards.py` after regenerating the raw GIFs to refresh those
+wrappers. The OLED viewport remains 512×256 with unchanged pixels and timing; the
+[card notes](../images/screens/framed/README.md) describe the decorative borders.
 
 ## Full match GIF
 

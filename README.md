@@ -23,7 +23,7 @@
 
 <p align="center">
   <a href="resources/videos/eleven_meter_demo.mp4">
-    <img src="resources/videos/eleven_meter_demo.gif" alt="Animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="480"/>
+    <img src="resources/images/screens/framed/em_game_demo.gif" alt="Banner-themed frame around the animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="720"/>
   </a>
 </p>
 
@@ -107,7 +107,7 @@ This section describes the gameplay, screens, and objects of **Eleven Meter**.
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_menu.gif" alt="Animated difficulty menu preview cycling through Easy, Normal, and Hard" width="480"/></td>
+    <td align="center"><img src="resources/images/screens/framed/scr_game_menu.gif" alt="Banner-themed frame around the animated difficulty menu preview" width="720"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 3:</em></strong> Menu screen</p>
@@ -122,7 +122,7 @@ The game opens on the **difficulty menu**, which provides:
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_penalty.gif" alt="Captured OLED animation of round four, from countdown through the shot and result" width="600"/></td>
+    <td align="center"><img src="resources/images/screens/framed/scr_game_penalty.gif" alt="Banner-themed frame around captured round-four OLED gameplay" width="720"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 4:</em></strong> Gameplay screen</p>
@@ -140,7 +140,7 @@ The game opens on the **difficulty menu**, which provides:
   </thead>
   <tbody>
     <tr>
-      <td align="center"><img src="resources/images/objects/em_game_match.gif" alt="Captured OLED playback of a full five-round match through the final score" width="256"/></td>
+      <td align="center"><img src="resources/images/screens/framed/em_game_match.gif" alt="Banner-themed frame around a captured full five-round match" width="300"/></td>
       <td align="center"><strong>Match</strong></td>
       <td align="left">Coordinates the menu, round setup, countdown, accepted input, result phase, and screen transitions.</td>
     </tr>
@@ -165,7 +165,7 @@ The game opens on the **difficulty menu**, which provides:
       <td align="left">Waits for the Ball and Keeper reports, then resolves the kick as a goal, save, or miss.</td>
     </tr>
     <tr>
-      <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Scoreboard shown on the Game Over screen with final score, winner, and best result" width="256"/></td>
+      <td align="center"><img src="resources/images/screens/framed/scr_game_over.png" alt="Banner-themed frame around the scoreboard with final score, winner, and best result" width="300"/></td>
       <td align="center"><strong>Scoreboard</strong></td>
       <td align="left">Tracks five rounds, all kick results, and the final winner.</td>
     </tr>
@@ -201,14 +201,14 @@ The game opens on the **difficulty menu**, which provides:
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_rip.png" alt="Eleven Meter match-over transition" width="480"/></td>
+    <td align="center"><img src="resources/images/screens/framed/scr_game_rip.png" alt="Banner-themed frame around the match-over transition" width="720"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 5:</em></strong> Match-over transition screen</p>
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Eleven Meter final score" width="480"/></td>
+    <td align="center"><img src="resources/images/screens/framed/scr_game_over.png" alt="Banner-themed frame around the final score" width="720"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 6:</em></strong> Game Over screen</p>

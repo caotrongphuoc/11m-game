@@ -26,3 +26,9 @@ python3 tools/render_game_banner.py
 
 The first two commands refresh the existing preview inputs; the last command overwrites
 only the generated banner GIF. No firmware changes or new kit captures are required.
+
+The banner's background, colors, and pixel lettering are shared through
+`tools/game_art_theme.py`. The README's [screen cards](screens/framed/README.md) use
+child crops of that same background. Generate them with `python3 tools/render_screen_cards.py`
+after updating their raw inputs. The banner itself always uses raw previews rather than
+framed outputs, avoiding nested frames.
