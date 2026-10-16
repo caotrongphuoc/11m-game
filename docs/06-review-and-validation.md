@@ -61,8 +61,9 @@ update. These are manual confirmations, not an automated test log:
 
 The number of matches and test duration were not recorded. This is not a quantified soak
 test. The final quiet image does not print `fatal l` or `lcd d` replies, so no new fatal-counter
-sweep or final-image framebuffer dump is claimed. Images under `resources/images/screens/`
-are generated previews, not UART captures. To collect diagnostic evidence later, follow
+sweep or final-image framebuffer dump was claimed in that review. A subsequent documentation
+update captured Figure 4 on a temporary diagnostic build; see its [raw dump and capture notes](../resources/captures/README.md).
+The other screen images remain generated previews. To collect diagnostic evidence later, follow
 [Getting Started](01-guide-getting-started.md#inspect-the-board).
 
 ## Remaining limits

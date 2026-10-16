@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render reproducible OLED previews from the firmware font and bitmaps."""
+"""Render the saved UART gameplay capture and reproducible OLED previews."""
 
 from pathlib import Path
 import re
@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BITMAP_SOURCE = ROOT / "application/sources/app/screens/screens_bitmap.cpp"
 FONT_SOURCE = ROOT / "application/sources/driver/Adafruit_oled_drv/glcdfont.cpp"
 OUTPUT_DIR = ROOT / "resources/images/screens"
+GAMEPLAY_CAPTURE = ROOT / "resources/captures/scr_game_penalty_uart.txt"
 WIDTH = 128
 HEIGHT = 64
 SCALE = 4
@@ -153,6 +154,22 @@ def render_penalty(font: list[int], bitmaps: dict[str, list[int]],
 	return oled
 
 
+def render_gameplay_capture(font: list[int], capture: Path) -> Oled:
+	text = capture.read_text(encoding="utf-8")
+	match = re.search(r"\[DUMP\] frame buffer lcd => start(.*?)\[DUMP\] frame buffer lcd => end", text, re.DOTALL)
+	if match is None:
+		raise ValueError(f"missing complete LCD dump in {capture}")
+	data = [int(value, 16) for value in re.findall(r"0x([0-9a-fA-F]{2})\b", match.group(1))]
+	if len(data) != WIDTH * HEIGHT // 8:
+		raise ValueError(f"LCD dump has {len(data)} bytes, expected 1024")
+	oled = Oled(font)
+	for y in range(HEIGHT):
+		for x in range(WIDTH):
+			if data[(y // 8) * WIDTH + x] & (1 << (y % 8)):
+				oled.pixel(x, y)
+	return oled
+
+
 def render_shooter_frames(font: list[int], bitmaps: dict[str, list[int]]) -> None:
 	# Standing bitmap only: a two-pixel forward step settles over four frames.
 	poses = (("prepare", 4, (64, 59)), ("kick", 0, (64, 59)), ("recover", 4, (87, 47)))
@@ -210,7 +227,7 @@ def main() -> None:
 	bitmap_names = ("bitmap_penalty_goal", "bitmap_penalty_keeper_dive_left", "bitmap_penalty_shooter_prepare", "bitmap_penalty_ball")
 	bitmaps = {name: parse_array(BITMAP_SOURCE, name) for name in bitmap_names}
 	render_menu(font).save("scr_game_menu.png")
-	render_penalty(font, bitmaps).save("scr_game_penalty.png")
+	render_gameplay_capture(font, GAMEPLAY_CAPTURE).save("scr_game_penalty.png")
 	render_shooter_frames(font, bitmaps)
 	render_rip(font).save("scr_game_rip.png")
 	render_game_over(font).save("scr_game_over.png")
