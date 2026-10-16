@@ -18,8 +18,6 @@
 
 static em_game_shooter_view_t s_shooter;
 static uint32_t s_random_seed;
-static int16_t s_target_x;
-static int16_t s_target_y;
 static uint16_t s_selection_elapsed_ms;
 static uint8_t s_update_elapsed_ms;
 static bool s_kick_started;
@@ -54,8 +52,6 @@ static void em_game_shooter_reset()
 	s_shooter.visible = true;
 	s_shooter.moving = false;
 	s_shooter.kick = EM_GAME_SHOOTER_KICK_NONE;
-	s_target_x = EM_GAME_SHOOTER_START_X;
-	s_target_y = EM_GAME_SHOOTER_START_Y;
 	s_selection_elapsed_ms = 0;
 	s_update_elapsed_ms = 0;
 	s_kick_started = false;
@@ -70,22 +66,6 @@ static void em_game_shooter_reset()
 	}
 
 	em_game_shooter_publish_view();
-}
-
-static int16_t em_game_shooter_get_target_x(em_game_shooter_kick_t kick)
-{
-	switch (kick)
-	{
-	case EM_GAME_SHOOTER_KICK_LEFT:
-		return EM_GAME_SHOOTER_TARGET_LEFT_X;
-
-	case EM_GAME_SHOOTER_KICK_RIGHT:
-		return EM_GAME_SHOOTER_TARGET_RIGHT_X;
-
-	case EM_GAME_SHOOTER_KICK_CENTER:
-	default:
-		return EM_GAME_SHOOTER_TARGET_CENTER_X;
-	}
 }
 
 static em_game_ball_target_t
@@ -147,8 +127,6 @@ static void em_game_shooter_start(em_game_shooter_kick_t kick)
 	s_shooter.moving = true;
 	s_shooter.visible = true;
 	s_shooter.kick = (uint8_t)kick;
-	s_target_x = em_game_shooter_get_target_x(kick);
-	s_target_y = EM_GAME_SHOOTER_TARGET_Y;
 	s_update_elapsed_ms = 0;
 	s_kick_started = true;
 
@@ -186,18 +164,11 @@ static void em_game_shooter_advance()
 	}
 
 	s_shooter.frame++;
-	s_shooter.x = EM_GAME_SHOOTER_START_X +
-	              ((s_target_x - EM_GAME_SHOOTER_START_X) * s_shooter.frame) /
-	                  EM_GAME_SHOOTER_STEP_COUNT;
-	s_shooter.y = EM_GAME_SHOOTER_START_Y +
-	              ((s_target_y - EM_GAME_SHOOTER_START_Y) * s_shooter.frame) /
-	                  EM_GAME_SHOOTER_STEP_COUNT;
+	// Animate around the planted left foot; shot direction belongs to Ball.
 
 	if (s_shooter.frame >= EM_GAME_SHOOTER_STEP_COUNT)
 	{
 		s_shooter.frame = EM_GAME_SHOOTER_STEP_COUNT;
-		s_shooter.x = s_target_x;
-		s_shooter.y = s_target_y;
 		s_shooter.moving = false;
 	}
 

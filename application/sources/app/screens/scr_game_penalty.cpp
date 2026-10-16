@@ -45,12 +45,13 @@ scr_game_penalty_get_shooter_bitmap(const em_game_view_t* view);
 static const unsigned char*
 scr_game_penalty_get_shooter_bitmap(const em_game_view_t* view)
 {
-	if (view->shooter_frame == 0)
+	if (view->shooter_kick == EM_GAME_SHOOTER_KICK_NONE)
 	{
 		return bitmap_penalty_shooter_prepare;
 	}
 
-	if (view->shooter_frame <= 2)
+	// Ball starts moving on the kick request: show contact immediately.
+	if (view->shooter_frame <= 1)
 	{
 		return bitmap_penalty_shooter_kick;
 	}

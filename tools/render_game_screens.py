@@ -123,7 +123,8 @@ def render_menu(font: list[int]) -> Oled:
 	return oled
 
 
-def render_penalty(font: list[int], bitmaps: dict[str, list[int]]) -> Oled:
+def render_penalty(font: list[int], bitmaps: dict[str, list[int]],
+				   shooter_pose: str = "follow", ball_position: tuple[int, int] = (87, 47)) -> Oled:
 	oled = Oled(font)
 	oled.fill_rect(0, 0, 35, 11)
 	oled.text(3, 2, "YOU 2", 0)
@@ -146,9 +147,24 @@ def render_penalty(font: list[int], bitmaps: dict[str, list[int]]) -> Oled:
 	for x in (63, 64, 65):
 		oled.pixel(x, 59)
 	oled.bitmap(21, 23, 40, 40, bitmaps["bitmap_penalty_keeper_dive_left"])
-	oled.bitmap(36, 27, 40, 40, bitmaps["bitmap_penalty_shooter_follow"])
-	oled.bitmap(84, 44, 7, 7, bitmaps["bitmap_penalty_ball"])
+	oled.bitmap(32, 29, 40, 40, bitmaps[f"bitmap_penalty_shooter_{shooter_pose}"])
+	oled.bitmap(ball_position[0] - 3, ball_position[1] - 3, 7, 7, bitmaps["bitmap_penalty_ball"])
 	return oled
+
+
+def render_shooter_frames(font: list[int], bitmaps: dict[str, list[int]]) -> None:
+	# Match firmware coordinates: anchor (52, 63), sprite origin (32, 29).
+	# The contact boot meets the rear edge of the ball at (64, 59).
+	poses = (("prepare", (64, 59)), ("kick", (64, 59)), ("follow", (75, 53)))
+	strip = Image.new("RGB", (WIDTH * SCALE * len(poses), (HEIGHT + 12) * SCALE), "black")
+	for index, (pose, ball) in enumerate(poses):
+		oled = render_penalty(font, bitmaps, pose, ball)
+		preview = oled.image.resize((WIDTH * SCALE, HEIGHT * SCALE), Image.NEAREST).convert("RGB")
+		strip.paste(preview, (index * WIDTH * SCALE, 12 * SCALE))
+		label = Oled(font)
+		label.text(3, 2, pose.upper())
+		strip.paste(label.image.crop((0, 0, WIDTH, 12)).resize((WIDTH * SCALE, 12 * SCALE), Image.NEAREST).convert("RGB"), (index * WIDTH * SCALE, 0))
+	strip.save(OUTPUT_DIR / "scr_game_shooter_frames.png", optimize=True)
 
 
 def render_rip(font: list[int]) -> Oled:
@@ -191,10 +207,11 @@ def render_game_over(font: list[int]) -> Oled:
 
 def main() -> None:
 	font = parse_array(FONT_SOURCE, "font")
-	bitmap_names = ("bitmap_penalty_goal", "bitmap_penalty_keeper_dive_left", "bitmap_penalty_shooter_follow", "bitmap_penalty_ball")
+	bitmap_names = ("bitmap_penalty_goal", "bitmap_penalty_keeper_dive_left", "bitmap_penalty_shooter_prepare", "bitmap_penalty_shooter_kick", "bitmap_penalty_shooter_follow", "bitmap_penalty_ball")
 	bitmaps = {name: parse_array(BITMAP_SOURCE, name) for name in bitmap_names}
 	render_menu(font).save("scr_game_menu.png")
 	render_penalty(font, bitmaps).save("scr_game_penalty.png")
+	render_shooter_frames(font, bitmaps)
 	render_rip(font).save("scr_game_rip.png")
 	render_game_over(font).save("scr_game_over.png")
 
