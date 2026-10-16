@@ -5,6 +5,9 @@ banner's stadium-green background, pitch outlines, scanlines, pixel font, and co
 `tools/game_art_theme.py` is the shared source for the banner and these cards; no separate
 AI artwork or firmware UI is introduced.
 
+The Objects table intentionally uses **unframed** previews, including Match and
+Scoreboard. The generated Match card remains an optional asset, not the table image.
+
 Each child background is a different 720×480 crop of that shared 1280×640 background,
 with a title, subtitle, bezel, and footer added **outside** the OLED viewport. The saved
 empty cards are in [`backgrounds/`](backgrounds/).

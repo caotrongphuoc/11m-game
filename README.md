@@ -140,7 +140,7 @@ The game opens on the **difficulty menu**, which provides:
   </thead>
   <tbody>
     <tr>
-      <td align="center"><img src="resources/images/screens/framed/em_game_match.gif" alt="Banner-themed frame around a captured full five-round match" width="300"/></td>
+      <td align="center"><img src="resources/images/objects/em_game_match.gif" alt="Captured OLED playback of a full five-round match" width="256"/></td>
       <td align="center"><strong>Match</strong></td>
       <td align="left">Coordinates the menu, round setup, countdown, accepted input, result phase, and screen transitions.</td>
     </tr>
@@ -165,7 +165,7 @@ The game opens on the **difficulty menu**, which provides:
       <td align="left">Waits for the Ball and Keeper reports, then resolves the kick as a goal, save, or miss.</td>
     </tr>
     <tr>
-      <td align="center"><img src="resources/images/screens/framed/scr_game_over.png" alt="Banner-themed frame around the scoreboard with final score, winner, and best result" width="300"/></td>
+      <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Scoreboard with final score, winner, and best result" width="256"/></td>
       <td align="center"><strong>Scoreboard</strong></td>
       <td align="left">Tracks five rounds, all kick results, and the final winner.</td>
     </tr>
