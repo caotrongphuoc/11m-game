@@ -19,6 +19,19 @@
 
 ---
 
+## Gameplay Demo
+
+<p align="center">
+  <a href="resources/videos/eleven_meter_demo.mp4">
+    <img src="resources/videos/eleven_meter_demo.gif" alt="Animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="768"/>
+  </a>
+</p>
+
+Menu → Hard → five rounds → defeat → final score → Home. The GIF plays automatically;
+[open or download the MP4](resources/videos/eleven_meter_demo.mp4) for video playback.
+Captured from the kit's OLED through UART, not a camera; no audio.
+See [capture details and regeneration](resources/videos/README.md).
+
 ## Documentation
 
 | File | Description |
@@ -41,19 +54,6 @@ The game is also a small example of event-driven firmware design:
 - **Process management:** AK tasks run cooperatively without blocking delays.
 - **Communication:** Signals and messages carry input, commands, results, and display snapshots.
 - **Timing:** One 40 ms gameplay tick drives the match and object animations.
-
-### Gameplay Demo
-
-<p align="center">
-  <a href="resources/videos/eleven_meter_demo.mp4">
-    <img src="resources/videos/eleven_meter_demo.gif" alt="Animated OLED demo: menu, Hard difficulty, five rounds, loss, final score, and return to menu" width="768"/>
-  </a>
-</p>
-
-Menu → Hard → five rounds → defeat → final score → Home. The GIF plays automatically;
-[open or download the MP4](resources/videos/eleven_meter_demo.mp4) for video playback.
-Captured from the kit's OLED through UART, not a camera; no audio.
-See [capture details and regeneration](resources/videos/README.md).
 
 ### I. Hardware
 
@@ -216,10 +216,6 @@ The Match GIF is a sampled UART recording of a complete five-round match, includ
   </tr>
 </table>
 <p align="center"><strong><em>Figure 7:</em></strong> Basic game sequence from menu entry to Retry or Home</p>
-
-The diagram follows the current message ownership: Display forwards input and drives the shared tick, Match coordinates rounds, Shooter commands Ball and Keeper, and Goal waits for both reports before resolving a kick. After five results, Match updates BEST when improved, stops the gameplay tick, and opens RIP followed by the final score screen.
-
-This is a high-level sequence; exact signals, payloads, and timing are documented in the object and runtime guides. Regenerate the image with `python3 tools/render_game_sequence.py` (Pillow and DejaVu Sans fonts required; use `--font-dir` if the fonts are installed elsewhere).
 
 ## Contact & Support
 
