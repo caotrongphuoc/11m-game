@@ -116,36 +116,44 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
 <table>
   <thead>
     <tr>
+      <th align="center">Bitmap</th>
       <th align="center">Object Name</th>
       <th align="center">Description</th>
     </tr>
   </thead>
   <tbody>
     <tr>
+      <td align="center">—<br/>Logic only</td>
       <td align="center"><strong>Match</strong></td>
       <td align="left">Coordinates the menu, round setup, countdown, accepted input, result phase, and screen transitions.</td>
     </tr>
     <tr>
+      <td align="center"><img src="resources/images/objects/em_game_shooter.gif" alt="Original standing shooter taking a two-pixel step and recovering" width="184"/></td>
       <td align="center"><strong>Shooter</strong></td>
       <td align="left">Owns kick selection and a short two-pixel step using the original standing bitmap.</td>
     </tr>
     <tr>
+      <td align="center"><img src="resources/images/objects/em_game_ball.gif" alt="Original ball bitmap moving along a right-side shot trajectory" width="136"/></td>
       <td align="center"><strong>Ball</strong></td>
       <td align="left">Moves from the penalty spot toward the chosen target. A rushed kick may travel wide.</td>
     </tr>
     <tr>
+      <td align="center"><img src="resources/images/objects/em_game_keeper.gif" alt="Original keeper bitmaps showing idle, left dive, and right dive" width="180"/></td>
       <td align="center"><strong>Keeper</strong></td>
       <td align="left">Chooses a dive from the shot direction and current difficulty, then animates the save attempt.</td>
     </tr>
     <tr>
+      <td align="center"><img src="resources/images/objects/bitmap_penalty_goal.gif" alt="Original goal frame bitmap, drawn by Display" width="186"/></td>
       <td align="center"><strong>Goal</strong></td>
       <td align="left">Waits for the Ball and Keeper reports, then resolves the kick as a goal, save, or miss.</td>
     </tr>
     <tr>
+      <td align="center">—<br/>Match-owned data</td>
       <td align="center"><strong>Scoreboard</strong></td>
       <td align="left">Tracks five rounds, all kick results, and the final winner.</td>
     </tr>
     <tr>
+      <td align="center">—<br/>Composes screen graphics</td>
       <td align="center"><strong>Display</strong></td>
       <td align="left">Keeps the validated render snapshot and draws the menu, pitch, sprites, HUD, RIP, and Game Over screens.</td>
     </tr>
@@ -154,6 +162,8 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
 </div>
 
 Each gameplay task keeps its mutable state private. Objects work together through AK messages instead of reading or changing one another's data directly.
+
+The GIFs are isolated documentation previews made from the original bitmap bytes, not recordings from the board. Shooter, Ball, and Keeper use their current movement constants; idle/endpoint holds are extended for readability. The goal artwork is static and rendered by Display; the Goal task only resolves reports. Match, Scoreboard, and Display have no standalone sprite. See the [complete bitmap GIF gallery](resources/images/objects/README.md) for all eight gameplay assets, including retained shooter poses that are not used in the current animation. Regenerate the GIFs with `python3 tools/render_game_objects.py` (Pillow required).
 
 > **Note:** For detailed object flows, see [Game Object Sequences](docs/03-design-sequence-object.md).
 
