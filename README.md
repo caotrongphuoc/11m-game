@@ -42,6 +42,19 @@ The game is also a small example of event-driven firmware design:
 - **Communication:** Signals and messages carry input, commands, results, and display snapshots.
 - **Timing:** One 40 ms gameplay tick drives the match and object animations.
 
+### Gameplay Demo
+
+<p align="center">
+  <a href="resources/videos/eleven_meter_demo.mp4">
+    <img src="resources/images/screens/scr_game_penalty.png" alt="Open the full five-round Eleven Meter OLED demo video" width="512"/>
+  </a>
+</p>
+
+[Watch or download the demo (MP4)](resources/videos/eleven_meter_demo.mp4) — a 19.76-second
+playback of OLED samples captured from the kit, covering all five rounds and the final
+3–2 score. This is sampled screen playback, not a camera recording; UART transfer pauses
+are excluded and there is no audio. See [video details and regeneration](resources/videos/README.md).
+
 ### I. Hardware
 
 <table align="center">
