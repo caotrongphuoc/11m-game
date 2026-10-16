@@ -108,6 +108,13 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 - Hardware validation uses the UART console at 115200 8N1. Display validation should include an `lcd d` framebuffer dump when a board is available.
 - Never claim on-device validation when only compilation was performed.
 
+## Development tools lifecycle
+
+Keep the `tools/` folder throughout game development, including its renderers, capture
+helpers, and validation scripts. Remove it only after the engineer confirms the entire
+game is finished and requests final cleanup. Completing an individual TODO, README
+update, or demo is not permission to remove `tools/`.
+
 ## Coding style
 Use the root `.clang-format` as the source of truth: Allman braces, tab indent 4, `int* p`, `if (x)`, no auto line-wrap, no sort includes. Run `clang-format -i` before committing.
 

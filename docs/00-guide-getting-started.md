@@ -132,5 +132,5 @@ make -C application clean
 make -C application flash dev=/dev/ttyUSB0
 ```
 
-For the completed board checks and the distinction between manual confirmation and
-captured evidence, see [Review and validation](05-review-and-validation.md).
+For saved OLED frames and diagnostic-build provenance, see the
+[OLED capture notes](../resources/captures/README.md).

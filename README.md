@@ -27,8 +27,6 @@
   </a>
 </p>
 
-<p align="center"><a href="resources/videos/eleven_meter_demo.mp4">MP4</a> · <a href="resources/videos/README.md">OLED capture details</a></p>
-
 ## Documentation
 
 | File | Description |
@@ -39,7 +37,6 @@
 | [docs/02-design-sequence-object.md](docs/02-design-sequence-object.md) | Ownership and message sequences for Match, Shooter, Ball, Keeper, Goal, and Display. |
 | [docs/03-design-sequence-runtime.md](docs/03-design-sequence-runtime.md) | Runtime flow from button input to animation, result handling, and screen updates. |
 | [docs/04-ak-mcp-deployment.md](docs/04-ak-mcp-deployment.md) | Deployment guide for the AK documentation MCP server. |
-| [docs/05-review-and-validation.md](docs/05-review-and-validation.md) | Final review scope, build measurements, and engineer-confirmed board checks. |
 
 ## Introduction
 
