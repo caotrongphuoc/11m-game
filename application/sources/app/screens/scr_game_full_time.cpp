@@ -1,28 +1,28 @@
-#include "scr_game_rip.h"
+#include "scr_game_full_time.h"
 
 /*****************************************************************************/
-/* View - Game RIP */
+/* View - Game Full Time */
 /*****************************************************************************/
 
-static void view_scr_game_rip();
-static void scr_game_rip_goal_display();
-static void scr_game_rip_continue_display();
+static void view_scr_game_full_time();
+static void scr_game_full_time_goal_display();
+static void scr_game_full_time_continue_display();
 
-view_dynamic_t dyn_view_game_rip = {
+view_dynamic_t dyn_view_game_full_time = {
     {
         .item_type = ITEM_TYPE_DYNAMIC,
     },
-    view_scr_game_rip};
+    view_scr_game_full_time};
 
-view_screen_t scr_game_rip = {
-    &dyn_view_game_rip,
+view_screen_t scr_game_full_time = {
+    &dyn_view_game_full_time,
     ITEM_NULL,
     ITEM_NULL,
 
     .focus_item = 0,
 };
 
-void view_scr_game_rip()
+void view_scr_game_full_time()
 {
 	view_render.clear();
 	view_render.setTextColor(WHITE);
@@ -30,15 +30,15 @@ void view_scr_game_rip()
 	view_render.fillRect(0, 0, 128, 17, WHITE);
 	view_render.setTextColor(BLACK);
 	view_render.setTextSize(1);
-	view_render.setCursor(34, 5);
-	view_render.print("MATCH OVER");
+	view_render.setCursor(37, 5);
+	view_render.print("FULL TIME");
 	view_render.setTextColor(WHITE);
 
-	scr_game_rip_goal_display();
-	scr_game_rip_continue_display();
+	scr_game_full_time_goal_display();
+	scr_game_full_time_continue_display();
 }
 
-static void scr_game_rip_goal_display()
+static void scr_game_full_time_goal_display()
 {
 	view_render.drawRect(33, 22, 62, 23, WHITE);
 	view_render.drawLine(33, 22, 43, 31, WHITE);
@@ -52,7 +52,7 @@ static void scr_game_rip_goal_display()
 	view_render.drawLine(67, 35, 61, 41, WHITE);
 }
 
-static void scr_game_rip_continue_display()
+static void scr_game_full_time_continue_display()
 {
 	view_render.fillRect(22, 52, 84, 12, WHITE);
 	view_render.fillTriangle(29, 54, 29, 61, 36, 57, BLACK);
@@ -63,16 +63,16 @@ static void scr_game_rip_continue_display()
 }
 
 /*****************************************************************************/
-/* Handle - Game RIP */
+/* Handle - Game Full Time */
 /*****************************************************************************/
 
-void scr_game_rip_handle(ak_msg_t* msg)
+void scr_game_full_time_handle(ak_msg_t* msg)
 {
 	switch (msg->sig)
 	{
 	case SCREEN_ENTRY:
 	{
-		APP_DBG_SIG("EM_GAME RIP SCREEN_ENTRY\n");
+		APP_DBG_SIG("EM_GAME FULL_TIME SCREEN_ENTRY\n");
 		timer_remove_attr(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_IDLE);
 	}
 	break;
@@ -80,7 +80,7 @@ void scr_game_rip_handle(ak_msg_t* msg)
 	case AC_DISPLAY_BUTTON_MODE_PRESSED:
 	{
 		APP_DBG_SIG("AC_DISPLAY_BUTTON_MODE_PRESSED\n");
-		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SKIP_RIP);
+		task_post_pure_msg(EM_GAME_MATCH_ID, EM_GAME_MATCH_SKIP_FULL_TIME);
 	}
 	break;
 

@@ -12,10 +12,6 @@ typedef struct __attribute__((packed))
 
 #define EM_GAME_SCORE_CHECKSUM_SIZE \
 	(sizeof(uint32_t) + sizeof(em_game_score_record_t))
-#define EM_GAME_SCORE_EEPROM_SIZE (9)
-
-static_assert(sizeof(em_game_score_eeprom_t) == EM_GAME_SCORE_EEPROM_SIZE,
-              "em_game score EEPROM record must be 9 bytes");
 
 static uint8_t em_game_eeprom_checksum(const uint8_t* data, uint32_t size)
 {

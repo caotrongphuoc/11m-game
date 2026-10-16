@@ -39,7 +39,7 @@ static bool task_display_match_view_is_valid(const em_game_match_view_t* view)
 	       (view->misses <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
 	       (result_count <= view->round) &&
 	       (view->countdown <= 3) &&
-	       (view->state <= EM_GAME_MATCH_STATE_RIP) &&
+	       (view->state <= EM_GAME_MATCH_STATE_FULL_TIME) &&
 	       (view->difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD) &&
 	       (view->best_goals <= EM_GAME_SCOREBOARD_TOTAL_KICKS) &&
 	       (view->best_difficulty <= EM_GAME_MATCH_DIFFICULTY_HARD) &&
@@ -118,10 +118,10 @@ void task_display(ak_msg_t* msg)
 	}
 	break;
 
-	case EM_GAME_DISPLAY_SHOW_RIP:
+	case EM_GAME_DISPLAY_SHOW_FULL_TIME:
 	{
-		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_RIP\n");
-		SCREEN_TRAN(scr_game_rip_handle, &scr_game_rip);
+		APP_DBG_SIG("EM_GAME_DISPLAY_SHOW_FULL_TIME\n");
+		SCREEN_TRAN(scr_game_full_time_handle, &scr_game_full_time);
 	}
 	break;
 

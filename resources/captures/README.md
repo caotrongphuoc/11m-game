@@ -2,6 +2,12 @@
 
 ## Menu-to-Home demo
 
+The saved recordings predate the Full Time screen rename. Their original JSON
+phase label `rip` and on-screen `MATCH OVER` text are preserved as capture evidence.
+New captures use `full_time` and `FULL TIME`; capture/render tools accept both
+versions. The current static Full Time preview is generated from drawing primitives,
+not a new board capture. Existing demo videos and match GIFs remain historical recordings.
+
 [`em_game_demo_uart.json`](em_game_demo_uart.json) is the source for the README's
 autoplay [`demo GIF`](../videos/eleven_meter_demo.gif) and optional
 [`MP4`](../videos/eleven_meter_demo.mp4). It records the real kit's OLED through the

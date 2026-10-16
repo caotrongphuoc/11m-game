@@ -185,16 +185,16 @@ sequenceDiagram
             M->>E: init_score_record and save_score_record
         end
         M->>T: timer_remove_attr for Display EM_GAME_TIME_TICK
-        M->>M: Enter RIP
+        M->>M: Enter Full Time
         M-)D: EM_GAME_DISPLAY_UPDATE_MATCH
-        M-)D: EM_GAME_DISPLAY_SHOW_RIP
-        M->>T: Arm EM_GAME_MATCH_RIP_TIMEOUT, one-shot 2000 ms
-        alt RIP timeout expires
-            T-)M: EM_GAME_MATCH_RIP_TIMEOUT
-        else Mode pressed on RIP screen
-            D-)M: EM_GAME_MATCH_SKIP_RIP
+        M-)D: EM_GAME_DISPLAY_SHOW_FULL_TIME
+        M->>T: Arm EM_GAME_MATCH_FULL_TIME_TIMEOUT, one-shot 2000 ms
+        alt Full Time timeout expires
+            T-)M: EM_GAME_MATCH_FULL_TIME_TIMEOUT
+        else Mode pressed on Full Time screen
+            D-)M: EM_GAME_MATCH_SKIP_FULL_TIME
         end
-        M->>T: Remove EM_GAME_MATCH_RIP_TIMEOUT and queued expiry
+        M->>T: Remove EM_GAME_MATCH_FULL_TIME_TIMEOUT and queued expiry
         M->>M: Enter GAME_OVER
         M-)D: EM_GAME_DISPLAY_UPDATE_MATCH
         M-)D: EM_GAME_DISPLAY_SHOW_GAME_OVER
@@ -237,7 +237,7 @@ Paths below are relative to the repository root.
 | [scr_startup.cpp](../application/sources/app/screens/scr_startup.cpp) | OLED startup and initial menu transition. |
 | [scr_game_menu.cpp](../application/sources/app/screens/scr_game_menu.cpp) | Difficulty and Start input translation. |
 | [scr_game_penalty.cpp](../application/sources/app/screens/scr_game_penalty.cpp) | Shared gameplay tick, kick input, and gameplay rendering. |
-| [scr_game_rip.cpp](../application/sources/app/screens/scr_game_rip.cpp) | RIP rendering and skip input. |
+| [scr_game_full_time.cpp](../application/sources/app/screens/scr_game_full_time.cpp) | Full Time rendering and skip input. |
 | [scr_game_over.cpp](../application/sources/app/screens/scr_game_over.cpp) | Final result rendering, Retry, and Home input. |
 | [em_game_match.cpp](../application/sources/app/game_eleven_meter/em_game_match.cpp) | Round phases, results, BEST, and gameplay screen coordination. |
 | [em_game_shooter.cpp](../application/sources/app/game_eleven_meter/em_game_shooter.cpp) | Kick selection and shooter feedback. |
@@ -279,7 +279,7 @@ The active screen determines the command. Directional kick mapping applies only 
 | Startup | No game command. | No game command. | Cancel startup timeout and enter menu locally. |
 | Menu | `EM_GAME_MATCH_MENU_RIGHT` | `EM_GAME_MATCH_MENU_LEFT` | `EM_GAME_MATCH_START` |
 | Penalty | `EM_GAME_MATCH_KICK_LEFT` | `EM_GAME_MATCH_KICK_CENTER` | `EM_GAME_MATCH_KICK_RIGHT` |
-| RIP | No game command. | No game command. | `EM_GAME_MATCH_SKIP_RIP` |
+| Full Time | No game command. | No game command. | `EM_GAME_MATCH_SKIP_FULL_TIME` |
 | Game Over | No game command. | `EM_GAME_MATCH_HOME` | `EM_GAME_MATCH_RETRY` |
 
 ### Button Processing Rules
@@ -287,7 +287,7 @@ The active screen determines the command. Directional kick mapping applies only 
 - Screens translate input into messages, not direct gameplay mutations.
 - Match accepts difficulty changes and Start only in `EM_GAME_MATCH_STATE_MENU`.
 - Match accepts kicks only in `EM_GAME_MATCH_STATE_SHOOTER_WAIT`. A second press after an accepted kick does not start another shot.
-- Match accepts Skip only in `EM_GAME_MATCH_STATE_RIP`, and Retry or Home only in `EM_GAME_MATCH_STATE_GAME_OVER`.
+- Match accepts Skip only in `EM_GAME_MATCH_STATE_FULL_TIME`, and Retry or Home only in `EM_GAME_MATCH_STATE_GAME_OVER`.
 - BSP long-press callbacks only log the event. They do not emit another gameplay command.
 - Each pressed callback also rearms the framework idle timeout. Penalty entry removes the pending idle timeout; game screens do not use idle expiry as a round or match transition.
 
@@ -314,10 +314,10 @@ These are nominal durations from constants and step counts, not measured wall-cl
 | Ball flight | Eight steps at 40 ms | Arrival report after nominally 320 ms. |
 | Keeper response | Six steps at 40 ms | Ready report after nominally 240 ms, including a center response. |
 | Result hold | 1,200 ms | Match advances the round or finishes the match. |
-| RIP transition | 2,000 ms or Mode | One-shot Match timeout or accepted skip command. |
+| Full Time transition | 2,000 ms or Mode | One-shot Match timeout or accepted skip command. |
 | Screen render spacing | At least 40 ms | Framework render throttling, not another gameplay update timer. |
 
-Startup, idle, RIP, and deferred-render timers serve separate framework or transition purposes. They do not give Shooter, Ball, Keeper, or Goal individual gameplay timers.
+Startup, idle, Full Time, and deferred-render timers serve separate framework or transition purposes. They do not give Shooter, Ball, Keeper, or Goal individual gameplay timers.
 
 ### Render Scheduling
 
@@ -333,8 +333,8 @@ The framework renders immediately when allowed by its minimum render interval, o
 | `EM_GAME_MATCH_STATE_ROUND_START` | `EM_GAME_MATCH_SETUP` advances the round, then self-posted `EM_GAME_MATCH_START_ROUND` starts selection. | `EM_GAME_MATCH_STATE_SHOOTER_WAIT` |
 | `EM_GAME_MATCH_STATE_SHOOTER_WAIT` | Accepted directional kick or selection timeout during `EM_GAME_MATCH_UPDATE`. | `EM_GAME_MATCH_STATE_REVEAL` |
 | `EM_GAME_MATCH_STATE_REVEAL` | Valid `EM_GAME_MATCH_HIT_RESULT` recorded by Scoreboard. | `EM_GAME_MATCH_STATE_ROUND_END` |
-| `EM_GAME_MATCH_STATE_ROUND_END` | Result hold expires during `EM_GAME_MATCH_UPDATE`. | `EM_GAME_MATCH_STATE_ROUND_START` if rounds remain, otherwise `EM_GAME_MATCH_STATE_RIP`. |
-| `EM_GAME_MATCH_STATE_RIP` | `EM_GAME_MATCH_RIP_TIMEOUT` or `EM_GAME_MATCH_SKIP_RIP`. | `EM_GAME_MATCH_STATE_GAME_OVER` |
+| `EM_GAME_MATCH_STATE_ROUND_END` | Result hold expires during `EM_GAME_MATCH_UPDATE`. | `EM_GAME_MATCH_STATE_ROUND_START` if rounds remain, otherwise `EM_GAME_MATCH_STATE_FULL_TIME`. |
+| `EM_GAME_MATCH_STATE_FULL_TIME` | `EM_GAME_MATCH_FULL_TIME_TIMEOUT` or `EM_GAME_MATCH_SKIP_FULL_TIME`. | `EM_GAME_MATCH_STATE_GAME_OVER` |
 | `EM_GAME_MATCH_STATE_GAME_OVER` | `EM_GAME_MATCH_RETRY` or `EM_GAME_MATCH_HOME`. | `EM_GAME_MATCH_STATE_ROUND_START` or `EM_GAME_MATCH_STATE_MENU`, respectively. |
 
 Common-message consumers validate payload lengths and allowed values before using data. Shooter, Ball, and Keeper latch one kick or reaction per round. Goal accepts one valid report from each object and resolves once. Match accepts the result only in REVEAL, and its Scoreboard helper rejects duplicate or out-of-order result recording. Setup and reset prepare these guards for the next round.

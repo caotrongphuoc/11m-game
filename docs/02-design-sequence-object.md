@@ -73,9 +73,9 @@ signal, and publishes its view.
 The penalty screen stays active; it is not re-entered between rounds.
 
 After five results, Match evaluates the winner, saves an improved BEST, stops the
-gameplay tick, publishes its RIP state, requests `EM_GAME_DISPLAY_SHOW_RIP`, and arms
-the one-shot `EM_GAME_MATCH_RIP_TIMEOUT` for 2,000 ms. That timeout or
-`EM_GAME_MATCH_SKIP_RIP` opens Game Over and plays `EM_GAME_BUZZER_WIN` or
+gameplay tick, publishes its Full Time state, requests `EM_GAME_DISPLAY_SHOW_FULL_TIME`, and arms
+the one-shot `EM_GAME_MATCH_FULL_TIME_TIMEOUT` for 2,000 ms. That timeout or
+`EM_GAME_MATCH_SKIP_FULL_TIME` opens Game Over and plays `EM_GAME_BUZZER_WIN` or
 `EM_GAME_BUZZER_LOSE`. Game Over Mode retries; Up posts `EM_GAME_MATCH_HOME`, which
 clears the current match and requests the menu. Difficulty and BEST survive Retry/Home.
 
@@ -137,10 +137,10 @@ sequenceDiagram
         opt More goals, or equal goals at harder difficulty
             Match->>Store: save_score_record
         end
-        Note right of Match: Stop shared tick<br/>Enter RIP
+        Note right of Match: Stop shared tick<br/>Enter Full Time
         Match-)Display: EM_GAME_DISPLAY_UPDATE_MATCH
-        Match-)Display: EM_GAME_DISPLAY_SHOW_RIP
-        Note right of Match: RIP timeout or skip leads to Game Over
+        Match-)Display: EM_GAME_DISPLAY_SHOW_FULL_TIME
+        Note right of Match: Full Time timeout or skip leads to Game Over
     end
 ```
 
@@ -496,13 +496,13 @@ sequenceDiagram
 This is posting order, not a barrier that waits for all four handlers to finish.
 Message-driven reports and snapshots may be queued between ticks. Goal has no update
 signal. At match completion, Match cancels the shared timer and pending tick messages;
-RIP uses a separate one-shot transition timeout, not a second periodic gameplay loop.
+Full Time uses a separate one-shot transition timeout, not a second periodic gameplay loop.
 Canceling the tick does not retract object update messages posted by an earlier tick.
 
 ## IX. Message Contracts and Render Snapshots
 
-All common-message structures have compile-time size assertions against
-`AK_COMMON_MSG_DATA_SIZE`. Receivers validate length and allowed values before using
+Common-message payloads must fit within `AK_COMMON_MSG_DATA_SIZE` (64 bytes).
+The application does not use compile-time size assertions. Receivers validate length and allowed values before using
 payloads. Payloads contain commands or copies, never pointers to mutable task state.
 
 | Sender → Receiver | Signal | Payload |

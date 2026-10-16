@@ -230,10 +230,10 @@ def render_shooter_frames(font: list[int], bitmaps: dict[str, list[int]]) -> Non
 	strip.save(OUTPUT_DIR / "scr_game_shooter_frames.png", optimize=True)
 
 
-def render_rip(font: list[int]) -> Oled:
+def render_full_time(font: list[int]) -> Oled:
 	oled = Oled(font)
 	oled.fill_rect(0, 0, 128, 17)
-	oled.text(34, 5, "MATCH OVER", 0)
+	oled.text(37, 5, "FULL TIME", 0)
 	oled.rect(33, 22, 62, 23)
 	oled.line(33, 22, 43, 31)
 	oled.line(95, 22, 85, 31)
@@ -275,7 +275,7 @@ def main() -> None:
 	render_menu(font).save("scr_game_menu.png")
 	render_gameplay_capture(font, GAMEPLAY_CAPTURE).save("scr_game_penalty.png")
 	render_shooter_frames(font, bitmaps)
-	render_rip(font).save("scr_game_rip.png")
+	render_full_time(font).save("scr_game_full_time.png")
 	render_game_over(font).save("scr_game_over.png")
 	render_screen_animations(font)
 

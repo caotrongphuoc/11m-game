@@ -191,7 +191,7 @@ The game opens on the **difficulty menu**, which provides:
 - **Score:** The HUD shows the player score, CPU score, round number, and selection countdown.
 - **Best result:** The highest goal count is stored together with its difficulty. An equal goal count on a harder difficulty replaces the previous record.
 - **Animation:** The original standing shooter takes a two-pixel step, the ball follows the shot, and the goalkeeper animates the response.
-- **Game Over:** After the fifth result, a short **RIP** transition leads to the final score, with two actions:
+- **Game Over:** After the fifth result, a short **Full Time** transition leads to the final score, with two actions:
 
     - **Retry:** Press **[Mode]** to play another match.
     - **Home:** Press **[Up]** to return to the difficulty menu.
@@ -200,10 +200,10 @@ The game opens on the **difficulty menu**, which provides:
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/screens/framed/scr_game_rip.png" alt="Banner-themed frame around the match-over transition" width="720"/></td>
+    <td align="center"><img src="resources/images/screens/framed/scr_game_full_time.png" alt="Banner-themed frame around the match-over transition" width="720"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 5:</em></strong> Match-over transition screen</p>
+<p align="center"><strong><em>Figure 5:</em></strong> Full Time transition screen</p>
 
 <table align="center">
   <tr>

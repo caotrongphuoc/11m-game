@@ -34,8 +34,8 @@ def main():
                for name in ("shooter", "ball", "keeper")]
     with Image.open(IMAGES / "board/ak-embedded-base-kit-version-3.jpg") as source:
         board = ImageOps.contain(source.convert("RGB"), (224, 112), Image.LANCZOS)
-    with Image.open(IMAGES / "screens/scr_game_rip.png") as source:
-        rip = source.convert("RGB").resize((224, 112), Image.NEAREST)
+    with Image.open(IMAGES / "screens/scr_game_full_time.png") as source:
+        full_time = source.convert("RGB").resize((224, 112), Image.NEAREST)
     with Image.open(IMAGES / "screens/scr_game_over.png") as source:
         over = source.convert("RGB").resize((224, 112), Image.NEAREST)
 
@@ -59,10 +59,10 @@ def main():
             sprite = sprite.resize((sprite.width // 2, sprite.height // 2), Image.NEAREST)
             frame.paste(WHITE, (center - sprite.width // 2, 378 - sprite.height), sprite.convert("L"))
         cards = (at_time(menu, time_ms).resize((224, 112), Image.NEAREST),
-                 game_frame.resize((224, 112), Image.NEAREST), board, rip, over)
+                 game_frame.resize((224, 112), Image.NEAREST), board, full_time, over)
         draw = ImageDraw.Draw(frame)
         for index, (caption, image) in enumerate(zip(
-                ("DIFFICULTY", "GAMEPLAY", "AK BASE KIT", "MATCH OVER", "FINAL SCORE"), cards)):
+                ("DIFFICULTY", "GAMEPLAY", "AK BASE KIT", "FULL TIME", "FINAL SCORE"), cards)):
             left = 16 + index * 252
             label(frame, font, caption, 438, 2, center=left + 120)
             draw.rectangle((left, 460, left + 239, 587), fill="#020605", outline=GREEN, width=2)

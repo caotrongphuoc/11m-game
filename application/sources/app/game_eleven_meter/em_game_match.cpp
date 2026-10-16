@@ -183,16 +183,16 @@ static void em_game_match_finish()
 	}
 
 	timer_remove_attr(AC_TASK_DISPLAY_ID, EM_GAME_TIME_TICK);
-	em_game_match_set_state(EM_GAME_MATCH_STATE_RIP);
+	em_game_match_set_state(EM_GAME_MATCH_STATE_FULL_TIME);
 	em_game_match_publish_view();
-	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_RIP);
-	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT,
-	          EM_GAME_MATCH_RIP_DURATION, TIMER_ONE_SHOT);
+	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_FULL_TIME);
+	timer_set(EM_GAME_MATCH_ID, EM_GAME_MATCH_FULL_TIME_TIMEOUT,
+	          EM_GAME_MATCH_FULL_TIME_DURATION, TIMER_ONE_SHOT);
 }
 
 static void em_game_match_show_game_over()
 {
-	timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_RIP_TIMEOUT);
+	timer_remove_attr(EM_GAME_MATCH_ID, EM_GAME_MATCH_FULL_TIME_TIMEOUT);
 	em_game_match_set_state(EM_GAME_MATCH_STATE_GAME_OVER);
 	em_game_match_publish_view();
 	task_post_pure_msg(AC_TASK_DISPLAY_ID, EM_GAME_DISPLAY_SHOW_GAME_OVER);
@@ -419,10 +419,10 @@ void em_game_match_handle(ak_msg_t* msg)
 		}
 		break;
 
-	case EM_GAME_MATCH_RIP_TIMEOUT:
-	case EM_GAME_MATCH_SKIP_RIP:
-		APP_DBG_SIG("EM_GAME_MATCH_RIP_COMPLETE\n");
-		if (s_state == EM_GAME_MATCH_STATE_RIP)
+	case EM_GAME_MATCH_FULL_TIME_TIMEOUT:
+	case EM_GAME_MATCH_SKIP_FULL_TIME:
+		APP_DBG_SIG("EM_GAME_MATCH_FULL_TIME_COMPLETE\n");
+		if (s_state == EM_GAME_MATCH_STATE_FULL_TIME)
 		{
 			em_game_match_show_game_over();
 		}

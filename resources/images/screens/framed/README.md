@@ -16,7 +16,7 @@ empty cards are in [`backgrounds/`](backgrounds/).
 |---|---|---|
 | Difficulty | [Menu preview](../scr_game_menu.gif) | [Menu card](scr_game_menu.gif) |
 | Gameplay | [Captured round 4](../scr_game_penalty.gif) | [Gameplay card](scr_game_penalty.gif) |
-| Match Over | [Transition preview](../scr_game_rip.png) | [Transition card](scr_game_rip.png) |
+| Full Time | [Transition preview](../scr_game_full_time.png) | [Transition card](scr_game_full_time.png) |
 | Final Score | [Score preview](../scr_game_over.png) | [Score card](scr_game_over.png) |
 | Full Match | [Five-round recording](../../objects/em_game_match.gif) | [Match card](em_game_match.gif) |
 

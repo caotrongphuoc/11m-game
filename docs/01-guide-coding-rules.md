@@ -53,7 +53,7 @@ application/sources/app/
 │   ├── Makefile.mk
 │   ├── scr_game_menu.h/.cpp
 │   ├── scr_game_penalty.h/.cpp
-│   ├── scr_game_rip.h/.cpp
+│   ├── scr_game_full_time.h/.cpp
 │   └── scr_game_over.h/.cpp
 ├── app.h
 └── task_list.h/.cpp
@@ -215,8 +215,8 @@ AK task handlers, not ordinary helpers, screens, or drivers.
 Gameplay tasks exchange commands, results, and snapshots only through AK messages.
 Do not replace a message with a cross-task function call or shared mutable data.
 Before using a common-message payload, check its length, field ranges, and whether
-the current phase accepts it. Protect every payload with a compile-time size assertion
-against `AK_COMMON_MSG_DATA_SIZE` (64 bytes). Messages support at most seven references;
+the current phase accepts it. Keep each payload within `AK_COMMON_MSG_DATA_SIZE`
+(64 bytes); the application does not use compile-time size assertions. Messages support at most seven references;
 pools have fixed capacities.
 
 Scoreboard operations are direct helper calls on Match-owned data, not cross-task

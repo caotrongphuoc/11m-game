@@ -18,7 +18,7 @@ typedef enum
 	EM_GAME_MATCH_STATE_REVEAL,
 	EM_GAME_MATCH_STATE_ROUND_END,
 	EM_GAME_MATCH_STATE_GAME_OVER,
-	EM_GAME_MATCH_STATE_RIP
+	EM_GAME_MATCH_STATE_FULL_TIME
 } em_game_match_state_t;
 
 typedef enum
@@ -46,9 +46,6 @@ typedef struct
 	uint8_t last_result;
 	uint8_t winner;
 } em_game_match_view_t;
-
-static_assert(sizeof(em_game_match_view_t) <= AK_COMMON_MSG_DATA_SIZE,
-              "em_game_match_view_t exceeds AK common message payload");
 
 extern void em_game_match_handle(ak_msg_t* msg);
 

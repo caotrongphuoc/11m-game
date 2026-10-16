@@ -17,7 +17,7 @@ SCREEN_BOX = (104, 128, 616, 384)
 CARDS = (
     ("resources/images/screens/scr_game_menu.gif", "scr_game_menu.gif", "DIFFICULTY", "SELECT YOUR CHALLENGE", "01", 0),
     ("resources/images/screens/scr_game_penalty.gif", "scr_game_penalty.gif", "GAMEPLAY", "COUNTDOWN / SHOT / RESULT", "02", 160),
-    ("resources/images/screens/scr_game_rip.png", "scr_game_rip.png", "MATCH OVER", "FIVE KICKS COMPLETE", "03", 320),
+    ("resources/images/screens/scr_game_full_time.png", "scr_game_full_time.png", "FULL TIME", "FIVE KICKS COMPLETE", "03", 320),
     ("resources/images/screens/scr_game_over.png", "scr_game_over.png", "FINAL SCORE", "RESULT / RETRY / HOME", "04", 560),
     ("resources/images/objects/em_game_match.gif", "em_game_match.gif", "FULL MATCH", "FIVE ROUNDS / FINAL SCORE", "06", 480),
 )

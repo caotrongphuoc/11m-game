@@ -137,7 +137,7 @@ def main() -> None:
     capture = json.loads((ROOT / "resources/captures/em_game_match_uart.json").read_text())
     if not capture["complete"] or {frame["round"] for frame in capture["frames"] if frame["round"]} != {1, 2, 3, 4, 5}:
         raise ValueError("Match GIF requires a complete five-round capture")
-    if capture["frames"][-1]["phase"] != "game_over" or not any(frame["phase"] == "rip" for frame in capture["frames"]):
+    if capture["frames"][-1]["phase"] != "game_over" or not any(frame["phase"] in ("full_time", "rip") for frame in capture["frames"]):
         raise ValueError("Match GIF requires the match-over transition and final score")
     samples = []
     for frame in capture["frames"]:

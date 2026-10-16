@@ -30,8 +30,9 @@ def classify(data: bytes, font: list[int]) -> tuple[str, int | None]:
         return "menu", None
     if text_matches(data, font, 37, 2, "GAME OVER"):
         return "game_over", None
-    if text_matches(data, font, 34, 5, "MATCH OVER", False):
-        return "rip", None
+    if (text_matches(data, font, 37, 5, "FULL TIME", False) or
+            text_matches(data, font, 34, 5, "MATCH OVER", False)):
+        return "full_time", None
     if text_matches(data, font, 41, 2, "R"):
         for round_number in range(1, 6):
             if text_matches(data, font, 47, 2, str(round_number)):
@@ -75,7 +76,7 @@ def main() -> None:
         termios.tcsetattr(fd, termios.TCSANOW, attrs)
         deadline = time.monotonic() + args.timeout
         rounds = set()
-        saw_rip = False
+        saw_full_time = False
         previous = None
         menu_step = 0
         started = False
@@ -115,8 +116,8 @@ def main() -> None:
                             os.write(fd, b"lcd k d\r")
                             time.sleep(args.interval_ms / 1000)
                             continue
-                if phase == "rip":
-                    if saw_rip:
+                if phase == "full_time":
+                    if saw_full_time:
                         time.sleep(args.interval_ms / 1000)
                         continue
                     duration = 2000
@@ -129,7 +130,7 @@ def main() -> None:
                 duration = 2000
             if round_number is not None:
                 rounds.add(round_number)
-            saw_rip = saw_rip or phase == "rip"
+            saw_full_time = saw_full_time or phase == "full_time"
             record["frames"].append({"phase": phase, "round": round_number,
                                      "duration_ms": duration,
                                      "data_hex": data.hex()})
@@ -140,8 +141,8 @@ def main() -> None:
             if button:
                 os.write(fd, button)
             if phase == ("menu_home" if args.demo_flow else "game_over"):
-                if rounds != {1, 2, 3, 4, 5} or not saw_rip:
-                    raise ValueError(f"incomplete match: rounds={sorted(rounds)}, RIP={saw_rip}")
+                if rounds != {1, 2, 3, 4, 5} or not saw_full_time:
+                    raise ValueError(f"incomplete match: rounds={sorted(rounds)}, Full Time={saw_full_time}")
                 record["complete"] = True
                 checkpoint()
                 print(f"Complete match: {len(record['frames'])} frames saved to {args.output}", flush=True)

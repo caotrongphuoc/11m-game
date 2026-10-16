@@ -23,9 +23,10 @@ def validate_capture(record) -> None:
         raise ValueError("demo requires a complete five-round capture")
     phases = []
     for sample in samples:
-        if not phases or phases[-1] != sample["phase"]:
-            phases.append(sample["phase"])
-    if phases != ["menu_start", "menu_hard", "gameplay", "rip", "game_over", "menu_home"] or record.get("winner") != "ai":
+        phase = "full_time" if sample["phase"] == "rip" else sample["phase"]
+        if not phases or phases[-1] != phase:
+            phases.append(phase)
+    if phases != ["menu_start", "menu_hard", "gameplay", "full_time", "game_over", "menu_home"] or record.get("winner") != "ai":
         raise ValueError("demo requires menu, Hard selection, play, loss, final score, and Home in order")
     round_order = [sample["round"] for sample in samples if sample["phase"] == "gameplay"]
     if round_order != sorted(round_order):

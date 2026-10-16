@@ -79,9 +79,9 @@ PHASES = (
     )),
     ("05  FINISH AFTER FIVE RESULTS", (
         ("Match", "EEPROM", "Save BEST only if improved"),
-        ("Match", "Match", "Stop gameplay tick; enter RIP"),
-        ("Match", "Display", "Show match-over (RIP) screen"),
-        (None, None, "RIP ends after 2,000 ms, or earlier when Mode requests skip."),
+        ("Match", "Match", "Stop gameplay tick; enter Full Time"),
+        ("Match", "Display", "Show match-over (Full Time) screen"),
+        (None, None, "Full Time ends after 2,000 ms, or earlier when Mode requests skip."),
         ("Match", "Display", "Show Game Over / final score"),
         (None, None, "YOU = goals; CPU = saves + misses. Three or more goals win the five-kick match."),
         ("Player", "Display", "Mode: retry / Up: home"),

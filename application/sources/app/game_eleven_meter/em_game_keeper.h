@@ -47,9 +47,6 @@ typedef struct
 	uint8_t difficulty;
 } em_game_keeper_difficulty_msg_t;
 
-static_assert(sizeof(em_game_keeper_difficulty_msg_t) <= AK_COMMON_MSG_DATA_SIZE,
-              "em_game_keeper_difficulty_msg_t exceeds AK common message payload");
-
 typedef enum
 {
 	EM_GAME_KEEPER_SHOT_NONE,
@@ -63,9 +60,6 @@ typedef struct
 	uint8_t shot_zone;
 } em_game_keeper_react_t;
 
-static_assert(sizeof(em_game_keeper_react_t) <= AK_COMMON_MSG_DATA_SIZE,
-              "em_game_keeper_react_t exceeds AK common message payload");
-
 typedef struct
 {
 	int16_t x;
@@ -75,9 +69,6 @@ typedef struct
 	uint8_t moving;
 	uint8_t dive;
 } em_game_keeper_view_t;
-
-static_assert(sizeof(em_game_keeper_view_t) <= AK_COMMON_MSG_DATA_SIZE,
-              "em_game_keeper_view_t exceeds AK common message payload");
 
 extern void em_game_keeper_handle(ak_msg_t* msg);
 

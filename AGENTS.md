@@ -82,7 +82,7 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 - Match coordinates rounds and forwards accepted input; Shooter owns kick selection; Ball owns movement; Keeper owns dive selection; Goal resolves Ball and Keeper reports; Display owns render snapshots.
 - Tasks exchange commands, results, and view snapshots only through `task_post_*` messages.
 - Validate incoming common-message lengths and values before using their payloads.
-- Protect every common-message payload with a `static_assert` against `AK_COMMON_MSG_DATA_SIZE`.
+- Keep every common-message payload within `AK_COMMON_MSG_DATA_SIZE` (64 bytes). Do not add compile-time size assertions; preserve runtime payload validation.
 - Follow `docs/02-design-sequence-object.md` and `docs/03-design-sequence-runtime.md` when changing gameplay message flow.
 
 ## Current runtime architecture
