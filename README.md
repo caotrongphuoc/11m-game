@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="resources/images/eleven_meter_banner.svg" alt="Eleven Meter — five kicks, one winner; penalty shootout on AK Embedded Base Kit" width="1200"/>
-</p>
-
 <div align="center">
 
 ![Repo Traffic](https://ak-badge-proxy.caotrongphuoc.workers.dev/?username=11m-game&label=Repo+Traffic&color=blue&style=flat-square)
@@ -16,6 +12,10 @@
 </p>
 
 # Eleven Meter - Game built on AK Embedded Base Kit
+
+<p align="center">
+  <img src="resources/images/eleven_meter_banner.gif" alt="Eleven Meter — five kicks, one winner; animated original sprites, gameplay, and AK Embedded Base Kit" width="1280"/>
+</p>
 
 ---
 
