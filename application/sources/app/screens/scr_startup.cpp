@@ -1,5 +1,9 @@
 #include "scr_startup.h"
 
+/*****************************************************************************/
+/* View - Startup screen */
+/*****************************************************************************/
+
 static void view_scr_startup();
 
 view_dynamic_t dyn_view_startup = {
@@ -33,6 +37,10 @@ void view_scr_startup()
 	view_render.setCursor(SCR_STARTUP_LOGO_TEXT_AXIS_X, 42);
 	view_render.print("Active Kernel");
 }
+
+/*****************************************************************************/
+/* Handle - Startup screen */
+/*****************************************************************************/
 
 void scr_startup_handle(ak_msg_t* msg)
 {

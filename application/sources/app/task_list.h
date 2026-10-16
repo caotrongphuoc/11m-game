@@ -27,6 +27,8 @@ enum
 	AC_TASK_DBG_ID,
 	AC_TASK_BUZZER_ID,
 	AC_TASK_DISPLAY_ID,
+
+	/* ELEVEN METER GAME TASKS */
 	EM_GAME_MATCH_ID,
 	EM_GAME_SHOOTER_ID,
 	EM_GAME_KEEPER_ID,
@@ -72,6 +74,8 @@ extern void task_uart_if(ak_msg_t*);
 extern void task_dbg(ak_msg_t*);
 extern void task_buzzer(ak_msg_t*);
 extern void task_display(ak_msg_t*);
+
+/* ELEVEN METER GAME TASKS */
 extern void em_game_match_handle(ak_msg_t*);
 extern void em_game_shooter_handle(ak_msg_t*);
 extern void em_game_keeper_handle(ak_msg_t*);

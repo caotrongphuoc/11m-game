@@ -146,7 +146,7 @@ parentheses. Choose a named constant instead of repeating a coordinate or interv
 | Start position | `EM_GAME_BALL_START_X` | `em_game_ball.h` |
 | Movement length | `EM_GAME_BALL_STEP_COUNT` | `em_game_ball.h` |
 | Match length | `EM_GAME_SCOREBOARD_TOTAL_KICKS` | `em_game_scoreboard.h` |
-| Sprite geometry | `SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH` | `scr_game_penalty.cpp` |
+| Sprite geometry | `EM_GAME_SHOOTER_BITMAP_WIDTH` | `em_game_shooter.h` |
 | Animation interval | `EM_GAME_SHOOTER_ANIM_TICK_INTERVAL` | `app.h` |
 | Shared gameplay tick | `EM_GAME_TIME_TICK_INTERVAL` | `app.h` |
 
