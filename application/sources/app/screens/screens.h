@@ -1,55 +1,11 @@
 #ifndef __SCREENS_H__
 #define __SCREENS_H__
 
-#include "fsm.h"
-#include "port.h"
-#include "message.h"
-#include "timer.h"
-
-#include "sys_ctrl.h"
-#include "sys_dbg.h"
-
-#include "app.h"
-#include "app_dbg.h"
-#include "task_list.h"
-#include "task_display.h"
-#include "view_render.h"
-
-#include "buzzer.h"
-
-#include <math.h>
-#include <vector>
-
-#include "screens_bitmap.h"
-
-// scr_game_over
-extern view_dynamic_t dyn_view_game_over;
-extern view_screen_t scr_game_over;
-extern void scr_game_over_handle(ak_msg_t* msg);
-
-// scr_game_menu
-extern view_dynamic_t dyn_view_game_menu;
-extern view_screen_t scr_game_menu;
-extern void scr_game_menu_handle(ak_msg_t* msg);
-
-// scr_game_penalty
-extern view_dynamic_t dyn_view_game_penalty;
-extern view_screen_t scr_game_penalty;
-extern void scr_game_penalty_handle(ak_msg_t* msg);
-
-// scr_game_full_time
-extern view_dynamic_t dyn_view_game_full_time;
-extern view_screen_t scr_game_full_time;
-extern void scr_game_full_time_handle(ak_msg_t* msg);
-
-// scr_idle
-extern view_dynamic_t dyn_view_idle;
-extern view_screen_t scr_idle;
-extern void scr_idle_handle(ak_msg_t* msg);
-
-// scr_startup
-extern view_dynamic_t dyn_view_startup;
-extern view_screen_t scr_startup;
-extern void scr_startup_handle(ak_msg_t* msg);
+#include "scr_game_menu.h"
+#include "scr_game_penalty.h"
+#include "scr_game_over.h"
+#include "scr_game_full_time.h"
+#include "scr_idle.h"
+#include "scr_startup.h"
 
 #endif //__SCREENS_H__

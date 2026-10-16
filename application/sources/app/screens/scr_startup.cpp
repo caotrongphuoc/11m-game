@@ -18,21 +18,19 @@ view_screen_t scr_startup = {
 
 void view_scr_startup()
 {
-#define AK_LOGO_AXIS_X (23)
-#define AK_LOGO_TEXT (AK_LOGO_AXIS_X + 4)
 	/* ak logo */
 	view_render.clear();
 	view_render.setTextSize(1);
 	view_render.setTextColor(WHITE);
-	view_render.setCursor(AK_LOGO_AXIS_X, 3);
+	view_render.setCursor(SCR_STARTUP_LOGO_AXIS_X, 3);
 	view_render.print("   __    _  _ ");
-	view_render.setCursor(AK_LOGO_AXIS_X, 10);
+	view_render.setCursor(SCR_STARTUP_LOGO_AXIS_X, 10);
 	view_render.print("  /__\\  ( )/ )");
-	view_render.setCursor(AK_LOGO_AXIS_X, 20);
+	view_render.setCursor(SCR_STARTUP_LOGO_AXIS_X, 20);
 	view_render.print(" /(__)\\ (   (");
-	view_render.setCursor(AK_LOGO_AXIS_X, 30);
+	view_render.setCursor(SCR_STARTUP_LOGO_AXIS_X, 30);
 	view_render.print("(__)(__)(_)\\_)");
-	view_render.setCursor(AK_LOGO_TEXT, 42);
+	view_render.setCursor(SCR_STARTUP_LOGO_TEXT_AXIS_X, 42);
 	view_render.print("Active Kernel");
 }
 

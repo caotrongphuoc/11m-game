@@ -2,9 +2,6 @@
 
 using namespace std;
 
-#define MAX_BALL_DISPLAY (16)
-#define BALL_MOVE_STEP (2)
-
 class ball
 {
 	// rand from a to b
@@ -47,20 +44,20 @@ class ball
 	{
 		if (axis_x > 0)
 		{
-			x = x + BALL_MOVE_STEP;
+			x = x + SCR_IDLE_BALL_MOVE_STEP;
 		}
 		else
 		{
-			x = x - BALL_MOVE_STEP;
+			x = x - SCR_IDLE_BALL_MOVE_STEP;
 		}
 
 		if (axis_y > 0)
 		{
-			y += BALL_MOVE_STEP * atan(slope);
+			y += SCR_IDLE_BALL_MOVE_STEP * atan(slope);
 		}
 		else
 		{
-			y -= BALL_MOVE_STEP * atan(slope);
+			y -= SCR_IDLE_BALL_MOVE_STEP * atan(slope);
 		}
 
 		if (x > ((LCD_WIDTH - 1) - radius) || x < radius)
@@ -177,7 +174,7 @@ void scr_idle_handle(ak_msg_t* msg)
 			          TIMER_PERIODIC);
 		}
 
-		if (v_idle_ball.size() < MAX_BALL_DISPLAY)
+		if (v_idle_ball.size() < SCR_IDLE_MAX_BALL_DISPLAY)
 		{
 			v_idle_ball.push_back(new_ball);
 		}

@@ -41,6 +41,7 @@
 #include "task_if.h"
 #include "task_uart_if.h"
 #include "task_display.h"
+#include "scr_startup.h"
 
 /* sys include */
 #include "sys_boot.h"

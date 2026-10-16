@@ -90,6 +90,19 @@ Keep task state and private helpers in the implementation. Headers expose the ha
 object-owned enums, constants, payload contracts, and view snapshot types. Helper modules
 such as Scoreboard may expose operations on data owned by their caller.
 
+Each screen header declares its own `view_dynamic_t`, `view_screen_t`, and
+`scr_*_handle(ak_msg_t* msg)` entry point, includes its required dependencies, and
+defines its screen-specific geometry constants. `screens.h` only aggregates the
+screen headers; do not centralize their declarations there. Screen headers do not
+include that aggregator. Keep `task_display.h` independent of the screen headers
+to avoid circular includes. Private rendering helpers remain local to each `.cpp`.
+Unlike reference layouts with redundant or circular includes, use only dependencies
+needed by the screen and retain message-only gameplay communication.
+
+Run `python3 tools/test_screen_headers.py` to compile each screen header independently
+and with the aggregator using the application's ARM compiler flags. Keep AK headers
+in their supported include order (`fsm.h` before `message.h` in screen headers).
+
 ### 3. Header guard
 
 Match the uppercased file name, including the project prefix:
