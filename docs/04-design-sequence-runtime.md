@@ -28,6 +28,25 @@ flowchart LR
 The penalty screen is the only owner of the periodic gameplay tick. Match owns every screen
 transition and removes that tick before requesting the RIP screen.
 
+## Runtime timing
+
+These are nominal durations derived from `app.h` and object step counts, not measured
+handler execution times. Shooter, Ball, and Keeper advance from the same tick; they do not
+install individual gameplay timers.
+
+| Action | Tick or duration | Behavior |
+|---|---|---|
+| Gameplay tick | 40 ms | Posts updates to Match, Shooter, Ball, and Keeper. |
+| Selection | 3,000 ms | Timeout requests a center kick. |
+| Shooter feedback | 4 steps at 80 ms | Original standing bitmap takes a two-pixel step and returns in nominally 320 ms. |
+| Ball flight | 8 steps at 40 ms | Reports arrival after nominally 320 ms. |
+| Keeper movement | 6 steps at 40 ms | Reports ready after nominally 240 ms; Goal waits for Ball too. |
+| Result hold | 1,200 ms | Keeps GOAL/SAVE/MISS visible before advancing or finishing. |
+| RIP screen | 2,000 ms or Mode | A one-shot Match timer ends the transition; gameplay tick has stopped. |
+
+Raised-leg shooter bitmaps are not selected at any stage. A kick starts Ball and Keeper
+immediately; the small player step is feedback rather than a separate run-up phase.
+
 ## Match state lifecycle
 
 ```mermaid

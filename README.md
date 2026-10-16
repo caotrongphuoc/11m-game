@@ -25,10 +25,11 @@
 | [docs/03-design-sequence-object.md](docs/03-design-sequence-object.md) | Ownership and message sequences for Match, Shooter, Ball, Keeper, Goal, and Display. |
 | [docs/04-design-sequence-runtime.md](docs/04-design-sequence-runtime.md) | Runtime flow from button input to animation, result handling, and screen updates. |
 | [docs/05-ak-mcp-deployment.md](docs/05-ak-mcp-deployment.md) | Deployment guide for the AK documentation MCP server. |
+| [docs/06-review-and-validation.md](docs/06-review-and-validation.md) | Final review scope, build measurements, and engineer-confirmed board checks. |
 
 ## Introduction
 
-Eleven Meter is a five-kick penalty shootout for the AK Embedded Base Kit. The player has three buttons, three shooting directions, and three seconds to make each decision. The goalkeeper reacts according to the selected difficulty, while the OLED shows the whole kick from the run-up to the final result.
+Eleven Meter is a five-kick penalty shootout for the AK Embedded Base Kit. The player has three buttons, three shooting directions, and three seconds to make each decision. The goalkeeper reacts according to the selected difficulty, while the OLED shows the ball, goalkeeper response, and kick result. The shooter keeps the original standing bitmap and takes a small two-pixel step when shooting; raised-leg frames are not displayed.
 
 The game is also a small example of event-driven firmware design:
 
@@ -107,7 +108,7 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
 </table>
 <p align="center"><strong><em>Figure 4:</em></strong> Penalty animation, score HUD, and kick result</p>
 
-> **Display preview:** Figures 3–6 are rendered from the firmware's OLED primitives, font, and bitmap data. Regenerate them with `python3 tools/render_game_screens.py` (Pillow required). On-device validation still requires a UART `lcd d` framebuffer capture.
+> **Display preview:** Figures 3–6 are generated illustrations using the firmware's OLED primitives, font, and bitmap data, not captured board frames. Regenerate them with `python3 tools/render_game_screens.py` (Pillow required). The [shooter animation strip](resources/images/screens/scr_game_shooter_frames.png) shows preparation, the small step, and recovery. For a board framebuffer capture, enable diagnostic console output as described in [Getting Started](docs/01-guide-getting-started.md#inspect-the-board) before using `lcd d`.
 
 #### Objects in the Game:
 
@@ -126,7 +127,7 @@ The match starts at the difficulty menu. Easy gives the player the best chance a
     </tr>
     <tr>
       <td align="center"><strong>Shooter</strong></td>
-      <td align="left">Owns the selected kick and animates the player's run-up and follow-through.</td>
+      <td align="left">Owns kick selection and a short two-pixel step using the original standing bitmap.</td>
     </tr>
     <tr>
       <td align="center"><strong>Ball</strong></td>
@@ -166,11 +167,12 @@ Each gameplay task keeps its mutable state private. Objects work together throug
 #### Game Mechanics:
 
 - **Five kicks:** Every match contains five penalty attempts.
+- **Winning:** Score at least three goals out of five. Saves and misses both count toward the CPU score.
 - **Three results:** A kick ends as a goal, save, or miss.
 - **Reaction pressure:** Shooting too quickly increases the chance of missing the target.
 - **Difficulty:** The selected level changes how often the goalkeeper matches the shot direction.
 - **Score:** The HUD shows the player score, CPU score, round number, and selection countdown.
-- **Best result:** The highest goal count is stored together with the difficulty on which it was achieved.
+- **Best result:** The highest goal count is stored together with its difficulty. An equal goal count on a harder difficulty replaces the previous record.
 - **Game Over:** After the fifth result, a short RIP screen leads to the final score. Press **[Mode]** to retry or **[Up]** to return home.
 
 <table align="center">
@@ -220,6 +222,12 @@ Start Match -> Round Setup -> Three-Second Selection
                                                 |
                                          Retry or Home
 ```
+
+## Build and validation status
+
+The current play configuration disables all six console print/debug flags. See [Getting Started](docs/01-guide-getting-started.md) for build, Type-C UART flashing, and a temporary diagnostic build.
+
+Firmware `33ac918` was built and flashed successfully: application Flash **51,216 / 118,784 bytes**, RAM **13,636 / 16,384 bytes**. The engineer confirmed five-round play across all difficulties, timeout handling, Retry/Home, BEST persistence after power-off, and no recurrence of the earlier MF31 failure during their checks. These are manual confirmations; no test duration or match count was recorded. See the [review and validation record](docs/06-review-and-validation.md) for evidence and limits.
 
 ## Contact & Support
 

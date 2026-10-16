@@ -7,10 +7,11 @@ This document describes state ownership and message flow between the Eleven Mete
 | Object | Owned state | Main responsibility |
 |---|---|---|
 | Match | Match phase, difficulty, countdown, best score, scoreboard | Coordinate menu, rounds, timing, and final result. |
-| Shooter | Position, kick direction, animation frame, reaction timer, random seed | Animate the original player sprites and dispatch Ball/Keeper commands. |
+| Shooter | Position, kick direction, animation frame, reaction timer, random seed | Animate a small step with the original standing sprite and dispatch Ball/Keeper commands. |
 | Ball | Position, animation frame, movement target | Animate the shot and report its arrival to Goal. |
 | Keeper | Dive direction, difficulty, position, animation frame, random seed | Select and animate the goalkeeper response. |
 | Goal | Latest Ball and Keeper reports, readiness flags | Resolve goal, save, or miss after both reports arrive. |
+| Scoreboard | No independent task state; operates on Match-owned data | Enforce one result per round, five attempts, and the three-goal win threshold. |
 | Display | Read-only snapshots received from gameplay tasks | Compose and render the current OLED view. |
 
 ## Initialize the menu and select difficulty
@@ -136,10 +137,10 @@ All original shooter bitmap bytes are preserved. Display uses only the original 
 bitmap; the raised-leg kick and follow bitmaps are no longer part of the animation.
 On the accepted kick, Shooter moves from `(44, 63)` to `(46, 63)` and commands Ball and
 Keeper immediately. Each 80 ms animation step eases the player back toward `(44, 63)`;
-frame four completes the recovery after 320 ms. The small step supplies visual feedback
+frame four completes the nominal 320 ms recovery. The small step supplies visual feedback
 without changing the player's leg pose. Shot direction changes only the ball target.
 
-The three poses can be reviewed in [the shooter frame preview](../resources/images/screens/scr_game_shooter_frames.png),
+The three animation stages can be reviewed in [the shooter frame preview](../resources/images/screens/scr_game_shooter_frames.png),
 regenerated with `python3 tools/render_game_screens.py`.
 
 ## Resolve the kick
