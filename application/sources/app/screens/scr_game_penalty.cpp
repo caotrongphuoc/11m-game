@@ -16,6 +16,7 @@
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH (40)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT (40)
 #define SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING (6)
+#define SCR_GAME_PENALTY_SHOOTER_KICK_Y_OFFSET (-2)
 #define SCR_GAME_PENALTY_GOAL_BITMAP_WIDTH (93)
 #define SCR_GAME_PENALTY_GOAL_BITMAP_HEIGHT (38)
 #define SCR_GAME_PENALTY_GOAL_BITMAP_AXIS_X (17)
@@ -56,7 +57,8 @@ scr_game_penalty_get_shooter_bitmap(const em_game_view_t* view)
 		return bitmap_penalty_shooter_kick;
 	}
 
-	return bitmap_penalty_shooter_follow;
+	// Recover with the original standing pose; the old follow pose reverses the leg.
+	return bitmap_penalty_shooter_prepare;
 }
 
 view_dynamic_t dyn_view_game_penalty = {{
@@ -228,11 +230,18 @@ static void scr_game_penalty_shooter_display(const em_game_view_t* view)
 		return;
 	}
 
+	const unsigned char* bitmap = scr_game_penalty_get_shooter_bitmap(view);
+	int16_t bitmap_y = view->shooter_y - SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT +
+	                   SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING;
+	if (bitmap == bitmap_penalty_shooter_kick)
+	{
+		// The original kick boot extends two rows below the standing boot.
+		bitmap_y += SCR_GAME_PENALTY_SHOOTER_KICK_Y_OFFSET;
+	}
+
 	view_render.drawBitmap(
 	    view->shooter_x - (SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH / 2),
-	    view->shooter_y - SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT +
-	        SCR_GAME_PENALTY_SHOOTER_BITMAP_BOTTOM_PADDING,
-	    scr_game_penalty_get_shooter_bitmap(view),
+	    bitmap_y, bitmap,
 	    SCR_GAME_PENALTY_SHOOTER_BITMAP_WIDTH,
 	    SCR_GAME_PENALTY_SHOOTER_BITMAP_HEIGHT, WHITE);
 }

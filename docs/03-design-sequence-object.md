@@ -7,7 +7,7 @@ This document describes state ownership and message flow between the Eleven Mete
 | Object | Owned state | Main responsibility |
 |---|---|---|
 | Match | Match phase, difficulty, countdown, best score, scoreboard | Coordinate menu, rounds, timing, and final result. |
-| Shooter | Position, kick direction, animation frame, reaction timer, random seed | Animate a planted-foot kick and dispatch Ball/Keeper commands. |
+| Shooter | Position, kick direction, animation frame, reaction timer, random seed | Animate the original player sprites and dispatch Ball/Keeper commands. |
 | Ball | Position, animation frame, movement target | Animate the shot and report its arrival to Goal. |
 | Keeper | Dive direction, difficulty, position, animation frame, random seed | Select and animate the goalkeeper response. |
 | Goal | Latest Ball and Keeper reports, readiness flags | Resolve goal, save, or miss after both reports arrive. |
@@ -132,12 +132,17 @@ sequenceDiagram
 
 Shooter owns the player's kick direction. Ball receives only its movement target, while Keeper receives only the shot zone it needs to choose a dive.
 
-The shooter is viewed from behind at the fixed anchor `(52, 63)`. Its left foot stays planted
-while the right boot swings forward to meet the rear edge of the ball centered at `(64, 59)` and then rises toward the
-goal. The kick snapshot selects the contact bitmap immediately, including animation frame
-zero, so the ball does not depart while the player is still shown preparing. Frames zero and
-one show contact; frames two through four show follow-through. Shot direction changes the
-ball target rather than sliding the player's planted foot across the pitch.
+All original shooter bitmap bytes are preserved. Animation uses the fixed anchor `(44, 63)`
+to place the extended boot at the rear edge of the ball centered at `(64, 59)`. The kick
+snapshot selects the original kick bitmap immediately, including animation frame zero,
+so the ball does not depart while the player is still shown preparing. Frames zero and
+one show contact; frames two through four recover with the original standing bitmap.
+The original follow bitmap remains unchanged in the assets but is omitted from this
+sequence because its leg points back across the player. Shot direction changes the ball
+target rather than sliding the player across the pitch.
+The original kick bitmap is drawn two pixels higher than the standing bitmap to align
+their boot baselines and keep the kick boot inside the OLED. This is a render offset only;
+the bitmap data is not transformed or edited.
 
 The three poses can be reviewed in [the shooter frame preview](../resources/images/screens/scr_game_shooter_frames.png),
 regenerated with `python3 tools/render_game_screens.py`.

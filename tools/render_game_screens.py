@@ -124,7 +124,7 @@ def render_menu(font: list[int]) -> Oled:
 
 
 def render_penalty(font: list[int], bitmaps: dict[str, list[int]],
-				   shooter_pose: str = "follow", ball_position: tuple[int, int] = (87, 47)) -> Oled:
+				   shooter_pose: str = "prepare", ball_position: tuple[int, int] = (87, 47)) -> Oled:
 	oled = Oled(font)
 	oled.fill_rect(0, 0, 35, 11)
 	oled.text(3, 2, "YOU 2", 0)
@@ -147,22 +147,23 @@ def render_penalty(font: list[int], bitmaps: dict[str, list[int]],
 	for x in (63, 64, 65):
 		oled.pixel(x, 59)
 	oled.bitmap(21, 23, 40, 40, bitmaps["bitmap_penalty_keeper_dive_left"])
-	oled.bitmap(32, 29, 40, 40, bitmaps[f"bitmap_penalty_shooter_{shooter_pose}"])
+	shooter_y = 27 if shooter_pose == "kick" else 29
+	oled.bitmap(24, shooter_y, 40, 40, bitmaps[f"bitmap_penalty_shooter_{shooter_pose}"])
 	oled.bitmap(ball_position[0] - 3, ball_position[1] - 3, 7, 7, bitmaps["bitmap_penalty_ball"])
 	return oled
 
 
 def render_shooter_frames(font: list[int], bitmaps: dict[str, list[int]]) -> None:
-	# Match firmware coordinates: anchor (52, 63), sprite origin (32, 29).
-	# The contact boot meets the rear edge of the ball at (64, 59).
-	poses = (("prepare", (64, 59)), ("kick", (64, 59)), ("follow", (75, 53)))
+	# Original sprites, unchanged: anchor (44, 63), sprite origin (24, 29).
+	# Recover with the standing bitmap instead of the reversed-leg follow bitmap.
+	poses = (("prepare", "prepare", (64, 59)), ("kick", "kick", (64, 59)), ("recover", "prepare", (75, 53)))
 	strip = Image.new("RGB", (WIDTH * SCALE * len(poses), (HEIGHT + 12) * SCALE), "black")
-	for index, (pose, ball) in enumerate(poses):
+	for index, (label_text, pose, ball) in enumerate(poses):
 		oled = render_penalty(font, bitmaps, pose, ball)
 		preview = oled.image.resize((WIDTH * SCALE, HEIGHT * SCALE), Image.NEAREST).convert("RGB")
 		strip.paste(preview, (index * WIDTH * SCALE, 12 * SCALE))
 		label = Oled(font)
-		label.text(3, 2, pose.upper())
+		label.text(3, 2, label_text.upper())
 		strip.paste(label.image.crop((0, 0, WIDTH, 12)).resize((WIDTH * SCALE, 12 * SCALE), Image.NEAREST).convert("RGB"), (index * WIDTH * SCALE, 0))
 	strip.save(OUTPUT_DIR / "scr_game_shooter_frames.png", optimize=True)
 

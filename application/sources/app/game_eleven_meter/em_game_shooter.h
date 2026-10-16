@@ -11,7 +11,7 @@
 /* Shooter geometry, animation, and accuracy tuning */
 /*****************************************************************************/
 
-#define EM_GAME_SHOOTER_START_X (52)
+#define EM_GAME_SHOOTER_START_X (44)
 #define EM_GAME_SHOOTER_START_Y (63)
 #define EM_GAME_SHOOTER_STEP_COUNT (4)
 #define EM_GAME_SHOOTER_MISS_BASE_CHANCE (10)
