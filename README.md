@@ -140,32 +140,32 @@ The game opens on the **difficulty menu**, which provides:
   </thead>
   <tbody>
     <tr>
-      <td align="center"><img src="resources/images/objects/em_game_match.gif" alt="Captured OLED playback of a full five-round match" width="256"/></td>
+      <td align="center" valign="middle"><img src="resources/images/objects/table/em_game_match.gif" alt="Captured OLED playback of a full five-round match" width="256" height="144"/></td>
       <td align="center"><strong>Match</strong></td>
       <td align="left">Coordinates the menu, round setup, countdown, accepted input, result phase, and screen transitions.</td>
     </tr>
     <tr>
-      <td align="center"><img src="resources/images/objects/em_game_shooter.gif" alt="Original standing shooter taking a two-pixel step and recovering" width="184"/></td>
+      <td align="center" valign="middle"><img src="resources/images/objects/table/em_game_shooter.gif" alt="Original standing shooter taking a two-pixel step and recovering" width="256" height="144"/></td>
       <td align="center"><strong>Shooter</strong></td>
       <td align="left">Owns kick selection and a short two-pixel step using the original standing bitmap.</td>
     </tr>
     <tr>
-      <td align="center"><img src="resources/images/objects/em_game_ball.gif" alt="Original ball bitmap moving along a right-side shot trajectory" width="136"/></td>
+      <td align="center" valign="middle"><img src="resources/images/objects/table/em_game_ball.gif" alt="Original ball bitmap moving along a right-side shot trajectory" width="256" height="144"/></td>
       <td align="center"><strong>Ball</strong></td>
       <td align="left">Moves from the penalty spot toward the chosen target. A rushed kick may travel wide.</td>
     </tr>
     <tr>
-      <td align="center"><img src="resources/images/objects/em_game_keeper.gif" alt="Original keeper bitmaps showing idle, left dive, and right dive" width="180"/></td>
+      <td align="center" valign="middle"><img src="resources/images/objects/table/em_game_keeper.gif" alt="Original keeper bitmaps showing idle, left dive, and right dive" width="256" height="144"/></td>
       <td align="center"><strong>Keeper</strong></td>
       <td align="left">Chooses a dive from the shot direction and current difficulty, then animates the save attempt.</td>
     </tr>
     <tr>
-      <td align="center"><img src="resources/images/objects/bitmap_penalty_goal.gif" alt="Original goal frame bitmap, drawn by Display" width="186"/></td>
+      <td align="center" valign="middle"><img src="resources/images/objects/table/bitmap_penalty_goal.gif" alt="Original goal frame bitmap, drawn by Display" width="256" height="144"/></td>
       <td align="center"><strong>Goal</strong></td>
       <td align="left">Waits for the Ball and Keeper reports, then resolves the kick as a goal, save, or miss.</td>
     </tr>
     <tr>
-      <td align="center"><img src="resources/images/screens/scr_game_over.png" alt="Scoreboard with final score, winner, and best result" width="256"/></td>
+      <td align="center" valign="middle"><img src="resources/images/objects/table/em_game_scoreboard.png" alt="Scoreboard with final score, winner, and best result" width="256" height="144"/></td>
       <td align="center"><strong>Scoreboard</strong></td>
       <td align="left">Tracks five rounds, all kick results, and the final winner.</td>
     </tr>

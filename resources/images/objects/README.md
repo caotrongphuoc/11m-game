@@ -59,13 +59,22 @@ set and is not included in this gallery.
 
 ## Regenerate
 
+The README's Objects table uses plain, centered copies in [`table/`](table/), all
+512×288 pixels displayed at 256×144. This equalizes row sizes without decorative frames
+or stretching the source images. Shooter and Keeper share the same sprite scale; the
+ball preview is enlarged an additional 2× with nearest-neighbor sampling for visibility.
+Source files, sprite geometry, animation frame order, and durations are unchanged.
+
 From the repository root, with Pillow installed:
 
 ```bash
 python3 tools/render_game_objects.py
+python3 tools/render_object_table.py
 ```
 
-The script validates each bitmap's byte count, uses the firmware's row-major MSB-first
+`render_game_objects.py` validates each bitmap's byte count, uses the firmware's row-major MSB-first
 packing, and exports eight single-frame asset GIFs, three movement GIFs, and the Match
 GIF from its saved UART samples. Animation
 frames use a fixed black/white palette and clear the previous frame to prevent trails.
+`render_object_table.py` then creates six equal-size table previews, leaving the raw
+exports intact.
