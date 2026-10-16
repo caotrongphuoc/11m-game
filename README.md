@@ -190,38 +190,16 @@ Each gameplay task keeps its mutable state private. Objects work together throug
 
 > **Note:** For the complete signal flow, see [Runtime Signal Processing](docs/04-design-sequence-runtime.md).
 
-```text
-Main Menu
-    |
-    v
-Select Difficulty
-    |
-    v
-Start Match -> Round Setup -> Three-Second Selection
-                                  |
-                       +----------+----------+
-                       |          |          |
-                      Left      Center      Right
-                       +----------+----------+
-                                  |
-                                  v
-                              Shooter
-                             /       \
-                            v         v
-                          Ball      Keeper
-                            \         /
-                             v       v
-                        Goal Evaluation
-                                  |
-                    +-------------+-------------+
-                    |                           |
-               Next Round                  Match Complete
-                                                |
-                                                v
-                                        RIP -> Game Over
-                                                |
-                                         Retry or Home
-```
+<table align="center">
+  <tr>
+    <td align="center"><img src="resources/images/design-sequence/em_game_eleven_meter_sequence.png" alt="Eleven Meter basic sequence: menu and setup, accepted kick, shared update loop, round result, and final score" width="1000"/></td>
+  </tr>
+</table>
+<p align="center"><strong><em>Figure 7:</em></strong> Basic game sequence from menu entry to Retry or Home</p>
+
+The diagram follows the current message ownership: Display forwards input and drives the shared tick, Match coordinates rounds, Shooter commands Ball and Keeper, and Goal waits for both reports before resolving a kick. After five results, Match updates BEST when improved, stops the gameplay tick, and opens RIP followed by the final score screen.
+
+This is a high-level sequence; exact signals, payloads, and timing are documented in the object and runtime guides. Regenerate the image with `python3 tools/render_game_sequence.py` (Pillow and DejaVu Sans fonts required; use `--font-dir` if the fonts are installed elsewhere).
 
 ## Build and validation status
 
