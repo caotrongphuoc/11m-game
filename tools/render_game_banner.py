@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a 2:1 animated banner using existing Eleven Meter screen/sprite assets."""
+"""Render matching 2:1 GIF and PNG banners from Eleven Meter screen/sprite assets."""
 
 from PIL import Image, ImageDraw, ImageOps, ImageSequence
 
@@ -8,6 +8,7 @@ from game_art_theme import GREEN, HEIGHT, WHITE, WIDTH, label, lettering, stadiu
 
 
 OUTPUT = ROOT / "resources/images/eleven_meter_banner.gif"
+STATIC_OUTPUT = ROOT / "resources/images/eleven_meter_banner_2x1.png"
 IMAGES = ROOT / "resources/images"
 
 
@@ -74,7 +75,9 @@ def main():
     encoded = [frame.quantize(palette=palette, dither=Image.NONE) for frame, _ in frames]
     encoded[0].save(OUTPUT, save_all=True, append_images=encoded[1:],
                     duration=[duration for _, duration in frames], loop=0, disposal=2, optimize=False)
+    encoded[0].convert("RGB").save(STATIC_OUTPUT, optimize=True)
     print(f"Rendered {OUTPUT.relative_to(ROOT)}: {len(frames)} frames, {time_ms} ms")
+    print(f"Rendered {STATIC_OUTPUT.relative_to(ROOT)}: {WIDTH}x{HEIGHT}, static 2:1 cover")
 
 
 if __name__ == "__main__":

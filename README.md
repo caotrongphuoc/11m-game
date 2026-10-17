@@ -14,7 +14,9 @@
 # Eleven Meter - Game built on AK Embedded Base Kit
 
 <p align="center">
-  <img src="resources/images/eleven_meter_banner.gif" alt="Eleven Meter — five kicks, one winner; animated original sprites, gameplay, and AK Embedded Base Kit" width="1280" height="640"/>
+  <a href="resources/images/eleven_meter_banner_2x1.png">
+    <img src="resources/images/eleven_meter_banner.gif" alt="Eleven Meter — five kicks, one winner; animated original sprites, gameplay, and AK Embedded Base Kit; click for the static 2:1 cover" width="1280" height="640"/>
+  </a>
 </p>
 
 ---
