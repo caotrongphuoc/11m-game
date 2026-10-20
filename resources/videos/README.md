@@ -27,14 +27,10 @@ frames to prevent trails. MP4 uses high-quality H.264 encoding
 (CRF 18, High profile, level 3.0, YUV420P), with MP4 fast-start metadata and no audio
 track. MP4 compression is lossy; the raw capture remains the pixel-exact source.
 
-Regenerate from the repository root with Python 3, Pillow, and FFmpeg with `libx264`:
-
-```bash
-python3 tools/render_game_demo.py
-```
-
-This command overwrites only the generated GIF and MP4. The demo renderer requires the complete
-ordered menu-to-Home sequence, all five rounds, and the recorded AI win. No firmware,
-sprite, or capture data is changed. See the
+The demo renderer was removed during engineer-approved final cleanup. Restore it and
+its dependencies from Git history to regenerate the GIF and MP4 with Python 3, Pillow,
+and FFmpeg with `libx264`. It requires the complete ordered menu-to-Home sequence,
+all five rounds, and the recorded AI win. No firmware, sprite, or capture data needs
+to change. See the
 [capture notes](../captures/README.md#menu-to-home-demo) for the diagnostic capture build,
 timing limitations, and restoration of the quiet production firmware.

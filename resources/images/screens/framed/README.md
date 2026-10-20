@@ -2,8 +2,8 @@
 
 The README displays OLED screens inside 720×480 cards derived from the main Eleven Meter
 banner's stadium-green background, pitch outlines, scanlines, pixel font, and colors.
-`tools/game_art_theme.py` is the shared source for the banner and these cards; no separate
-AI artwork or firmware UI is introduced.
+The banner and cards were generated from a shared theme; no separate AI artwork or
+firmware UI is introduced. The development scripts are retained in Git history.
 
 The Objects table intentionally uses **unframed** previews, including Match and
 Scoreboard. The generated Match card remains an optional asset, not the table image.
@@ -31,14 +31,7 @@ A fixed palette reserves pure black and white for the OLED, and each previous fr
 cleared to prevent trails. Decorative backgrounds are not part of the board framebuffer
 and should not be interpreted as firmware graphics or new on-device validation.
 
-Regenerate only the cards with Pillow installed:
-
-```bash
-python3 tools/render_screen_cards.py
-python3 tools/test_screen_cards.py
-```
-
-If the underlying preview assets have changed, regenerate those first using their
-existing scripts. The banner continues to use the **raw** screen assets, not these cards,
-so it does not gain recursively nested frames. Keep `tools/` until the engineer confirms
-that the entire game is finished and requests final cleanup.
+The engineer approved removal of the development scripts during final cleanup. Restore
+the former theme, card renderer, and card tests from Git history before regenerating
+or revalidating cards; Pillow is required. Refresh changed raw previews first. The banner
+uses the **raw** screen assets, not these cards, avoiding recursively nested frames.

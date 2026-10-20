@@ -110,10 +110,14 @@ This is a penalty shootout game (11-meter penalty kick) built on top of a blank 
 
 ## Development tools lifecycle
 
-Keep the `tools/` folder throughout game development, including its renderers, capture
-helpers, and validation scripts. Remove it only after the engineer confirms the entire
-game is finished and requests final cleanup. Completing an individual TODO, README
-update, or demo is not permission to remove `tools/`.
+Eleven Meter is in its engineer-approved final-cleanup state: the root `tools/`
+folder has been removed. Keep generated media, raw captures, and firmware unchanged.
+Earlier render/capture/test scripts can be restored from Git history when needed;
+do not claim those scripts can run in the current checkout.
+
+For a new game, retain development helpers until the engineer confirms the entire
+game is finished and explicitly requests final cleanup. A single completed TODO or
+README update is not permission to remove them.
 
 ## Locked Eleven Meter decisions
 
@@ -256,15 +260,10 @@ network, publish media, or remove development tools from a request to review the
   on a host versus a device; compilation alone is not gameplay validation.
 - Run `make -C application clean`, `make -C application`, formatting checks on changed
   C/C++, and `git diff --check`. Report Flash/RAM from the successful build.
-- Eleven Meter's host regression commands are:
-
-  ```bash
-  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_object_headers.py
-  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_screen_headers.py
-  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_penalty_buttons.py
-  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_full_time_screen.py
-  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_screen_cards.py
-  ```
+- Earlier Eleven Meter host regressions covered object headers/extern instances,
+  screen headers, penalty buttons/ticks, Full Time/capture compatibility, and screen
+  cards. These development scripts were removed in final cleanup; restore them from
+  Git history before using them to validate renewed firmware or media work.
 
 - Adapt tests to a new game's names and contracts, not its gameplay implementation.
   Test header independence/both include orders, exactly one extern definition, initial

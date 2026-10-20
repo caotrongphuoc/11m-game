@@ -65,16 +65,12 @@ or stretching the source images. Shooter and Keeper share the same sprite scale;
 ball preview is enlarged an additional 2× with nearest-neighbor sampling for visibility.
 Source files, sprite geometry, animation frame order, and durations are unchanged.
 
-From the repository root, with Pillow installed:
+Development renderers were removed during engineer-approved final cleanup. Restore
+the former object and table renderers from Git history to regenerate these assets;
+Pillow is required.
 
-```bash
-python3 tools/render_game_objects.py
-python3 tools/render_object_table.py
-```
-
-`render_game_objects.py` validates each bitmap's byte count, uses the firmware's row-major MSB-first
-packing, and exports eight single-frame asset GIFs, three movement GIFs, and the Match
-GIF from its saved UART samples. Animation
+The object renderer validated each bitmap's byte count, used the firmware's row-major
+MSB-first packing, and exported eight single-frame asset GIFs, three movement GIFs,
+and the Match GIF from its saved UART samples. Animation
 frames use a fixed black/white palette and clear the previous frame to prevent trails.
-`render_object_table.py` then creates six equal-size table previews, leaving the raw
-exports intact.
+The table renderer created six equal-size table previews, leaving the raw exports intact.

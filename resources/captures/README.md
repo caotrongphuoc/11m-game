@@ -1,5 +1,10 @@
 # OLED framebuffer captures
 
+Development capture/render scripts were removed during engineer-approved final cleanup.
+The raw UART dumps, JSON samples, generated media, and historical measurements below
+remain unchanged. Restore the relevant scripts and dependencies from Git history before
+regenerating assets or making a new diagnostic capture.
+
 ## Menu-to-Home demo
 
 The saved recordings predate the Full Time screen rename. Their original JSON
@@ -49,16 +54,11 @@ and restored successfully, updater checksum **`0xC0B5`** verified, **51,220-byte
 **51,216 bytes Flash**, **13,636 bytes RAM**. The physical left/middle/right kick mapping
 is retained; bitmap arrays, `task_display`, kernel, and production log flags are unchanged.
 
-To regenerate the assets without a kit:
-
-```bash
-python3 tools/render_game_demo.py
-```
-
-For a new recording, `tools/capture_game_match.py --demo-flow --interval-ms 80
---firmware-checksum <checksum> --output resources/captures/em_game_demo_uart.json`
-requires the temporary capture build described above, not the quiet play image. Recording
-can affect the visible game through normal inputs; do not interact with the kit concurrently.
+The saved samples allow asset regeneration without a kit once the historical demo
+renderer is restored. A new recording requires the temporary capture build described
+above, not the quiet play image. Record at 80 ms active intervals and retain the actual
+firmware checksum. Recording can affect the visible game through normal inputs;
+do not interact with the kit concurrently.
 
 ## Original static gameplay capture
 
@@ -101,15 +101,9 @@ build reported pool peaks of **8/32 pure** and **5/16 common** messages, and a m
 measured OLED frame time of **38,328 microseconds**. These values describe the capture
 session, not a new timing measurement of the quiet build.
 
-## Reproduce the PNG
+## PNG decoding
 
-From the repository root:
-
-```bash
-python3 tools/render_game_screens.py
-```
-
-Pillow is required. The script reads the saved dump, requires exactly **1,024 bytes**, and
+The historical screen renderer requires Pillow. It reads the saved dump, requires exactly **1,024 bytes**, and
 decodes the OLED page layout: byte `(y // 8) * 128 + x`, bit `y % 8`, with the least
 significant bit at the top of each page. The original frame is 128×64 monochrome pixels;
 the README image is a 512×256 nearest-neighbor enlargement. The script regenerates the
@@ -117,8 +111,8 @@ capture image from the saved bytes rather than replacing it with the synthetic s
 
 ## Animated README screens
 
-Figures 3 and 4 use these raw 512×256 animated OLED previews, regenerated with
-`python3 tools/render_game_screens.py` (Pillow required):
+Figures 3 and 4 use these raw 512×256 animated OLED previews generated with the
+historical screen renderer:
 
 - **Figure 3 — [`scr_game_menu.gif`](../images/screens/scr_game_menu.gif):** generated
   menu preview selecting Easy → Normal → Hard → Normal, with 900 ms per selection.
@@ -134,9 +128,9 @@ Both GIFs use a fixed black/white palette and clear each previous frame to preve
 trails. Original static PNGs remain available; the static gameplay capture described
 above is no longer the image displayed as Figure 4 in the README.
 
-The README now places these raw previews inside 720×480 banner-themed cards. Run
-`python3 tools/render_screen_cards.py` after regenerating the raw GIFs to refresh those
-wrappers. The OLED viewport remains 512×256 with unchanged pixels and timing; the
+The README places these raw previews inside 720×480 banner-themed cards. Restore the
+historical card renderer before refreshing wrappers from changed raw GIFs.
+The OLED viewport remains 512×256 with unchanged pixels and timing; the
 [card notes](../images/screens/framed/README.md) describe the decorative borders.
 
 ## Full match GIF
@@ -156,14 +150,11 @@ random keeper choices, without automatically retrying Game Over. As for Figure 4
 paused the existing gameplay timer during each blocking UART framebuffer transmission
 and resumed that same timer afterward; it did not add a gameplay timer or change sprites.
 
-`tools/capture_game_match.py` reads `lcd d` responses at 115200 8N1 and saves the decoded
+The historical match capture helper read `lcd d` responses at 115200 8N1 and saved the decoded
 page-major bytes, phase, and round for each sample. Its completion check requires rounds
 1–5, Match Over, and Game Over. It requires the temporary capture build, not the quiet
-production image. The recorded JSON is sufficient to regenerate the GIF without a kit:
-
-```bash
-python3 tools/render_game_objects.py
-```
+production image. The recorded JSON is sufficient to regenerate the GIF without a kit
+after restoring the historical object renderer from Git history.
 
 The GIF is a sampled playback, not a real-time or native-frame-rate recording. Each
 sample is held for the configured **160 ms** active interval, excluding UART transfer

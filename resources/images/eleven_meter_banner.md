@@ -24,19 +24,10 @@ The 1280×640 GIF contains 23 frames with 160 ms holds, looping in 3.68 seconds.
 128-color palette avoids frame-to-frame color shifts. Sprite and screen resizing uses
 nearest-neighbor sampling; the kit photograph uses Lanczos resizing.
 
-Regenerate from the repository root with Pillow installed:
+Development renderers were removed during engineer-approved final cleanup. To regenerate
+these assets, restore the former banner, screen, object, and shared-theme renderers from
+Git history; Pillow is required. The GIF, PNG, source previews, and captures remain here.
 
-```bash
-python3 tools/render_game_screens.py
-python3 tools/render_game_objects.py
-python3 tools/render_game_banner.py
-```
-
-The first two commands refresh the existing preview inputs; the last command overwrites
-only the generated banner GIF and static PNG cover. No firmware changes or new kit captures are required.
-
-The banner's background, colors, and pixel lettering are shared through
-`tools/game_art_theme.py`. The README's [screen cards](screens/framed/README.md) use
-child crops of that same background. Generate them with `python3 tools/render_screen_cards.py`
-after updating their raw inputs. The banner itself always uses raw previews rather than
-framed outputs, avoiding nested frames.
+The banner and the README's [screen cards](screens/framed/README.md) use the same
+background, colors, and pixel lettering. Cards use child crops of that background.
+The banner uses raw previews rather than framed outputs, avoiding nested frames.

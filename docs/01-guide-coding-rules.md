@@ -101,8 +101,9 @@ include object headers back. Concrete snapshot contracts are included explicitly
 `task_display.cpp` and the screens that use their enum values. Keep rendering and
 screen-transition dependencies out of the object headers.
 
-Run `python3 tools/test_object_headers.py` to check standalone compilation, include
-order, exactly one instance definition, and owner-only state access.
+Check standalone compilation, include order, exactly one instance definition, and
+owner-only state access. The former object-header test is available in Git history,
+not in the final cleaned checkout.
 
 Each screen header declares its own `view_dynamic_t`, `view_screen_t`, and
 `scr_*_handle(ak_msg_t* msg)` entry point, includes its required dependencies, and
@@ -115,8 +116,9 @@ to avoid circular includes. Private rendering helpers remain local to each `.cpp
 Retain message-only gameplay communication; screen declarations do not expose
 mutable gameplay task state.
 
-Run `python3 tools/test_screen_headers.py` to compile each screen header independently
-and with the shared registry in both include orders using the application's ARM compiler flags. Keep AK headers
+Compile each screen header independently and with the shared registry in both include
+orders using the application's ARM compiler flags. The former screen-header test is
+available in Git history. Keep AK headers
 in their supported include order (`fsm.h` before `message.h` in screen headers).
 
 ### 3. Header guard
@@ -397,9 +399,10 @@ and demo video assets under `resources/videos/`. Use the main README for the bas
 sequence and per-object/runtime guides for detailed Mermaid diagrams. Write exact
 signal names and keep diagrams consistent with their task handlers.
 
-Retain `tools/` and its capture, rendering, and test scripts throughout development.
-Remove it only after the engineer confirms the whole game is complete and requests
-final cleanup. Finishing a single TODO or README update is not that confirmation.
+The engineer approved final cleanup after game completion. The root development-tools
+folder has been removed; its earlier capture, rendering, and test scripts remain in
+Git history. Generated media and original capture records are retained. Restore the
+needed scripts before regenerating assets or repeating their historical host checks.
 
 ## VII. References
 
