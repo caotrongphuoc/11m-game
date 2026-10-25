@@ -1,6 +1,6 @@
 <div align="center">
 
-![Repo Traffic](https://ak-badge-proxy.caotrongphuoc.workers.dev/?username=11m-game&label=Repo+Traffic&color=blue&style=flat-square)
+![Repo Traffic](https://ak-badge-proxy.caotrongphuoc.workers.dev/?username=11m-game&label=Repo+Traffic&color=green&style=flat-square)
 
 </div>
 
