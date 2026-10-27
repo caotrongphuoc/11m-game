@@ -52,7 +52,7 @@ Eleven Meter is a five-kick penalty shootout built on the AK Embedded Base Kit. 
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/board/ak-embedded-base-kit-version-3.jpg" alt="AK Embedded Base Kit - STM32L151 - v3.0" width="480"/></td>
+    <td align="center"><img src="resources/images/board/ak-embedded-base-kit-version-3_1.jpg" alt="AK Embedded Base Kit - STM32L151 - v3.0" width="480"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 1:</em></strong> AK Embedded Base Kit - STM32L151</p>
